@@ -25,4 +25,4 @@ Then open http://localhost:8440/Back40/. `npm test` runs the tests.
 Add `?test` to the address for the test panel: speed up the clock, skip ahead,
 add coins and levels, and start over.
 
-Status: milestone 5 (land expansions).
+Status: milestone 5.5 (harvest basket).

@@ -155,8 +155,9 @@ decorations, an expansion, a new neighbor). Version 1 has content through level
 ## Trees and animals
 
 Trees and animals are bought from the market, placed on a tile, and produce on
-a repeating timer. They never wither and never die. Harvesting one restarts
-its timer. An unharvested tree or animal simply waits.
+a repeating timer. They never wither and never die. Collecting from one
+restarts its timer and puts one piece of produce (an apple, an egg) in the
+**harvest basket**; see below. An uncollected tree or animal simply waits.
 
 Starting values, ours rather than documented (tune freely):
 
@@ -174,7 +175,33 @@ Starting values, ours rather than documented (tune freely):
 | Pig | animal | 11 | 600 | truffles | 2d | 140 | 6 |
 | Horse | animal | 15 | 900 | hair | 3d | 260 | 9 |
 
-Harvesting a tree or animal gives 1 XP.
+Collecting from a tree or animal gives 1 XP. What each piece of produce sells
+for from the basket:
+
+| Produce | From | Sells for |
+| --- | --- | --- |
+| Apples | Apple tree | 30 |
+| Cherries | Cherry tree | 45 |
+| Lemons | Lemon tree | 60 |
+| Oranges | Orange tree | 75 |
+| Peaches | Peach tree | 110 |
+| Plums | Plum tree | 140 |
+| Eggs | Chicken | 15 |
+| Milk | Cow | 50 |
+| Wool | Sheep | 120 |
+| Truffles | Pig | 140 |
+| Horsehair | Horse | 260 |
+
+### The harvest basket
+
+Produce from trees and animals goes into the basket instead of paying out on
+the spot. The basket button in the top bar shows how many pieces are in it and
+hops when one arrives. Opening it lists each kind with its count and price,
+with a button to sell all of one kind and one to sell everything. Crops still
+sell the moment they're harvested, so a big field never needs an extra step.
+
+The basket is saved with the farm, has no size limit, and gives milestone 6's
+neighbor gifts and requests something to work with.
 
 ### Animal movement (milestone 7)
 
@@ -406,7 +433,7 @@ Stored in `localStorage` under the key `back40`. Every GitHub Pages project on
 
 ```json
 {
-  "version": 3,
+  "version": 4,
   "seed": 482913,
   "createdAt": 1791436800000,
   "lastSeenAt": 1791480000000,
@@ -429,6 +456,7 @@ Stored in `localStorage` under the key `back40`. Every GitHub Pages project on
   },
   "lastNeighborDay": "2026-10-08",
   "timeOffset": 0,
+  "basket": { "eggs": 4, "apples": 2 },
   "feed": [
     { "at": 1791476000000, "text": "Martha fertilized 6 of your crops" }
   ]
@@ -438,7 +466,8 @@ Stored in `localStorage` under the key `back40`. Every GitHub Pages project on
 - `version` goes up whenever the shape changes, and `save.ts` migrates older
   saves forward on load, one version at a time. Version 2 added trees
   (`lastHarvestAt`), animals (`lastHarvestAt`) and decorations. Version 3
-  added `timeOffset` for test mode, 0 for every older farm.
+  added `timeOffset` for test mode, 0 for every older farm. Version 4 added
+  `basket`, the harvest basket's contents by produce, empty for older farms.
 - Saving happens after every action. There is no save button.
 - If the stored save cannot be read, it is copied to `back40-unreadable-<time>`
   before a new farm starts, so a bad save never silently erases a farm.
@@ -473,6 +502,7 @@ Merging deploys.
 | 4 | **Farm life** | Trees, animals and decorations: buy, place, move, sell, harvest. |
 | 4.5 | **Test mode** | `?test` opens a panel to speed up or skip the clock, add coins and levels, ready everything, and start over. |
 | 5 | **Land** | Expansions with their level, neighbor and coin requirements. |
+| 5.5 | **Harvest basket** | Produce from trees and animals collects in a basket you sell from. |
 | 6 | **Neighbors** | Neighbor bar, farm visits and helping, overnight fertilizing, daily gifts and the gift box, news feed. |
 | 7 | **Polish** | Installable app, backup export and import, art pass, image-generation prompts in `prompts/`, and moving animals (see "Animal movement"). |
 | 8 | **Later** | Real multiplayer: accounts, cloud saves, real friends taking neighbor slots. Sound and music. |

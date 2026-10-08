@@ -5,8 +5,10 @@
 import './style.css';
 import { move, place, sell, sellValue, useMultiTool, type Outcome } from './core/actions';
 import { productInfo, type Placeable } from './core/catalog';
+import { sellBasket, sellProduce, type Sale } from './core/basket';
 import { addCoins, farmNow, levelUp as cheatLevelUp, readyEverything, skipAhead } from './core/cheats';
 import { systemClock } from './core/clock';
+import { PRODUCE } from './core/data/produce';
 import { expand, nextExpansion } from './core/land';
 import { levelForXp } from './core/levels';
 import { newSeed } from './core/rng';
@@ -19,6 +21,7 @@ import { objectAtPoint } from './render/hit';
 import { render, type Ghost } from './render/renderer';
 import { loadFarm, saveFarm } from './platform/storage';
 import { formatCoins } from './ui/format';
+import { createBasket } from './ui/basket';
 import { createHud } from './ui/hud';
 import { attachInput } from './ui/input';
 import { createLevelUp } from './ui/levelUp';
@@ -55,7 +58,11 @@ let highlight: TilePoint | null = null;
 let pointerKind: 'mouse' | 'touch' = 'mouse';
 let effects: FloatingText[] = [];
 
-const hud = createHud(required('#hud', HTMLElement));
+const basket = createBasket(required('#basket', HTMLDialogElement), {
+  sellOne: (id) => sold(sellProduce(farm, id)),
+  sellAll: () => sold(sellBasket(farm)),
+});
+const hud = createHud(required('#hud', HTMLElement), () => basket.open(farm));
 const tooltip = createTooltip(required('#tooltip', HTMLElement));
 const toast = createToast(required('#toast', HTMLElement));
 const levelUp = createLevelUp(required('#levelup', HTMLDialogElement));
@@ -217,6 +224,7 @@ function apply(outcome: Outcome): boolean {
   const { coins, xp } = outcome.reward;
   const lines: Array<readonly [string, string]> = [];
   if (coins !== 0) lines.push([`${coins > 0 ? '+' : '−'}${formatCoins(Math.abs(coins))}`, coins > 0 ? '#ffd23f' : '#ffe9c2']);
+  if (outcome.reward.produce) lines.push([`+1 ${PRODUCE[outcome.reward.produce].single}`, '#fff3c4']);
   if (xp > 0) lines.push([`+${xp} XP`, '#9fe3ff']);
   float(outcome.at, lines);
 
@@ -232,6 +240,13 @@ function setFarm(next: FarmState): void {
   if (!saveFarm(farm)) toast.show("Couldn't save. This browser is blocking storage");
   hud.update(farm);
   market.setFarm(farm);
+  basket.refresh(farm);
+}
+
+function sold(sale: Sale): void {
+  if (sale.sold === 0) return;
+  setFarm(sale.state);
+  toast.show(`Sold ${sale.sold} ${sale.sold === 1 ? 'item' : 'items'} for ${formatCoins(sale.coins)} coins`);
 }
 
 function celebrate(levelBefore: number): void {

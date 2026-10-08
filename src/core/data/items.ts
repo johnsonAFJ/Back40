@@ -1,5 +1,7 @@
 // Trees, animals and decorations, from SPEC.md. Starting values, ours rather
 // than documented; tune freely.
+
+import type { ProduceId } from './produce';
 //
 // Trees and animals produce on a repeating timer and never wither.
 // Decorations just sit there looking nice, and pay their XP once, when bought.
@@ -9,26 +11,26 @@ export type Producer = {
   readonly level: number;
   readonly price: number;
   readonly buyXp: number;
-  readonly product: string;
+  // What it gives every `hours`. Its sale price lives in data/produce.ts.
+  readonly product: ProduceId;
   readonly hours: number;
-  readonly sells: number;
 };
 
 export const TREES = {
-  appleTree: { name: 'Apple tree', level: 1, price: 50, buyXp: 1, product: 'apples', hours: 72, sells: 30 },
-  cherryTree: { name: 'Cherry tree', level: 3, price: 120, buyXp: 1, product: 'cherries', hours: 72, sells: 45 },
-  lemonTree: { name: 'Lemon tree', level: 6, price: 200, buyXp: 2, product: 'lemons', hours: 72, sells: 60 },
-  orangeTree: { name: 'Orange tree', level: 9, price: 300, buyXp: 3, product: 'oranges', hours: 72, sells: 75 },
-  peachTree: { name: 'Peach tree', level: 13, price: 450, buyXp: 4, product: 'peaches', hours: 96, sells: 110 },
-  plumTree: { name: 'Plum tree', level: 17, price: 650, buyXp: 6, product: 'plums', hours: 96, sells: 140 },
+  appleTree: { name: 'Apple tree', level: 1, price: 50, buyXp: 1, product: 'apples', hours: 72 },
+  cherryTree: { name: 'Cherry tree', level: 3, price: 120, buyXp: 1, product: 'cherries', hours: 72 },
+  lemonTree: { name: 'Lemon tree', level: 6, price: 200, buyXp: 2, product: 'lemons', hours: 72 },
+  orangeTree: { name: 'Orange tree', level: 9, price: 300, buyXp: 3, product: 'oranges', hours: 72 },
+  peachTree: { name: 'Peach tree', level: 13, price: 450, buyXp: 4, product: 'peaches', hours: 96 },
+  plumTree: { name: 'Plum tree', level: 17, price: 650, buyXp: 6, product: 'plums', hours: 96 },
 } as const satisfies Record<string, Producer>;
 
 export const ANIMALS = {
-  chicken: { name: 'Chicken', level: 2, price: 60, buyXp: 1, product: 'eggs', hours: 24, sells: 15 },
-  cow: { name: 'Cow', level: 5, price: 250, buyXp: 2, product: 'milk', hours: 24, sells: 50 },
-  sheep: { name: 'Sheep', level: 8, price: 400, buyXp: 4, product: 'wool', hours: 72, sells: 120 },
-  pig: { name: 'Pig', level: 11, price: 600, buyXp: 6, product: 'truffles', hours: 48, sells: 140 },
-  horse: { name: 'Horse', level: 15, price: 900, buyXp: 9, product: 'hair', hours: 72, sells: 260 },
+  chicken: { name: 'Chicken', level: 2, price: 60, buyXp: 1, product: 'eggs', hours: 24 },
+  cow: { name: 'Cow', level: 5, price: 250, buyXp: 2, product: 'milk', hours: 24 },
+  sheep: { name: 'Sheep', level: 8, price: 400, buyXp: 4, product: 'wool', hours: 72 },
+  pig: { name: 'Pig', level: 11, price: 600, buyXp: 6, product: 'truffles', hours: 48 },
+  horse: { name: 'Horse', level: 15, price: 900, buyXp: 9, product: 'hair', hours: 72 },
 } as const satisfies Record<string, Producer>;
 
 export type Decoration = {

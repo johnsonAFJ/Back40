@@ -622,6 +622,110 @@ body {
   text-transform: uppercase;
 }
 
+/* Basket */
+
+.basket-button {
+  color: var(--ink);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.basket-svg {
+  width: 20px;
+  height: 20px;
+  fill: #e0b947;
+  stroke: #8a5a20;
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.basket-button.hop {
+  animation: hop 380ms ease-out;
+}
+
+@keyframes hop {
+  30% {
+    transform: translateY(-5px);
+  }
+  60% {
+    transform: translateY(1px);
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.basket {
+  width: min(440px, calc(100vw - 32px));
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  max-height: calc(100dvh - 36px);
+}
+
+.basket-empty {
+  margin: 8px 20px 20px;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.basket-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0 16px;
+  overflow-y: auto;
+  display: grid;
+  gap: 6px;
+}
+
+.basket-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px 6px 6px;
+  border: 2px solid var(--panel-edge);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.basket-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--panel-shade);
+}
+
+.basket-main {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.basket-sell {
+  min-height: 36px;
+  padding: 0 14px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.basket-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 16px 16px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
 /* Land */
 
 .land-list {
@@ -851,11 +955,19 @@ button:focus-visible {
 }
 
 
+/* On a phone, a shorter XP bar keeps coins, level and basket on one row. */
+@media (max-width: 420px) {
+  .xp-bar {
+    width: 72px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .xp-fill {
     transition: none;
   }
-  .levelup-level {
+  .levelup-level,
+  .basket-button.hop {
     animation: none;
   }
 }

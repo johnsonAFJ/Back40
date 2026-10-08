@@ -12,6 +12,7 @@ import { HARVEST_XP, PLOW_XP } from '../core/data/economy';
 import { ANIMALS, DECORATIONS, TREES } from '../core/data/items';
 import { EXPANSIONS } from '../core/data/expansions';
 import { NEIGHBORS } from '../core/data/neighbors';
+import { PRODUCE } from '../core/data/produce';
 import { neighborsAt } from '../core/land';
 import { levelForXp } from '../core/levels';
 import type { FarmState } from '../core/state';
@@ -74,7 +75,8 @@ function details(p: Product): string {
     case 'tree':
     case 'animal': {
       const item = p.kind === 'tree' ? TREES[p.id] : ANIMALS[p.id];
-      return `<span class="card-line">${item.product} every ${formatGrowTime(item.hours)}, sells ${formatCoins(item.sells)}</span>
+      const produce = PRODUCE[item.product];
+      return `<span class="card-line">${produce.name} every ${formatGrowTime(item.hours)}, ${formatCoins(produce.sells)} each</span>
         <span class="card-line card-money">${coinIcon}${formatCoins(item.price)} · +${item.buyXp} XP</span>`;
     }
     case 'decoration': {

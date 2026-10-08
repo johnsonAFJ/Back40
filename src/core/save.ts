@@ -8,8 +8,9 @@
 import { isBuildingId } from './data/buildings';
 import { isCropId } from './data/crops';
 import { isAnimalId, isDecorationId, isTreeId } from './data/items';
+import { isProduceId } from './data/produce';
 import { EXPANSIONS } from './data/expansions';
-import { SAVE_VERSION, footprint, type FarmObject, type FarmState } from './state';
+import { SAVE_VERSION, footprint, type Basket, type FarmObject, type FarmState } from './state';
 
 export class SaveError extends Error {
   override name = 'SaveError';
@@ -103,7 +104,23 @@ const MIGRATIONS: Readonly<Record<number, (raw: Json) => Json>> = {
   // Version 3 added test mode's clock offset. Older farms have never been
   // in test mode, so they're on real time.
   2: (raw) => ({ ...raw, version: 3, timeOffset: 0 }),
+  // Version 4 added the harvest basket. Older farms sold everything on the
+  // spot, so their basket starts empty.
+  3: (raw) => ({ ...raw, version: 4, basket: {} }),
 };
+
+function parseBasket(raw: unknown): Basket {
+  if (!isRecord(raw)) throw new SaveError('save.basket should be an object');
+  const basket: { [id: string]: number } = {};
+  for (const [id, count] of Object.entries(raw)) {
+    if (!isProduceId(id)) throw new SaveError(`save.basket.${id} is not a known kind of produce`);
+    if (typeof count !== 'number' || !Number.isInteger(count) || count < 0) {
+      throw new SaveError(`save.basket.${id} should be a whole number, zero or more`);
+    }
+    if (count > 0) basket[id] = count;
+  }
+  return basket;
+}
 
 function migrate(input: Json): Json {
   let raw = input;
@@ -159,5 +176,6 @@ export function parseSave(input: unknown): FarmState {
     nextId: int(raw, 'nextId', 'save'),
     objects,
     timeOffset,
+    basket: parseBasket(raw['basket']),
   };
 }
