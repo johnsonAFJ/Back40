@@ -13,19 +13,27 @@
 
     <header id="hud" class="hud hud-top"></header>
 
+    <button id="test-toggle" class="pill test-toggle" type="button" aria-controls="test-panel" aria-expanded="false" hidden>Test</button>
+    <section id="test-panel" class="panel test-panel" aria-label="Test mode" hidden></section>
+
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
+    <div id="mode-banner" class="mode-banner" role="status" hidden></div>
+
+    <div class="zoom-controls">
+      <button id="zoom-in" class="round" type="button" aria-label="Zoom in" title="Zoom in (+)">+</button>
+      <button id="recenter" class="round" type="button" aria-label="Show whole farm" title="Show whole farm">⌂</button>
+      <button id="zoom-out" class="round" type="button" aria-label="Zoom out" title="Zoom out (−)">−</button>
+    </div>
+
     <footer class="hud hud-bottom">
-      <button id="market-button" class="pill market-button" type="button" aria-haspopup="dialog" title="Open the market to choose what to plant"></button>
-      <div class="zoom-controls">
-        <button id="zoom-out" class="round" type="button" aria-label="Zoom out" title="Zoom out (−)">−</button>
-        <button id="recenter" class="round" type="button" aria-label="Show whole farm" title="Show whole farm">⌂</button>
-        <button id="zoom-in" class="round" type="button" aria-label="Zoom in" title="Zoom in (+)">+</button>
-      </div>
+      <button id="market-button" class="pill market-button" type="button" aria-haspopup="dialog" title="Open the market"></button>
+      <nav id="tools" class="tools" aria-label="Tools"></nav>
     </footer>
 
     <dialog id="market" class="panel dialog" aria-label="Market"></dialog>
     <dialog id="levelup" class="panel dialog" aria-label="Level up"></dialog>
+    <dialog id="confirm" class="panel dialog" aria-label="Are you sure?"></dialog>
 
     <script type="module" src="/src/main.ts"></script>
   </body>

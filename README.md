@@ -22,4 +22,7 @@ npm run dev
 
 Then open http://localhost:8440/Back40/. `npm test` runs the tests.
 
-Status: milestone 3 (market and level unlocks).
+Add `?test` to the address for the test panel: speed up the clock, skip ahead,
+add coins and levels, and start over.
+
+Status: milestone 4.5 (test mode).

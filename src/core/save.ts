@@ -7,6 +7,7 @@
 
 import { isBuildingId } from './data/buildings';
 import { isCropId } from './data/crops';
+import { isAnimalId, isDecorationId, isTreeId } from './data/items';
 import { EXPANSIONS } from './data/expansions';
 import { SAVE_VERSION, footprint, type FarmObject, type FarmState } from './state';
 
@@ -50,6 +51,24 @@ function parseObject(raw: unknown, index: number): FarmObject {
     return { ...base, kind, typeId };
   }
 
+  if (kind === 'tree') {
+    const typeId = raw['typeId'];
+    if (!isTreeId(typeId)) throw new SaveError(`${where}.typeId is not a known tree`);
+    return { ...base, kind, typeId, lastHarvestAt: num(raw, 'lastHarvestAt', where) };
+  }
+
+  if (kind === 'animal') {
+    const typeId = raw['typeId'];
+    if (!isAnimalId(typeId)) throw new SaveError(`${where}.typeId is not a known animal`);
+    return { ...base, kind, typeId, lastHarvestAt: num(raw, 'lastHarvestAt', where) };
+  }
+
+  if (kind === 'decoration') {
+    const typeId = raw['typeId'];
+    if (!isDecorationId(typeId)) throw new SaveError(`${where}.typeId is not a known decoration`);
+    return { ...base, kind, typeId };
+  }
+
   if (kind === 'plot') {
     const state = raw['state'];
     if (state === 'plowed' || state === 'harvested') return { ...base, kind, state };
@@ -74,12 +93,27 @@ function parseObject(raw: unknown, index: number): FarmObject {
   throw new SaveError(`${where}.kind is not a known kind of object`);
 }
 
-// Upgrades an older save to the current shape. Version 1 is the first, so
-// there is nothing to upgrade yet.
-function migrate(raw: Json): Json {
-  const version = raw['version'];
-  if (version === SAVE_VERSION) return raw;
-  throw new SaveError(`This save is from version ${String(version)}, which this game doesn't know how to load`);
+// Upgrades an older save one version at a time until it's current. Each step
+// only knows how to go from one version to the next, so a version 1 save
+// walks through every step in order.
+const MIGRATIONS: Readonly<Record<number, (raw: Json) => Json>> = {
+  // Version 2 added trees, animals and decorations. A version 1 farm has
+  // none, so it's already a valid version 2 farm.
+  1: (raw) => ({ ...raw, version: 2 }),
+  // Version 3 added test mode's clock offset. Older farms have never been
+  // in test mode, so they're on real time.
+  2: (raw) => ({ ...raw, version: 3, timeOffset: 0 }),
+};
+
+function migrate(input: Json): Json {
+  let raw = input;
+  for (;;) {
+    const version = raw['version'];
+    if (version === SAVE_VERSION) return raw;
+    const step = typeof version === 'number' ? MIGRATIONS[version] : undefined;
+    if (!step) throw new SaveError(`This save is from version ${String(version)}, which this game doesn't know how to load`);
+    raw = step(raw);
+  }
 }
 
 export function parseSave(input: unknown): FarmState {
@@ -111,6 +145,9 @@ export function parseSave(input: unknown): FarmState {
     }
   }
 
+  const timeOffset = num(raw, 'timeOffset', 'save');
+  if (timeOffset < 0) throw new SaveError('save.timeOffset can only move the clock forward');
+
   return {
     version: SAVE_VERSION,
     seed: int(raw, 'seed', 'save'),
@@ -121,5 +158,6 @@ export function parseSave(input: unknown): FarmState {
     expansion,
     nextId: int(raw, 'nextId', 'save'),
     objects,
+    timeOffset,
   };
 }
