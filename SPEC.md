@@ -61,8 +61,9 @@ Every crop goes through the same plot states:
 
 Harvesting leaves bare stubble that must be **plowed again** before the next
 crop, as in the original. So every crop really costs its seed plus 15 coins,
-and earns its planting XP plus 2 (1 for plowing, 1 for harvesting). Plowing a
-plot that has a growing crop destroys the crop; the game asks first.
+and earns its planting XP plus 2 (1 for plowing, 1 for harvesting). A
+growing crop can't be plowed over; to get rid of one, remove its plot with the
+Sell tool, which asks first.
 
 ### Growth stages
 
@@ -177,8 +178,8 @@ Harvesting a tree or animal gives 1 XP.
 ## Decorations and buildings
 
 Decorations are bought, placed and moved freely. They give XP once, when
-bought, at roughly 1 XP per 100 coins with a minimum of 1. Selling one returns
-5% of its price.
+bought, at roughly 1 XP per 100 coins with a minimum of 1. Selling a
+decoration, tree or animal returns 5% of its price, rounded down.
 
 | Item | Level | Price | XP | Size |
 | --- | --- | --- | --- | --- |
@@ -260,8 +261,12 @@ Three tools sit in a toolbar, plus the market button:
 | Tool | Click or tap on |
 | --- | --- |
 | **Multi-tool** (default) | Empty land, a harvested plot or a withered crop: plow. Plowed plot: plant the selected seed. Ready crop, tree or animal: harvest. |
-| **Move** | An object, then a tile: move it there. |
-| **Sell** | A tree, animal or decoration: sell it, after a confirmation. |
+| **Move** | An object, then a tile: move it there, free. Plots move with their crops. |
+| **Sell** | A tree, animal or decoration: sell it, after a confirmation. A plot: remove it, and whatever is growing on it, for nothing. The farmhouse can't be sold. |
+
+While a tool other than the multi-tool is active, or while placing something,
+a banner at the top says what a click will do and has a **Done** button.
+Escape also returns to the multi-tool.
 
 The market button in the bottom-left corner shows the crop being planted and
 opens the market, which lists every crop in unlock order. Crops above your
@@ -269,7 +274,10 @@ level show greyed out with the level that unlocks them. Choosing a crop selects
 it as the current seed and returns to the farm with the multi-tool. The last
 seed chosen is remembered per browser under `back40-seed`, outside the save. Each plant charges the seed price; nothing is bought
 in advance. Buying a tree, animal or decoration puts it on the cursor to
-place.
+place; it's paid for when it goes down. A translucent preview follows the
+pointer over a green footprint where it fits and a red one where it doesn't.
+Fences and paths stay on the cursor after placing, since they usually go
+down in rows; everything else returns to the multi-tool.
 
 Camera:
 
@@ -328,6 +336,10 @@ into short toasts.
 - The canvas redraws every animation frame while something moves (a pan, a
   harvest pop) and once a second otherwise, so growth timers stay current
   without burning battery.
+- Clicks on things that stand up (a tree's leaves, a barn's roof) pick that
+  thing, even where it's drawn over the tiles behind it. Each object is
+  tested against its outline on screen, nearest first, before falling back
+  to the ground tile. See `src/render/hit.ts`.
 - All art is drawn in code for now. Every sprite goes through one
   `drawSprite(id, ...)` function, so swapping in image files later changes one
   module.
@@ -339,7 +351,7 @@ Stored in `localStorage` under the key `back40`. Every GitHub Pages project on
 
 ```json
 {
-  "version": 1,
+  "version": 2,
   "seed": 482913,
   "createdAt": 1791436800000,
   "lastSeenAt": 1791480000000,
@@ -368,7 +380,9 @@ Stored in `localStorage` under the key `back40`. Every GitHub Pages project on
 ```
 
 - `version` goes up whenever the shape changes, and `save.ts` migrates older
-  saves forward on load.
+  saves forward on load, one version at a time. Version 2 added trees
+  (`lastHarvestAt`), animals (`lastHarvestAt`) and decorations; version 1
+  farms load unchanged.
 - Saving happens after every action. There is no save button.
 - If the stored save cannot be read, it is copied to `back40-unreadable-<time>`
   before a new farm starts, so a bad save never silently erases a farm.

@@ -22,4 +22,4 @@ npm run dev
 
 Then open http://localhost:8440/Back40/. `npm test` runs the tests.
 
-Status: milestone 3 (market and level unlocks).
+Status: milestone 4 (trees, animals, decorations, move and sell).

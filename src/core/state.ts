@@ -3,13 +3,14 @@
 // stage from plantedAt and the clock.
 
 import { BUILDINGS, type BuildingId } from './data/buildings';
+import { DECORATIONS, type AnimalId, type DecorationId, type TreeId } from './data/items';
 import { CROPS, type CropId } from './data/crops';
 import { CUSHION_GROW_TIMES, SAFE_GROW_TIMES, STARTER_CROP_MINUTES_LEFT, STARTING_COINS } from './data/economy';
 import { EXPANSIONS } from './data/expansions';
 import { HOUR, MINUTE } from './clock';
 import { random01 } from './rng';
 
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 // A plot is always in exactly one of these states. Fields that only make
 // sense for a growing crop only exist on the 'planted' variant, so a plowed
@@ -30,7 +31,13 @@ type Placed = { readonly id: string; readonly x: number; readonly y: number };
 export type Plot = Placed & { readonly kind: 'plot' } & PlotState;
 export type PlantedPlot = Extract<Plot, { state: 'planted' }>;
 export type BuildingObject = Placed & { readonly kind: 'building'; readonly typeId: BuildingId };
-export type FarmObject = Plot | BuildingObject;
+// Trees and animals produce again a set time after their last harvest. A new
+// one counts as harvested the moment it's placed.
+export type TreeObject = Placed & { readonly kind: 'tree'; readonly typeId: TreeId; readonly lastHarvestAt: number };
+export type AnimalObject = Placed & { readonly kind: 'animal'; readonly typeId: AnimalId; readonly lastHarvestAt: number };
+export type DecorationObject = Placed & { readonly kind: 'decoration'; readonly typeId: DecorationId };
+export type Producer = TreeObject | AnimalObject;
+export type FarmObject = Plot | BuildingObject | TreeObject | AnimalObject | DecorationObject;
 
 export type FarmState = {
   readonly version: typeof SAVE_VERSION;
@@ -59,9 +66,13 @@ export function isOnFarm(state: FarmState, x: number, y: number): boolean {
 export function footprint(obj: FarmObject): { readonly width: number; readonly depth: number } {
   switch (obj.kind) {
     case 'plot':
+    case 'tree':
+    case 'animal':
       return { width: 1, depth: 1 };
     case 'building':
       return BUILDINGS[obj.typeId];
+    case 'decoration':
+      return DECORATIONS[obj.typeId];
     default: {
       const _exhaustive: never = obj;
       return _exhaustive;
@@ -75,6 +86,30 @@ export function objectAt(state: FarmState, x: number, y: number): FarmObject | n
     if (x >= obj.x && x < obj.x + width && y >= obj.y && y < obj.y + depth) return obj;
   }
   return null;
+}
+
+type Area = { readonly x: number; readonly y: number; readonly width: number; readonly depth: number };
+
+// Why an area can't take something: part of it is off the farm, or the
+// first object found in the way. Null when the area is clear. `ignoreId` is
+// the object being moved, which doesn't block its own new spot.
+export function areaBlocker(state: FarmState, area: Area, ignoreId?: string): 'offFarm' | FarmObject | null {
+  for (let dx = 0; dx < area.width; dx++) {
+    for (let dy = 0; dy < area.depth; dy++) {
+      if (!isOnFarm(state, area.x + dx, area.y + dy)) return 'offFarm';
+    }
+  }
+  for (let dx = 0; dx < area.width; dx++) {
+    for (let dy = 0; dy < area.depth; dy++) {
+      const there = objectAt(state, area.x + dx, area.y + dy);
+      if (there && there.id !== ignoreId) return there;
+    }
+  }
+  return null;
+}
+
+export function isAreaFree(state: FarmState, area: Area, ignoreId?: string): boolean {
+  return areaBlocker(state, area, ignoreId) === null;
 }
 
 // When a crop withers: safe for one grow time after ripening, then a seeded

@@ -1,25 +1,34 @@
 import { describe, expect, it } from 'vitest';
 import { isUnlocked, nextUnlockLevel, unlocksAt, unlocksBetween } from '../src/core/unlocks';
 
+const names = (list: ReadonlyArray<{ kind: string; id: string }>): string[] => list.map((u) => `${u.kind}:${u.id}`);
+
 describe('unlocks', () => {
-  it('lists the crops that unlock at a level', () => {
-    expect(unlocksAt(4).map((u) => u.id)).toEqual(['lilac', 'squash']);
-    expect(unlocksAt(2)).toEqual([]);
+  it('lists everything that unlocks at a level, across the whole market', () => {
+    expect(names(unlocksAt(4))).toEqual(['crop:lilac', 'crop:squash', 'decoration:flowerPot']);
+    expect(names(unlocksAt(2))).toEqual(['animal:chicken']);
+    expect(unlocksAt(7).length).toBe(1);
   });
 
   it('collects every unlock across a multi-level jump', () => {
-    expect(unlocksBetween(3, 5).map((u) => u.id)).toEqual(['lilac', 'squash', 'pumpkin']);
+    expect(names(unlocksBetween(3, 5))).toEqual([
+      'crop:lilac',
+      'crop:squash',
+      'decoration:flowerPot',
+      'crop:pumpkin',
+      'animal:cow',
+    ]);
   });
 
   it('finds the next level with something new', () => {
-    expect(nextUnlockLevel(1)).toBe(4);
-    expect(nextUnlockLevel(4)).toBe(5);
+    expect(nextUnlockLevel(1)).toBe(2);
+    expect(nextUnlockLevel(18)).toBe(19);
     expect(nextUnlockLevel(20)).toBeNull();
   });
 
-  it('knows which crops a level can plant', () => {
-    expect(isUnlocked('strawberries', 1)).toBe(true);
-    expect(isUnlocked('pumpkin', 4)).toBe(false);
-    expect(isUnlocked('pumpkin', 5)).toBe(true);
+  it('knows what a level can buy', () => {
+    expect(isUnlocked({ kind: 'crop', id: 'strawberries' }, 1)).toBe(true);
+    expect(isUnlocked({ kind: 'crop', id: 'pumpkin' }, 4)).toBe(false);
+    expect(isUnlocked({ kind: 'animal', id: 'horse' }, 15)).toBe(true);
   });
 });

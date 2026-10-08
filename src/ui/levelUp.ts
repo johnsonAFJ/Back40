@@ -1,25 +1,18 @@
 // The level-up banner: the new level, what it unlocked, and how far away
 // the next unlock is.
 
-import { CROPS } from '../core/data/crops';
+import { productInfo } from '../core/catalog';
 import { nextUnlockLevel, type Unlock } from '../core/unlocks';
-import { cropThumbnail } from '../render/thumbnails';
+import { productThumbnail } from '../render/thumbnails';
 
 export type LevelUp = { readonly show: (level: number, unlocked: readonly Unlock[]) => void };
 
 function unlockCard(u: Unlock): string {
-  switch (u.kind) {
-    case 'crop':
-      return `
-        <li class="unlock">
-          <img class="unlock-thumb" src="${cropThumbnail(u.id)}" alt="" />
-          <span>${CROPS[u.id].name}</span>
-        </li>`;
-    default: {
-      const _exhaustive: never = u.kind;
-      return _exhaustive;
-    }
-  }
+  return `
+    <li class="unlock">
+      <img class="unlock-thumb" src="${productThumbnail(u)}" alt="" />
+      <span>${productInfo(u).name}</span>
+    </li>`;
 }
 
 export function createLevelUp(dialog: HTMLDialogElement): LevelUp {
@@ -36,7 +29,7 @@ export function createLevelUp(dialog: HTMLDialogElement): LevelUp {
            <ul class="unlocks">${unlocked.map(unlockCard).join('')}</ul>`
         : '';
       const nextPart = next
-        ? `<p class="levelup-next">${next - level === 1 ? 'More crops at the next level' : `More crops at level ${next}`}</p>`
+        ? `<p class="levelup-next">${next - level === 1 ? 'More unlocks at the next level' : `More unlocks at level ${next}`}</p>`
         : '';
       dialog.innerHTML = `
         <div class="levelup">

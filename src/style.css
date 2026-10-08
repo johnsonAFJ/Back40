@@ -18,6 +18,11 @@
   font-family: ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
 }
 
+/* Anything hidden stays hidden, whatever display its class sets. */
+[hidden] {
+  display: none !important;
+}
+
 html,
 body {
   height: 100%;
@@ -47,6 +52,14 @@ body {
   cursor: grabbing;
 }
 
+#farm[data-mode='place'] {
+  cursor: copy;
+}
+
+#farm[data-mode='move'] {
+  cursor: move;
+}
+
 /* HUD bars */
 
 .hud {
@@ -74,7 +87,10 @@ body {
   padding-top: max(16px, env(safe-area-inset-top, 0px));
 }
 
+/* The bottom bar: market button on the left, tools beside it. */
 .hud-bottom {
+  justify-content: flex-start;
+  flex-wrap: wrap;
   bottom: 0;
   padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
 }
@@ -186,6 +202,84 @@ body {
   font-size: 15px;
 }
 
+/* Tools */
+
+.tools {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--panel);
+  border: 2px solid var(--panel-edge);
+  border-radius: 999px;
+  box-shadow: 0 2px 0 var(--panel-edge);
+}
+
+.tool {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  min-width: 52px;
+  min-height: 44px;
+  padding: 4px 8px 3px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tool svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tool:hover {
+  background: var(--panel-shade);
+}
+
+.tool[aria-pressed='true'] {
+  background: var(--level);
+  color: #fff;
+}
+
+.mode-banner {
+  position: fixed;
+  top: calc(max(16px, env(safe-area-inset-top, 0px)) + 52px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: calc(100vw - 32px);
+  padding: 6px 6px 6px 16px;
+  border-radius: 999px;
+  background: rgba(45, 32, 16, 0.92);
+  color: #fff8e8;
+  font-size: 14px;
+  font-weight: 700;
+  z-index: 2;
+}
+
+.banner-cancel {
+  min-height: 32px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff8e8;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
 /* Dialogs */
 
 .panel {
@@ -238,6 +332,41 @@ body {
   box-shadow: none;
 }
 
+/* Confirm */
+
+.confirm {
+  width: min(340px, calc(100vw - 32px));
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+}
+
+.confirm p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  text-wrap: pretty;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.secondary {
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 2px solid var(--panel-edge);
+  background: var(--panel-shade);
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 /* Market */
 
 .market {
@@ -258,6 +387,33 @@ body {
   margin: 0;
   font-size: 22px;
   text-wrap: balance;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin: 10px 16px 0;
+  overflow-x: auto;
+}
+
+.tab {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 2px solid var(--panel-edge);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tab[aria-selected='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--panel);
 }
 
 .market-hint {
@@ -312,6 +468,10 @@ body {
 .card-thumb {
   width: 72px;
   height: 72px;
+}
+
+.card[data-short='true'] .card-money {
+  color: #b5432f;
 }
 
 .card:disabled .card-thumb {
@@ -442,7 +602,11 @@ body {
 /* Zoom */
 
 .zoom-controls {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 64px);
   display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 
