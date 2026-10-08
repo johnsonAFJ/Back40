@@ -8,6 +8,13 @@ import { productThumbnail } from '../render/thumbnails';
 export type LevelUp = { readonly show: (level: number, unlocked: readonly Unlock[]) => void };
 
 function unlockCard(u: Unlock): string {
+  if (u.kind === 'expansion') {
+    return `
+      <li class="unlock">
+        <span class="unlock-thumb land-thumb" aria-hidden="true">${u.size}×${u.size}</span>
+        <span>More land</span>
+      </li>`;
+  }
   return `
     <li class="unlock">
       <img class="unlock-thumb" src="${productThumbnail(u)}" alt="" />
@@ -25,7 +32,7 @@ export function createLevelUp(dialog: HTMLDialogElement): LevelUp {
     show(level, unlocked) {
       const next = nextUnlockLevel(level);
       const unlockedPart = unlocked.length
-        ? `<p class="levelup-sub">New in the market</p>
+        ? `<p class="levelup-sub">Now available</p>
            <ul class="unlocks">${unlocked.map(unlockCard).join('')}</ul>`
         : '';
       const nextPart = next

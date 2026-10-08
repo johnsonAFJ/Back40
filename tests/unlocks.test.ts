@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { isUnlocked, nextUnlockLevel, unlocksAt, unlocksBetween } from '../src/core/unlocks';
+import { isUnlocked, nextUnlockLevel, unlocksAt, unlocksBetween, type Unlock } from '../src/core/unlocks';
 
-const names = (list: ReadonlyArray<{ kind: string; id: string }>): string[] => list.map((u) => `${u.kind}:${u.id}`);
+const names = (list: readonly Unlock[]): string[] =>
+  list.map((u) => (u.kind === 'expansion' ? `expansion:${u.size}` : `${u.kind}:${u.id}`));
 
 describe('unlocks', () => {
   it('lists everything that unlocks at a level, across the whole market', () => {
@@ -17,13 +18,16 @@ describe('unlocks', () => {
       'decoration:flowerPot',
       'crop:pumpkin',
       'animal:cow',
+      'expansion:14',
     ]);
   });
 
   it('finds the next level with something new', () => {
     expect(nextUnlockLevel(1)).toBe(2);
     expect(nextUnlockLevel(18)).toBe(19);
-    expect(nextUnlockLevel(20)).toBeNull();
+    // After level 20's crops, the last expansion at 25 is all that's left.
+    expect(nextUnlockLevel(20)).toBe(25);
+    expect(nextUnlockLevel(25)).toBeNull();
   });
 
   it('knows what a level can buy', () => {

@@ -232,7 +232,16 @@ neighbors, and coins.
 | 4 | 20 x 20 | 20 | 4 | 75,000 |
 | 5 | 22 x 22 | 25 | 5 | 150,000 |
 
-New land is added on two sides so existing objects keep their tiles.
+Expansions are bought from the market's **Land** tab, which lists every size
+with its requirements ticked or crossed. Only the next size can be bought, and
+buying asks first. Afterwards the camera pulls back to show the whole farm.
+
+New land is added along the far x and y edges, so existing objects keep their
+tiles and the save only records which expansion the farm is on.
+
+The neighbor count comes from your level (see Neighbors), so like level it's
+never stored. Each new size also appears in the level-up banner when its level
+is reached.
 
 ## Neighbors
 
