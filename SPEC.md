@@ -315,9 +315,9 @@ near the cursor.
 - Tiles are 64 x 32 pixel diamonds at 100% zoom.
 - Objects are sorted back to front by `x + y`, then by `x`, so nearer objects
   overlap farther ones.
-- Clicks are mapped back to a tile with the inverse isometric transform, then
-  checked against the diamond's edges so clicks near a corner pick the right
-  tile.
+- Clicks are mapped back to a tile with the inverse isometric transform. That
+  transform turns every diamond back into a 1 x 1 square, so rounding down is
+  an exact hit test, even right next to a diamond's corner.
 - The canvas redraws every animation frame while something moves (a pan, a
   harvest pop) and once a second otherwise, so growth timers stay current
   without burning battery.
