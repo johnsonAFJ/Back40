@@ -5,9 +5,11 @@
 import './style.css';
 import { move, place, sell, sellValue, useMultiTool, type Outcome } from './core/actions';
 import { productInfo, type Placeable } from './core/catalog';
+import { addCoins, farmNow, levelUp as cheatLevelUp, readyEverything, skipAhead } from './core/cheats';
 import { systemClock } from './core/clock';
 import { levelForXp } from './core/levels';
-import { farmSize, footprint, isAreaFree, isOnFarm, objectAt, type FarmState } from './core/state';
+import { newSeed } from './core/rng';
+import { farmSize, footprint, isAreaFree, isOnFarm, newFarm, objectAt, type FarmState } from './core/state';
 import { unlocksBetween } from './core/unlocks';
 import { MIN_ZOOM, clampToBounds, pan, screenToWorld, worldToScreen, zoomAt, type Bounds, type Camera, type Viewport } from './render/camera';
 import { liveEffects, type FloatingText } from './render/effects';
@@ -22,6 +24,7 @@ import { createLevelUp } from './ui/levelUp';
 import { createMarket } from './ui/market';
 import { describeSell, describeTile, failureMessage, objectName } from './ui/messages';
 import { createToast, createTooltip } from './ui/notices';
+import { createTestPanel, isTestMode } from './ui/testPanel';
 import { createConfirm, createToolbar, type Mode } from './ui/tools';
 
 function required<T extends Element>(selector: string, type: new () => T): T {
@@ -38,6 +41,10 @@ const ctx = ctxOrNull;
 const clock = systemClock;
 let farm: FarmState = loadFarm(clock.now());
 saveFarm(farm);
+
+// The farm's time: real time, plus however far test mode has moved it ahead.
+// Every rule gets its `now` from here.
+const now = (): number => farmNow(farm, clock.now());
 
 let mode: Mode = { kind: 'farm' };
 let view: Viewport = { width: 1, height: 1 };
@@ -120,7 +127,7 @@ function requestDraw(): void {
     frameRequested = false;
     effects = liveEffects(effects, frameTime);
     const hiddenId = mode.kind === 'move' && mode.held ? mode.held.id : null;
-    render(ctx, { camera, view, pixelRatio, farm, now: clock.now(), highlight, ghost: ghostAt(highlight), hiddenId, effects, frameTime });
+    render(ctx, { camera, view, pixelRatio, farm, now: now(), highlight, ghost: ghostAt(highlight), hiddenId, effects, frameTime });
     if (effects.length > 0) requestDraw();
   });
 }
@@ -130,7 +137,7 @@ function requestDraw(): void {
 function tooltipText(t: TilePoint): string | null {
   switch (mode.kind) {
     case 'farm':
-      return describeTile(farm, t.x, t.y, market.selected(), clock.now());
+      return describeTile(farm, t.x, t.y, market.selected(), now());
     case 'sell':
       return describeSell(farm, t.x, t.y);
     case 'move': {
@@ -198,15 +205,12 @@ function float(at: { x: number; y: number }, lines: ReadonlyArray<readonly [stri
 // Applies an outcome: on success saves, updates the HUD, shows the reward and
 // celebrates a new level; on failure explains why. Returns whether it worked.
 function apply(outcome: Outcome): boolean {
-  const now = clock.now();
   if (!outcome.ok) {
-    toast.show(failureMessage(outcome.failure, now));
+    toast.show(failureMessage(outcome.failure, now()));
     return false;
   }
   const levelBefore = levelForXp(farm.xp);
-  farm = outcome.state;
-  if (!saveFarm(farm)) toast.show("Couldn't save. This browser is blocking storage");
-  hud.update(farm);
+  setFarm(outcome.state);
 
   const { coins, xp } = outcome.reward;
   const lines: Array<readonly [string, string]> = [];
@@ -214,25 +218,34 @@ function apply(outcome: Outcome): boolean {
   if (xp > 0) lines.push([`+${xp} XP`, '#9fe3ff']);
   float(outcome.at, lines);
 
-  const levelAfter = levelForXp(farm.xp);
-  market.setStatus(levelAfter, farm.coins);
-  if (levelAfter > levelBefore) levelUp.show(levelAfter, unlocksBetween(levelBefore, levelAfter));
-
+  celebrate(levelBefore);
   refreshTooltip();
   requestDraw();
   return true;
 }
 
+// Replaces the farm, saves it and updates everything that shows it.
+function setFarm(next: FarmState): void {
+  farm = next;
+  if (!saveFarm(farm)) toast.show("Couldn't save. This browser is blocking storage");
+  hud.update(farm);
+  market.setStatus(levelForXp(farm.xp), farm.coins);
+}
+
+function celebrate(levelBefore: number): void {
+  const levelAfter = levelForXp(farm.xp);
+  if (levelAfter > levelBefore) levelUp.show(levelAfter, unlocksBetween(levelBefore, levelAfter));
+}
+
 async function tapTile(t: TilePoint): Promise<void> {
-  const now = clock.now();
   switch (mode.kind) {
     case 'farm':
-      apply(useMultiTool(farm, t.x, t.y, market.selected(), now));
+      apply(useMultiTool(farm, t.x, t.y, market.selected(), now()));
       return;
     case 'place': {
       const g = ghostAt(t);
       const item: Placeable = mode.item;
-      if (!g || !apply(place(farm, item, g.x, g.y, now))) return;
+      if (!g || !apply(place(farm, item, g.x, g.y, now()))) return;
       // The next one stays in hand, so a row of trees or a flock of chickens
       // is one click each. It goes back to the multi-tool once another one
       // can't be afforded.
@@ -250,7 +263,7 @@ async function tapTile(t: TilePoint): Promise<void> {
         return;
       }
       const g = ghostAt(t);
-      if (g && apply(move(farm, mode.held.id, g.x, g.y, now))) setMode({ kind: 'move', held: null, grab: { dx: 0, dy: 0 } });
+      if (g && apply(move(farm, mode.held.id, g.x, g.y, now()))) setMode({ kind: 'move', held: null, grab: { dx: 0, dy: 0 } });
       return;
     }
     case 'sell': {
@@ -268,7 +281,7 @@ async function tapTile(t: TilePoint): Promise<void> {
             ? `Remove this plot? The ${name} growing on it will be lost.`
             : 'Remove this plot?'
           : `Sell the ${name} for ${formatCoins(value)} coins?`;
-      if (await askConfirm(question, obj.kind === 'plot' ? 'Remove' : 'Sell')) apply(sell(farm, obj.id, clock.now()));
+      if (await askConfirm(question, obj.kind === 'plot' ? 'Remove' : 'Sell')) apply(sell(farm, obj.id, now()));
       return;
     }
     default: {
@@ -337,9 +350,68 @@ attachInput(canvas, {
   },
 });
 
+// ---- Test mode ----
+
+// How fast the farm's clock runs while this page is open: farm seconds per
+// real second. Never saved, so every visit starts on real time. Time that
+// passes while the game is closed always counts at real speed.
+let speed = 1;
+let lastTick = clock.now();
+
+const testPanel = isTestMode()
+  ? createTestPanel(required('#test-toggle', HTMLButtonElement), required('#test-panel', HTMLElement), {
+      setSpeed: (next) => {
+        speed = next;
+        afterCheat();
+      },
+      skip: (ms) => {
+        setFarm(skipAhead(farm, ms));
+        afterCheat();
+      },
+      addCoins: (coins) => {
+        setFarm(addCoins(farm, coins));
+        afterCheat();
+      },
+      levelUp: () => {
+        const before = levelForXp(farm.xp);
+        setFarm(cheatLevelUp(farm));
+        celebrate(before);
+        afterCheat();
+      },
+      readyEverything: () => {
+        setFarm(readyEverything(farm, now()));
+        afterCheat();
+      },
+      reset: () => void startOver(),
+    })
+  : null;
+
+async function startOver(): Promise<void> {
+  if (!(await askConfirm('Throw away this farm and start a new one? This can’t be undone.', 'Start over'))) return;
+  setFarm(newFarm(clock.now(), newSeed()));
+  speed = 1;
+  setMode({ kind: 'farm' });
+  setCamera(fittedCamera());
+  afterCheat();
+}
+
+function afterCheat(): void {
+  testPanel?.update(farm.timeOffset, speed);
+  refreshTooltip();
+  requestDraw();
+}
+
 // Growth is driven by the clock, so redraw once a second to keep crops and
-// countdowns current. Browsers pause this in background tabs.
+// countdowns current. Browsers pause this in background tabs. In test mode
+// this is also where a faster clock pushes the farm's time ahead.
 window.setInterval(() => {
+  const real = clock.now();
+  if (speed > 1) {
+    farm = skipAhead(farm, (real - lastTick) * (speed - 1));
+    saveFarm(farm);
+    testPanel?.update(farm.timeOffset, speed);
+  }
+  lastTick = real;
   refreshTooltip();
   requestDraw();
 }, 1000);
@@ -395,3 +467,4 @@ window.addEventListener('keydown', (e) => {
 hud.update(farm);
 market.setStatus(levelForXp(farm.xp), farm.coins);
 setMode({ kind: 'farm' });
+testPanel?.update(farm.timeOffset, speed);

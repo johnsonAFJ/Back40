@@ -113,11 +113,12 @@ describe('selling', () => {
 });
 
 describe('saves from milestone 2', () => {
-  it('load as version 2 farms with nothing lost', () => {
-    const v1 = { ...newFarm(START, 7), version: 1 };
+  it('migrate step by step to the current version with nothing lost', () => {
+    const { timeOffset: _, ...v1 } = { ...newFarm(START, 7), version: 1 };
     const loaded = parseSave(JSON.parse(JSON.stringify(v1)));
-    expect(loaded.version).toBe(2);
+    expect(loaded.version).toBe(3);
     expect(loaded.objects).toEqual(v1.objects);
+    expect(loaded.timeOffset).toBe(0);
   });
 
   it('round-trip trees, animals and decorations', () => {
