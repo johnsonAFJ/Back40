@@ -3,19 +3,21 @@ import { DAY, HOUR, MINUTE, SECOND } from '../core/clock';
 // "2d 4h", "2h 14m", "14m", "45s". Rounds up, so a crop never claims to be
 // ready in 0m while it's still growing.
 export function formatDuration(ms: number): string {
-  if (ms >= DAY) {
+  // Round up first, then split into units, so 59m 1s becomes "1h" rather
+  // than "60m".
+  if (ms > DAY - HOUR) {
     const hours = Math.ceil(ms / HOUR);
     const d = Math.floor(hours / 24);
     const h = hours % 24;
     return h === 0 ? `${d}d` : `${d}d ${h}h`;
   }
-  if (ms >= HOUR) {
+  if (ms > HOUR - MINUTE) {
     const minutes = Math.ceil(ms / MINUTE);
     const h = Math.floor(minutes / 60);
     const m = minutes % 60;
     return m === 0 ? `${h}h` : `${h}h ${m}m`;
   }
-  if (ms >= MINUTE) return `${Math.ceil(ms / MINUTE)}m`;
+  if (ms > MINUTE - SECOND) return `${Math.ceil(ms / MINUTE)}m`;
   return `${Math.max(1, Math.ceil(ms / SECOND))}s`;
 }
 
