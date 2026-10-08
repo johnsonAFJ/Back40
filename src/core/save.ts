@@ -100,6 +100,9 @@ const MIGRATIONS: Readonly<Record<number, (raw: Json) => Json>> = {
   // Version 2 added trees, animals and decorations. A version 1 farm has
   // none, so it's already a valid version 2 farm.
   1: (raw) => ({ ...raw, version: 2 }),
+  // Version 3 added test mode's clock offset. Older farms have never been
+  // in test mode, so they're on real time.
+  2: (raw) => ({ ...raw, version: 3, timeOffset: 0 }),
 };
 
 function migrate(input: Json): Json {
@@ -142,6 +145,9 @@ export function parseSave(input: unknown): FarmState {
     }
   }
 
+  const timeOffset = num(raw, 'timeOffset', 'save');
+  if (timeOffset < 0) throw new SaveError('save.timeOffset can only move the clock forward');
+
   return {
     version: SAVE_VERSION,
     seed: int(raw, 'seed', 'save'),
@@ -152,5 +158,6 @@ export function parseSave(input: unknown): FarmState {
     expansion,
     nextId: int(raw, 'nextId', 'save'),
     objects,
+    timeOffset,
   };
 }

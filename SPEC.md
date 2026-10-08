@@ -14,12 +14,13 @@ and every place Back40 departs from the original, lives in
 
 ## Ground rules
 
-- **Real time.** Every timer runs on the computer's clock. There is no fast
-  mode. Changing the device clock will grow crops early; that is accepted until
-  there is a server.
+- **Real time.** Every timer runs on the computer's clock. Changing the device
+  clock will grow crops early; that is accepted until there is a server.
 - **One clock function.** The game asks `clock.now()` for the time and never
   calls `Date.now()` anywhere else. Tests swap in a fake clock to jump hours
-  ahead, and a test mode can be added later in one place.
+  ahead.
+- **Test mode** (see below) can push a farm's clock ahead of real time, never
+  behind it.
 - **Nothing derived is stored.** Level comes from XP, growth stage from
   `plantedAt` and the clock, the neighbor count from the level. The save holds
   only facts that cannot be recomputed, so it can never disagree with itself.
@@ -290,6 +291,29 @@ Camera:
 The HUD shows coins, level, an XP bar with "XP to next level", and the
 neighbor bar.
 
+## Test mode
+
+Adding `?test` to the address (`http://localhost:8440/Back40/?test`, or the
+same on the live site) shows a **Test** button above the zoom buttons. It
+opens a panel for testing without waiting:
+
+| Control | What it does |
+| --- | --- |
+| Clock speed | Real time, 1 min/s, 10 min/s or 1 hr/s: how much farm time passes per real second while the page is open. Resets to real time on every visit. |
+| Skip ahead | +1 hour, +8 hours or +1 day, instantly. |
+| Coins and levels | +1,000 or +10,000 coins, or exactly enough XP for the next level (with its banner). |
+| Ready everything | Ripens every crop (withered ones too) and readies every tree and animal, without moving the clock. |
+| Start a new farm | Throws the farm away and starts over, after a confirmation. |
+
+How the clock works: the save stores `timeOffset`, how many milliseconds this
+farm's clock is ahead of real time. The farm's time is always real time plus
+the offset, and every rule gets its `now` from that. The offset only grows, so
+the farm's clock never runs backward: whatever has grown stays grown after
+slowing down or reloading. Time that passes while the game is closed counts at
+real speed. The cheats are pure functions in `src/core/cheats.ts`.
+
+Without `?test` none of this appears, so friends playing normally never see it.
+
 ## Architecture
 
 Vite and TypeScript. No game framework and no UI framework.
@@ -352,7 +376,7 @@ Stored in `localStorage` under the key `back40`. Every GitHub Pages project on
 
 ```json
 {
-  "version": 2,
+  "version": 3,
   "seed": 482913,
   "createdAt": 1791436800000,
   "lastSeenAt": 1791480000000,
@@ -374,6 +398,7 @@ Stored in `localStorage` under the key `back40`. Every GitHub Pages project on
     "martha": { "lastVisitedDay": "2026-10-08", "helpsToday": 3 }
   },
   "lastNeighborDay": "2026-10-08",
+  "timeOffset": 0,
   "feed": [
     { "at": 1791476000000, "text": "Martha fertilized 6 of your crops" }
   ]
@@ -382,8 +407,8 @@ Stored in `localStorage` under the key `back40`. Every GitHub Pages project on
 
 - `version` goes up whenever the shape changes, and `save.ts` migrates older
   saves forward on load, one version at a time. Version 2 added trees
-  (`lastHarvestAt`), animals (`lastHarvestAt`) and decorations; version 1
-  farms load unchanged.
+  (`lastHarvestAt`), animals (`lastHarvestAt`) and decorations. Version 3
+  added `timeOffset` for test mode, 0 for every older farm.
 - Saving happens after every action. There is no save button.
 - If the stored save cannot be read, it is copied to `back40-unreadable-<time>`
   before a new farm starts, so a bad save never silently erases a farm.
@@ -416,6 +441,7 @@ Merging deploys.
 | 2 | **Farming loop** (first playable) | Plow, plant strawberries, wheat, soybeans, peanuts and eggplant, watch them grow in real time, harvest, withering. Coins, XP and level in the HUD. The farm survives a reload. |
 | 3 | **Progression** | The market with all crops, level unlocks and the level-up banner. |
 | 4 | **Farm life** | Trees, animals and decorations: buy, place, move, sell, harvest. |
+| 4.5 | **Test mode** | `?test` opens a panel to speed up or skip the clock, add coins and levels, ready everything, and start over. |
 | 5 | **Land** | Expansions with their level, neighbor and coin requirements. |
 | 6 | **Neighbors** | Neighbor bar, farm visits and helping, overnight fertilizing, daily gifts and the gift box, news feed. |
 | 7 | **Polish** | Installable app, backup export and import, art pass, image-generation prompts in `prompts/`. |
@@ -425,7 +451,7 @@ Merging deploys.
 
 Sound and music, a premium currency, ribbons and achievements, crop mastery,
 multi-plot tools (tractor, seeder, harvester), the farmer avatar, real
-multiplayer, and any anti-cheat.
+multiplayer, and any anti-cheat (test mode is a cheat panel on purpose).
 
 ## Open questions
 

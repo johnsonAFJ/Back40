@@ -10,7 +10,7 @@ import { EXPANSIONS } from './data/expansions';
 import { HOUR, MINUTE } from './clock';
 import { random01 } from './rng';
 
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 // A plot is always in exactly one of these states. Fields that only make
 // sense for a growing crop only exist on the 'planted' variant, so a plowed
@@ -49,6 +49,10 @@ export type FarmState = {
   readonly expansion: number;
   readonly nextId: number;
   readonly objects: readonly FarmObject[];
+  // How far test mode has moved this farm's clock ahead of real time, in
+  // milliseconds. Zero for any farm that's never been in test mode. See
+  // core/cheats.ts.
+  readonly timeOffset: number;
 };
 
 export function farmSize(state: FarmState): number {
@@ -152,5 +156,6 @@ export function newFarm(now: number, seed: number): FarmState {
     expansion: 0,
     nextId,
     objects,
+    timeOffset: 0,
   };
 }

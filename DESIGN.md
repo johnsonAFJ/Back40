@@ -94,3 +94,14 @@ rate. Plowing is 15 coins for 1 XP; buildings give about 1 XP per 100 coins.
 Choosing between the best coin crop and the best XP crop is the player's real
 decision, so once the data files exist, write a small script that prints coins
 per hour and XP per hour for every crop (seed, plow and all).
+
+### Test mode moves the clock forward, never back
+
+Planning ruled out a fast mode for players, but testing a game built on
+multi-day timers needs one. The catch is that every timer is a timestamp. If
+test mode simply sped up the clock and then let it snap back to real time, a
+crop planted "in the future" would un-grow. So the farm stores how far ahead
+its clock is, and that number only ever grows. Slowing down just stops the
+gap from widening. It's hidden behind `?test` rather than removed, because
+it's a tool for building the game, not part of playing it.
+
