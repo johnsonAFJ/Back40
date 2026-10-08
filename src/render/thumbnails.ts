@@ -3,10 +3,12 @@
 // match it. Each is drawn once and cached as an image URL.
 
 import { productInfo, type Product } from '../core/catalog';
+import type { ProduceId } from '../core/data/produce';
 import { TILE_HEIGHT, TILE_WIDTH } from './iso';
 import { drawCrop, drawSoil } from './draw/crops';
 import { drawFlatDecoration, isFlat } from './draw/items';
 import { drawProduct } from './draw/objects';
+import { drawProduceIcon } from './draw/produce';
 
 const SIZE = 96;
 const cache = new Map<string, string>();
@@ -53,5 +55,25 @@ export function productThumbnail(p: Product): string {
 
   const url = canvas.toDataURL('image/png');
   cache.set(key, url);
+  return url;
+}
+
+const produceCache = new Map<ProduceId, string>();
+
+// An icon for basket produce, 48 pixels square.
+export function produceThumbnail(id: ProduceId): string {
+  const cached = produceCache.get(id);
+  if (cached) return cached;
+  const size = 48;
+  const pixelRatio = Math.max(2, window.devicePixelRatio || 1);
+  const canvas = document.createElement('canvas');
+  canvas.width = size * pixelRatio;
+  canvas.height = size * pixelRatio;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return '';
+  ctx.setTransform(pixelRatio, 0, 0, pixelRatio, (size / 2) * pixelRatio, (size / 2) * pixelRatio);
+  drawProduceIcon(ctx, id);
+  const url = canvas.toDataURL('image/png');
+  produceCache.set(id, url);
   return url;
 }
