@@ -286,6 +286,8 @@ Vite and TypeScript. No game framework and no UI framework.
       core/          game rules, pure TypeScript, no browser APIs
         data/        crops, trees, animals, decorations, levels, expansions, neighbors
         clock.ts     now(), and a fake clock for tests
+        growth.ts    growth stage and time left, from plantedAt and now
+        levels.ts    level from XP
         rng.ts       seeded random numbers
         state.ts     the save shape and a new-farm factory
         actions.ts   plow, plant, harvest, buy, place, move, sell, expand
@@ -306,9 +308,11 @@ The rule that holds this together: **`src/core` never imports from `render`,
 tested without a browser, and the UI can later be swapped for React (or a
 native app) without touching the game.
 
-Actions are plain functions: `plow(state, x, y, clock)` returns either a new
-state or an error ("Not enough coins"). The UI shows errors as short toasts
-near the cursor.
+Actions are plain functions: `plow(state, x, y, now)` returns either a new
+state and what was earned, or the reason it failed (`notEnoughCoins`,
+`growing`, ...). They take the current time as a number rather than reading a
+clock, so tests can pass "four hours later" directly. The UI turns failures
+into short toasts.
 
 ### Drawing
 
@@ -391,8 +395,8 @@ Merging deploys.
 | # | Milestone | Done when |
 | --- | --- | --- |
 | 1 | **Ground** | A 12 x 12 isometric grid draws, pans and zooms with mouse and touch, and the hovered tile highlights correctly at every zoom level. Deploys to Pages. |
-| 2 | **Farming loop** (first playable) | Plow, plant strawberries, wheat, soybeans, peanuts and eggplant, watch them grow in real time, harvest. Coins, XP and level in the HUD. The farm survives a reload. |
-| 3 | **Progression** | The market with all crops, level unlocks and the level-up banner, withering. |
+| 2 | **Farming loop** (first playable) | Plow, plant strawberries, wheat, soybeans, peanuts and eggplant, watch them grow in real time, harvest, withering. Coins, XP and level in the HUD. The farm survives a reload. |
+| 3 | **Progression** | The market with all crops, level unlocks and the level-up banner. |
 | 4 | **Farm life** | Trees, animals and decorations: buy, place, move, sell, harvest. |
 | 5 | **Land** | Expansions with their level, neighbor and coin requirements. |
 | 6 | **Neighbors** | Neighbor bar, farm visits and helping, overnight fertilizing, daily gifts and the gift box, news feed. |

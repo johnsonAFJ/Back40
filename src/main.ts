@@ -1,22 +1,23 @@
-// Wires the pieces together: canvas sizing, the camera, input and the frame
-// loop. Holds no rules of its own.
+// Wires the pieces together: the farm, the camera, input, the HUD and the
+// frame loop. Holds no rules of its own; every rule lives in src/core.
 
 import './style.css';
-import { STARTING_FARM_SIZE } from './core/data/expansions';
-import {
-  MIN_ZOOM,
-  clampToBounds,
-  pan,
-  screenToWorld,
-  zoomAt,
-  type Bounds,
-  type Camera,
-  type Viewport,
-} from './render/camera';
-import { TILE_HEIGHT, TILE_WIDTH, pickTile, screen, tile, tileCenter, type ScreenPoint, type TilePoint } from './render/iso';
-import { isOnFarm } from './render/draw/ground';
+import { useMultiTool } from './core/actions';
+import { systemClock } from './core/clock';
+import { CROPS, CROP_IDS } from './core/data/crops';
+import { levelForXp } from './core/levels';
+import { farmSize, isOnFarm, type FarmState } from './core/state';
+import { MIN_ZOOM, clampToBounds, pan, screenToWorld, worldToScreen, zoomAt, type Bounds, type Camera, type Viewport } from './render/camera';
+import { liveEffects, type FloatingText } from './render/effects';
+import { TILE_HEIGHT, TILE_WIDTH, pickTile, screen, tile, tileCenter, tileToWorld, type ScreenPoint, type TilePoint } from './render/iso';
 import { render } from './render/renderer';
+import { loadFarm, saveFarm } from './platform/storage';
+import { formatCoins } from './ui/format';
+import { createHud } from './ui/hud';
 import { attachInput } from './ui/input';
+import { describeTile, failureMessage } from './ui/messages';
+import { createToast, createTooltip } from './ui/notices';
+import { createSeedPicker } from './ui/seedPicker';
 
 function required<T extends Element>(selector: string, type: new () => T): T {
   const el = document.querySelector(selector);
@@ -25,69 +26,127 @@ function required<T extends Element>(selector: string, type: new () => T): T {
 }
 
 const canvas = required('#farm', HTMLCanvasElement);
-const readout = required('#readout', HTMLElement);
 const ctxOrNull = canvas.getContext('2d', { alpha: false });
 if (!ctxOrNull) throw new Error('This browser cannot draw on a canvas.');
 const ctx = ctxOrNull;
 
-const farmSize = STARTING_FARM_SIZE;
+const clock = systemClock;
+let farm: FarmState = loadFarm(clock.now());
+saveFarm(farm);
 
-// The camera's center may roam anywhere over the farm's bounding box, so some
-// part of the farm is always on screen.
-const bounds: Bounds = {
-  minX: -farmSize * (TILE_WIDTH / 2),
-  maxX: farmSize * (TILE_WIDTH / 2),
-  minY: 0,
-  maxY: farmSize * TILE_HEIGHT,
-};
+const hud = createHud(required('#hud', HTMLElement));
+const seeds = createSeedPicker(required('#seed-button', HTMLButtonElement), required('#seed-panel', HTMLElement));
+const tooltip = createTooltip(required('#tooltip', HTMLElement));
+const toast = createToast(required('#toast', HTMLElement));
 
 let view: Viewport = { width: 1, height: 1 };
 let pixelRatio = 1;
-let camera: Camera = { center: tileCenter(tile(farmSize / 2 - 0.5, farmSize / 2 - 0.5)), zoom: 1 };
+let camera: Camera = fittedCamera();
 let highlight: TilePoint | null = null;
+let pointerKind: 'mouse' | 'touch' = 'mouse';
+let effects: FloatingText[] = [];
+
+// The camera's center may roam anywhere over the farm's bounding box, so some
+// part of the farm is always on screen.
+function bounds(): Bounds {
+  const size = farmSize(farm);
+  return { minX: -size * (TILE_WIDTH / 2), maxX: size * (TILE_WIDTH / 2), minY: 0, maxY: size * TILE_HEIGHT };
+}
 
 // The zoom that fits the whole farm on screen with a margin, within limits.
 function fittedCamera(): Camera {
-  const farmWidth = farmSize * TILE_WIDTH;
-  const farmHeight = farmSize * TILE_HEIGHT;
-  const fit = Math.min(view.width / (farmWidth * 1.1), view.height / (farmHeight * 1.4));
+  const size = farmSize(farm);
+  const fit = Math.min(view.width / (size * TILE_WIDTH * 1.1), view.height / (size * TILE_HEIGHT * 1.6));
   return {
-    center: tileCenter(tile(farmSize / 2 - 0.5, farmSize / 2 - 0.5)),
+    center: tileCenter(tile(size / 2 - 0.5, size / 2 - 0.5)),
     zoom: Math.min(1.25, Math.max(MIN_ZOOM, fit)),
   };
 }
 
-// Draw only when something changed. Calls during the same frame collapse
-// into one draw.
+// Draw only when something changed, and every frame while rewards are
+// floating. Calls during the same frame collapse into one draw.
 let frameRequested = false;
 function requestDraw(): void {
   if (frameRequested) return;
   frameRequested = true;
-  requestAnimationFrame(() => {
+  requestAnimationFrame((frameTime) => {
     frameRequested = false;
-    render(ctx, { camera, view, pixelRatio, farmSize, highlight });
-    updateReadout();
+    effects = liveEffects(effects, frameTime);
+    render(ctx, { camera, view, pixelRatio, farm, now: clock.now(), highlight, effects, frameTime });
+    if (effects.length > 0) requestDraw();
   });
 }
 
-function updateReadout(): void {
-  const zoom = `${Math.round(camera.zoom * 100)}%`;
-  readout.textContent = highlight ? `Tile ${highlight.x}, ${highlight.y} · ${zoom}` : zoom;
+function refreshTooltip(): void {
+  if (!highlight) {
+    tooltip.hide();
+    return;
+  }
+  const text = describeTile(farm, highlight.x, highlight.y, seeds.selected(), clock.now());
+  if (!text) {
+    tooltip.hide();
+    return;
+  }
+  // Anchor above the tile's top corner, a little higher for tall things.
+  const top = worldToScreen(camera, view, tileToWorld(highlight));
+  tooltip.show(text, screen(top.x, top.y - 18 * camera.zoom));
 }
 
 function setCamera(next: Camera): void {
-  camera = clampToBounds(next, bounds);
+  camera = clampToBounds(next, bounds());
+  refreshTooltip();
   requestDraw();
 }
 
 function farmTileAt(at: ScreenPoint): TilePoint | null {
   const t = pickTile(screenToWorld(camera, view, at));
-  return isOnFarm(t.x, t.y, farmSize) ? t : null;
+  return isOnFarm(farm, t.x, t.y) ? t : null;
 }
 
 function setHighlight(next: TilePoint | null): void {
-  if (next?.x === highlight?.x && next?.y === highlight?.y) return;
-  highlight = next;
+  if (next?.x !== highlight?.x || next?.y !== highlight?.y) {
+    highlight = next;
+    requestDraw();
+  }
+  refreshTooltip();
+}
+
+function float(at: TilePoint, lines: ReadonlyArray<readonly [string, string]>): void {
+  const center = tileCenter(at);
+  const startedAt = performance.now();
+  lines.forEach(([text, color], i) => {
+    effects.push({ at: { ...center, y: center.y - 10 - i * 16 }, text, color, startedAt: startedAt + i * 120 });
+  });
+}
+
+function act(at: TilePoint): void {
+  const now = clock.now();
+  const levelBefore = levelForXp(farm.xp);
+  const outcome = useMultiTool(farm, at.x, at.y, seeds.selected(), now);
+  if (!outcome.ok) {
+    toast.show(failureMessage(outcome.failure, now));
+    return;
+  }
+
+  farm = outcome.state;
+  if (!saveFarm(farm)) toast.show("Couldn't save. This browser is blocking storage");
+  hud.update(farm);
+
+  const { coins, xp } = outcome.reward;
+  const lines: Array<readonly [string, string]> = [];
+  if (coins !== 0) lines.push([`${coins > 0 ? '+' : '−'}${formatCoins(Math.abs(coins))}`, coins > 0 ? '#ffd23f' : '#ffe9c2']);
+  if (xp > 0) lines.push([`+${xp} XP`, '#9fe3ff']);
+  float(at, lines);
+
+  const levelAfter = levelForXp(farm.xp);
+  if (levelAfter > levelBefore) {
+    seeds.setLevel(levelAfter);
+    const unlocked = CROP_IDS.filter((id) => CROPS[id].level > levelBefore && CROPS[id].level <= levelAfter);
+    const names = unlocked.map((id) => CROPS[id].name).join(' and ');
+    toast.show(names ? `Level ${levelAfter}! ${names} unlocked` : `Level ${levelAfter}!`, 'celebrate');
+  }
+
+  refreshTooltip();
   requestDraw();
 }
 
@@ -106,12 +165,31 @@ function resize(): void {
 
 new ResizeObserver(resize).observe(canvas);
 
+canvas.addEventListener('pointerdown', (e) => {
+  pointerKind = e.pointerType === 'mouse' ? 'mouse' : 'touch';
+  seeds.close();
+});
+
 attachInput(canvas, {
   pan: (dx, dy) => setCamera(pan(camera, dx, dy)),
   zoom: (anchor, factor) => setCamera(zoomAt(camera, view, anchor, factor)),
   hover: (at) => setHighlight(at ? farmTileAt(at) : null),
-  // Touch has no hover, so a tap is how a phone picks a tile.
-  tap: (at) => setHighlight(farmTileAt(at)),
+  tap: (at) => {
+    const t = farmTileAt(at);
+    // On a phone there's no hover, so the tapped tile shows its tooltip.
+    if (pointerKind === 'touch') setHighlight(t);
+    if (t) act(t);
+  },
+});
+
+// Growth is driven by the clock, so redraw once a second to keep crops and
+// countdowns current. Browsers pause this in background tabs.
+window.setInterval(() => {
+  refreshTooltip();
+  requestDraw();
+}, 1000);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') requestDraw();
 });
 
 const middle = (): ScreenPoint => screen(view.width / 2, view.height / 2);
@@ -127,7 +205,7 @@ required('#recenter', HTMLButtonElement).addEventListener('click', () => setCame
 
 const PAN_STEP = 48;
 window.addEventListener('keydown', (e) => {
-  if (e.target instanceof HTMLInputElement) return;
+  if (e.target instanceof HTMLInputElement || e.metaKey || e.ctrlKey) return;
   switch (e.key) {
     case '+':
     case '=':
@@ -154,3 +232,6 @@ window.addEventListener('keydown', (e) => {
   }
   e.preventDefault();
 });
+
+hud.update(farm);
+seeds.setLevel(levelForXp(farm.xp));

@@ -7,16 +7,25 @@
     <title>Back40</title>
   </head>
   <body>
-    <canvas id="farm" aria-label="Your farm. Drag to look around, scroll or pinch to zoom."></canvas>
+    <canvas id="farm" aria-label="Your farm. Click a tile to plow, plant or harvest. Drag to look around, scroll or pinch to zoom."></canvas>
 
-    <div class="hud hud-bottom">
-      <output id="readout" class="pill"></output>
+    <div id="tooltip" class="tooltip" aria-hidden="true" hidden></div>
+
+    <header id="hud" class="hud hud-top"></header>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+    <footer class="hud hud-bottom">
+      <div class="seed-picker">
+        <section id="seed-panel" class="panel seed-panel" aria-label="Choose a seed" hidden></section>
+        <button id="seed-button" class="pill seed-button" type="button" aria-haspopup="true" aria-controls="seed-panel" aria-expanded="false" title="Choose what to plant"></button>
+      </div>
       <div class="zoom-controls">
         <button id="zoom-out" class="round" type="button" aria-label="Zoom out" title="Zoom out (−)">−</button>
         <button id="recenter" class="round" type="button" aria-label="Show whole farm" title="Show whole farm">⌂</button>
         <button id="zoom-in" class="round" type="button" aria-label="Zoom in" title="Zoom in (+)">+</button>
       </div>
-    </div>
+    </footer>
 
     <script type="module" src="/src/main.ts"></script>
   </body>
