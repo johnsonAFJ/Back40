@@ -20,17 +20,16 @@ export function createTooltip(el: HTMLElement): Tooltip {
   };
 }
 
-export type Toast = { readonly show: (text: string, tone?: 'info' | 'celebrate') => void };
+export type Toast = { readonly show: (text: string) => void };
 
 export function createToast(el: HTMLElement): Toast {
   let timer = 0;
   return {
-    show(text, tone = 'info') {
+    show(text) {
       el.textContent = text;
-      el.dataset['tone'] = tone;
       el.hidden = false;
       window.clearTimeout(timer);
-      timer = window.setTimeout(() => (el.hidden = true), tone === 'celebrate' ? 3500 : 2200);
+      timer = window.setTimeout(() => (el.hidden = true), 2200);
     },
   };
 }

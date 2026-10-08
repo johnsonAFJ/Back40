@@ -4,8 +4,8 @@
 import './style.css';
 import { useMultiTool } from './core/actions';
 import { systemClock } from './core/clock';
-import { CROPS, CROP_IDS } from './core/data/crops';
 import { levelForXp } from './core/levels';
+import { unlocksBetween } from './core/unlocks';
 import { farmSize, isOnFarm, type FarmState } from './core/state';
 import { MIN_ZOOM, clampToBounds, pan, screenToWorld, worldToScreen, zoomAt, type Bounds, type Camera, type Viewport } from './render/camera';
 import { liveEffects, type FloatingText } from './render/effects';
@@ -16,8 +16,9 @@ import { formatCoins } from './ui/format';
 import { createHud } from './ui/hud';
 import { attachInput } from './ui/input';
 import { describeTile, failureMessage } from './ui/messages';
+import { createLevelUp } from './ui/levelUp';
+import { createMarket } from './ui/market';
 import { createToast, createTooltip } from './ui/notices';
-import { createSeedPicker } from './ui/seedPicker';
 
 function required<T extends Element>(selector: string, type: new () => T): T {
   const el = document.querySelector(selector);
@@ -35,7 +36,10 @@ let farm: FarmState = loadFarm(clock.now());
 saveFarm(farm);
 
 const hud = createHud(required('#hud', HTMLElement));
-const seeds = createSeedPicker(required('#seed-button', HTMLButtonElement), required('#seed-panel', HTMLElement));
+const market = createMarket(required('#market', HTMLDialogElement), required('#market-button', HTMLButtonElement), () =>
+  refreshTooltip(),
+);
+const levelUp = createLevelUp(required('#levelup', HTMLDialogElement));
 const tooltip = createTooltip(required('#tooltip', HTMLElement));
 const toast = createToast(required('#toast', HTMLElement));
 
@@ -82,7 +86,7 @@ function refreshTooltip(): void {
     tooltip.hide();
     return;
   }
-  const text = describeTile(farm, highlight.x, highlight.y, seeds.selected(), clock.now());
+  const text = describeTile(farm, highlight.x, highlight.y, market.selected(), clock.now());
   if (!text) {
     tooltip.hide();
     return;
@@ -122,7 +126,7 @@ function float(at: TilePoint, lines: ReadonlyArray<readonly [string, string]>): 
 function act(at: TilePoint): void {
   const now = clock.now();
   const levelBefore = levelForXp(farm.xp);
-  const outcome = useMultiTool(farm, at.x, at.y, seeds.selected(), now);
+  const outcome = useMultiTool(farm, at.x, at.y, market.selected(), now);
   if (!outcome.ok) {
     toast.show(failureMessage(outcome.failure, now));
     return;
@@ -140,10 +144,8 @@ function act(at: TilePoint): void {
 
   const levelAfter = levelForXp(farm.xp);
   if (levelAfter > levelBefore) {
-    seeds.setLevel(levelAfter);
-    const unlocked = CROP_IDS.filter((id) => CROPS[id].level > levelBefore && CROPS[id].level <= levelAfter);
-    const names = unlocked.map((id) => CROPS[id].name).join(' and ');
-    toast.show(names ? `Level ${levelAfter}! ${names} unlocked` : `Level ${levelAfter}!`, 'celebrate');
+    market.setLevel(levelAfter);
+    levelUp.show(levelAfter, unlocksBetween(levelBefore, levelAfter));
   }
 
   refreshTooltip();
@@ -167,7 +169,6 @@ new ResizeObserver(resize).observe(canvas);
 
 canvas.addEventListener('pointerdown', (e) => {
   pointerKind = e.pointerType === 'mouse' ? 'mouse' : 'touch';
-  seeds.close();
 });
 
 attachInput(canvas, {
@@ -234,4 +235,4 @@ window.addEventListener('keydown', (e) => {
 });
 
 hud.update(farm);
-seeds.setLevel(levelForXp(farm.xp));
+market.setLevel(levelForXp(farm.xp));

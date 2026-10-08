@@ -22,4 +22,4 @@ npm run dev
 
 Then open http://localhost:8440/Back40/. `npm test` runs the tests.
 
-Status: milestone 2 (farming loop). Plow, plant, grow in real time and harvest.
+Status: milestone 3 (market and level unlocks).

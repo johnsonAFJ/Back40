@@ -263,8 +263,11 @@ Three tools sit in a toolbar, plus the market button:
 | **Move** | An object, then a tile: move it there. |
 | **Sell** | A tree, animal or decoration: sell it, after a confirmation. |
 
-Buying a crop in the market selects it as the current seed and returns to the
-farm with the multi-tool. Each plant charges the seed price; nothing is bought
+The market button in the bottom-left corner shows the crop being planted and
+opens the market, which lists every crop in unlock order. Crops above your
+level show greyed out with the level that unlocks them. Choosing a crop selects
+it as the current seed and returns to the farm with the multi-tool. The last
+seed chosen is remembered per browser under `back40-seed`, outside the save. Each plant charges the seed price; nothing is bought
 in advance. Buying a tree, animal or decoration puts it on the cursor to
 place.
 
