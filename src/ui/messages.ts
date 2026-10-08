@@ -1,6 +1,7 @@
 // Every sentence the game shows about a tile or a failed action.
 
 import { sellValue, type Failure } from '../core/actions';
+import type { ExpandFailure } from '../core/land';
 import { BUILDINGS } from '../core/data/buildings';
 import { CROPS, type CropId } from '../core/data/crops';
 import { PLOW_COST } from '../core/data/economy';
@@ -111,6 +112,23 @@ export function failureMessage(failure: Failure, now: number): string {
       return 'Nothing there';
     case 'cantSell':
       return `The ${objectName(failure.obj).toLowerCase()} can't be sold`;
+    default: {
+      const _exhaustive: never = failure;
+      return _exhaustive;
+    }
+  }
+}
+
+export function expandFailureMessage(failure: ExpandFailure): string {
+  switch (failure.code) {
+    case 'fullSize':
+      return 'Your farm is as big as it gets';
+    case 'levelTooLow':
+      return `Reach level ${failure.level} to expand`;
+    case 'needNeighbors':
+      return `You need ${failure.needed} neighbors to expand, and have ${failure.have}`;
+    case 'notEnoughCoins':
+      return `Not enough coins. You need ${formatCoins(failure.needed)}`;
     default: {
       const _exhaustive: never = failure;
       return _exhaustive;

@@ -176,6 +176,27 @@ Starting values, ours rather than documented (tune freely):
 
 Harvesting a tree or animal gives 1 XP.
 
+### Animal movement (milestone 7)
+
+All five animals come to life together in milestone 7: they wander, pause and
+do their idle action (the chicken pecks, the cow and sheep graze, the pig
+roots, the horse swishes its tail).
+
+- **Only the drawing moves.** The save keeps each animal on its tile, and
+  moving, selling and collecting all work on that tile, so no rule changes.
+- **Each animal stays within its own tile**, so it never walks through a
+  fence, a crop or a building.
+- **Every animal moves differently**, from seeded randomness keyed by its id,
+  like withering. Its path is worked out from the time, not stored.
+- **Clicks follow the drawing.** Hit-testing (`src/render/hit.ts`) uses the
+  animal's drawn position, so clicking a chicken where it is now picks it.
+- **It costs battery, so it holds back.** Animals on screen mean redrawing
+  every frame instead of about once a second. It pauses in a hidden tab and
+  stays still when the system's "reduce motion" setting is on.
+- **Order of work:** build the wandering with the code-drawn animals first, so
+  the movement is right before the art arrives, then swap in the sprite sheets
+  described in ART_BRIEF.md.
+
 ## Decorations and buildings
 
 Decorations are bought, placed and moved freely. They give XP once, when
@@ -211,7 +232,16 @@ neighbors, and coins.
 | 4 | 20 x 20 | 20 | 4 | 75,000 |
 | 5 | 22 x 22 | 25 | 5 | 150,000 |
 
-New land is added on two sides so existing objects keep their tiles.
+Expansions are bought from the market's **Land** tab, which lists every size
+with its requirements ticked or crossed. Only the next size can be bought, and
+buying asks first. Afterwards the camera pulls back to show the whole farm.
+
+New land is added along the far x and y edges, so existing objects keep their
+tiles and the save only records which expansion the farm is on.
+
+The neighbor count comes from your level (see Neighbors), so like level it's
+never stored. Each new size also appears in the level-up banner when its level
+is reached.
 
 ## Neighbors
 
@@ -444,7 +474,7 @@ Merging deploys.
 | 4.5 | **Test mode** | `?test` opens a panel to speed up or skip the clock, add coins and levels, ready everything, and start over. |
 | 5 | **Land** | Expansions with their level, neighbor and coin requirements. |
 | 6 | **Neighbors** | Neighbor bar, farm visits and helping, overnight fertilizing, daily gifts and the gift box, news feed. |
-| 7 | **Polish** | Installable app, backup export and import, art pass, image-generation prompts in `prompts/`. |
+| 7 | **Polish** | Installable app, backup export and import, art pass, image-generation prompts in `prompts/`, and moving animals (see "Animal movement"). |
 | 8 | **Later** | Real multiplayer: accounts, cloud saves, real friends taking neighbor slots. Sound and music. |
 
 ## Not in version 1

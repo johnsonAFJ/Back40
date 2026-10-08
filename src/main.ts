@@ -7,6 +7,7 @@ import { move, place, sell, sellValue, useMultiTool, type Outcome } from './core
 import { productInfo, type Placeable } from './core/catalog';
 import { addCoins, farmNow, levelUp as cheatLevelUp, readyEverything, skipAhead } from './core/cheats';
 import { systemClock } from './core/clock';
+import { expand, nextExpansion } from './core/land';
 import { levelForXp } from './core/levels';
 import { newSeed } from './core/rng';
 import { farmSize, footprint, isAreaFree, isOnFarm, newFarm, objectAt, type FarmState } from './core/state';
@@ -22,7 +23,7 @@ import { createHud } from './ui/hud';
 import { attachInput } from './ui/input';
 import { createLevelUp } from './ui/levelUp';
 import { createMarket } from './ui/market';
-import { describeSell, describeTile, failureMessage, objectName } from './ui/messages';
+import { describeSell, describeTile, expandFailureMessage, failureMessage, objectName } from './ui/messages';
 import { createToast, createTooltip } from './ui/notices';
 import { createTestPanel, isTestMode } from './ui/testPanel';
 import { createConfirm, createToolbar, type Mode } from './ui/tools';
@@ -62,6 +63,7 @@ const askConfirm = createConfirm(required('#confirm', HTMLDialogElement));
 const market = createMarket(required('#market', HTMLDialogElement), required('#market-button', HTMLButtonElement), {
   onSeed: () => setMode({ kind: 'farm' }),
   onBuy: (item) => setMode({ kind: 'place', item }),
+  onExpand: () => void expandFarm(),
 });
 const toolbar = createToolbar(
   required('#tools', HTMLElement),
@@ -229,7 +231,7 @@ function setFarm(next: FarmState): void {
   farm = next;
   if (!saveFarm(farm)) toast.show("Couldn't save. This browser is blocking storage");
   hud.update(farm);
-  market.setStatus(levelForXp(farm.xp), farm.coins);
+  market.setFarm(farm);
 }
 
 function celebrate(levelBefore: number): void {
@@ -289,6 +291,25 @@ async function tapTile(t: TilePoint): Promise<void> {
       return _exhaustive;
     }
   }
+}
+
+// ---- Land ----
+
+async function expandFarm(): Promise<void> {
+  const next = nextExpansion(farm);
+  if (!next) return;
+  const question = `Expand your farm to ${next.size} × ${next.size} for ${formatCoins(next.coins)} coins?`;
+  if (!(await askConfirm(question, 'Expand'))) return;
+  const outcome = expand(farm, now());
+  if (!outcome.ok) {
+    toast.show(expandFailureMessage(outcome.failure));
+    return;
+  }
+  setFarm(outcome.state);
+  setMode({ kind: 'farm' });
+  // Pull back to show the whole bigger farm.
+  setCamera(fittedCamera());
+  toast.show(`Your farm is now ${outcome.size} × ${outcome.size}`);
 }
 
 // ---- Input ----
@@ -465,6 +486,6 @@ window.addEventListener('keydown', (e) => {
 });
 
 hud.update(farm);
-market.setStatus(levelForXp(farm.xp), farm.coins);
+market.setFarm(farm);
 setMode({ kind: 'farm' });
 testPanel?.update(farm.timeOffset, speed);
