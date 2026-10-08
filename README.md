@@ -11,4 +11,15 @@ existing game or company; all art and names are original.
 - **Design decisions:** [DESIGN.md](DESIGN.md)
 - **Art:** [ART_BRIEF.md](ART_BRIEF.md) and [prompts/](prompts/)
 
-Status: spec stage. No code yet.
+Play it at https://johnsonafj.github.io/Back40/
+
+## Running it locally
+
+```bash
+npm install
+npm run dev
+```
+
+Then open http://localhost:8440/Back40/. `npm test` runs the tests.
+
+Status: milestone 1 (ground and camera).
