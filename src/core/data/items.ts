@@ -38,8 +38,7 @@ export type Decoration = {
   readonly buyXp: number;
   readonly width: number;
   readonly depth: number;
-  // Fences and paths join up with matching neighbors, and you usually want
-  // a row of them, so placing one keeps the next one ready to place.
+  // Fences and paths join up with matching neighbors on adjacent tiles.
   readonly connects: boolean;
 };
 

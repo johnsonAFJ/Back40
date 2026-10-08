@@ -6,7 +6,6 @@ import './style.css';
 import { move, place, sell, sellValue, useMultiTool, type Outcome } from './core/actions';
 import { productInfo, type Placeable } from './core/catalog';
 import { systemClock } from './core/clock';
-import { DECORATIONS } from './core/data/items';
 import { levelForXp } from './core/levels';
 import { farmSize, footprint, isAreaFree, isOnFarm, objectAt, type FarmState } from './core/state';
 import { unlocksBetween } from './core/unlocks';
@@ -165,7 +164,7 @@ function bannerText(): string | null {
       return null;
     case 'place': {
       const info = productInfo(mode.item);
-      return `Placing ${info.name.toLowerCase()} for ${formatCoins(info.price)} coins. Click where it goes`;
+      return `Placing ${info.name.toLowerCase()}, ${formatCoins(info.price)} coins each. Click every spot you want one`;
     }
     case 'move':
       return mode.held ? `Moving ${objectName(mode.held).toLowerCase()}. Click where it goes` : 'Click something to move it';
@@ -233,10 +232,15 @@ async function tapTile(t: TilePoint): Promise<void> {
     case 'place': {
       const g = ghostAt(t);
       const item: Placeable = mode.item;
-      if (!g) return;
-      // Fences and paths usually go down in rows, so they stay in hand.
-      const keep = item.kind === 'decoration' && DECORATIONS[item.id].connects;
-      if (apply(place(farm, item, g.x, g.y, now)) && !keep) setMode({ kind: 'farm' });
+      if (!g || !apply(place(farm, item, g.x, g.y, now))) return;
+      // The next one stays in hand, so a row of trees or a flock of chickens
+      // is one click each. It goes back to the multi-tool once another one
+      // can't be afforded.
+      const info = productInfo(item);
+      if (farm.coins < info.price) {
+        toast.show(`Not enough coins for another ${info.name.toLowerCase()}`);
+        setMode({ kind: 'farm' });
+      }
       return;
     }
     case 'move': {

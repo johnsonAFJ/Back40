@@ -276,8 +276,9 @@ seed chosen is remembered per browser under `back40-seed`, outside the save. Eac
 in advance. Buying a tree, animal or decoration puts it on the cursor to
 place; it's paid for when it goes down. A translucent preview follows the
 pointer over a green footprint where it fits and a red one where it doesn't.
-Fences and paths stay on the cursor after placing, since they usually go
-down in rows; everything else returns to the multi-tool.
+After placing one, the next stays on the cursor, so a row of trees or a
+flock of chickens is one click each. **Done** or Escape puts it away, and it
+goes back to the multi-tool on its own once another can't be afforded.
 
 Camera:
 
