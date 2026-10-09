@@ -3,8 +3,17 @@
 // pickTile finds the ground tile under a point, but a tree's leaves or a
 // barn's roof are drawn above the tiles *behind* them. Clicking a tree's
 // canopy should pick the tree, not plow the grass behind it. So objects get
-// tested first, nearest to the viewer first, against their outline on
-// screen: the footprint's diamond swept upward by the object's height.
+// tested first, nearest to the viewer first, in two steps:
+//
+//   1. A quick box: the footprint's diamond swept upward by the object's
+//      height. Cheap, but much wider than a thin thing like a scarecrow.
+//   2. An exact check, `confirm`, which asks whether the pixel under the
+//      pointer is really part of the object's drawing (see pick.ts). A
+//      click in the empty space beside the scarecrow's post fails it and
+//      falls through to whatever is behind.
+//
+// Tests leave `confirm` out, since there's no canvas to draw on there, and
+// get the box alone.
 
 import { footprint, type FarmObject, type FarmState } from '../core/state';
 import { animalSlots } from './animalSlots';
@@ -57,7 +66,11 @@ function inside(p: WorldPoint, polygon: readonly WorldPoint[]): boolean {
   return crossings % 2 === 1;
 }
 
-export function objectAtPoint(farm: FarmState, p: WorldPoint): FarmObject | null {
+export function objectAtPoint(
+  farm: FarmState,
+  p: WorldPoint,
+  confirm?: (obj: FarmObject) => boolean,
+): FarmObject | null {
   const slots = animalSlots(farm.objects);
   const tall = farm.objects
     .filter((o) => height(o) > 0)
@@ -76,7 +89,7 @@ export function objectAtPoint(farm: FarmState, p: WorldPoint): FarmObject | null
   for (const { o, box } of tall) {
     const [top, right, bottom, left] = footprintCorners(box, box.inset);
     const h = height(o);
-    if (inside(p, [left, lift(left, h), lift(top, h), lift(right, h), right, bottom])) return o;
+    if (inside(p, [left, lift(left, h), lift(top, h), lift(right, h), right, bottom]) && (!confirm || confirm(o))) return o;
   }
   return null;
 }

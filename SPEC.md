@@ -476,8 +476,12 @@ into short toasts.
   without burning battery.
 - Clicks on things that stand up (a tree's leaves, a barn's roof) pick that
   thing, even where it's drawn over the tiles behind it. Each object is
-  tested against its outline on screen, nearest first, before falling back
-  to the ground tile. See `src/render/hit.ts`.
+  tested nearest first: a quick box around it, then an exact check that the
+  pixel under the pointer is really part of its drawing (it's drawn onto a
+  one-pixel canvas to see). A click in the gap beside a thin scarecrow falls
+  through to the plot behind it; shadows don't count. If nothing tall is
+  hit, the click goes to the ground tile. See `src/render/hit.ts` and
+  `src/render/pick.ts`.
 - Art is drawn in code until a PNG for it exists in `src/art/`
   (`src/render/art.ts`). Each drawing function asks for the real art first and
   draws its code version only if there isn't any, so art can arrive one file
