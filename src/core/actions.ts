@@ -10,12 +10,13 @@ import { SELL_BACK } from './data/items';
 import type { ProduceId } from './data/produce';
 import { stage } from './growth';
 import { levelForXp } from './levels';
-import { isProducerReady, producerData } from './producers';
+import { isProducerReady, producerData, producerReadyAt } from './producers';
 import {
   areaBlocker,
   footprint,
   isOnFarm,
   objectAt,
+  objectsAt,
   rollWitherAt,
   type FarmObject,
   type FarmState,
@@ -24,14 +25,16 @@ import {
   type Producer,
 } from './state';
 
-// What an action earned. `produce` is a piece of fruit, an egg and so on,
-// collected into the basket rather than paid out.
-export type Reward = { readonly coins: number; readonly xp: number; readonly produce: ProduceId | null };
+// What an action earned. `produce` lists the eggs, fruit and so on collected
+// into the basket rather than paid out; several animals sharing a square
+// can give several at once.
+export type Reward = { readonly coins: number; readonly xp: number; readonly produce: readonly ProduceId[] };
 
 export type Failure =
   | { readonly code: 'offFarm' }
   | { readonly code: 'blocked'; readonly by: FarmObject }
   | { readonly code: 'noRoom' }
+  | { readonly code: 'squareFull' }
   | { readonly code: 'alreadyPlowed' }
   | { readonly code: 'notPlowed' }
   | { readonly code: 'growing'; readonly plot: PlantedPlot }
@@ -55,7 +58,14 @@ export type Outcome =
   | { readonly ok: false; readonly failure: Failure };
 
 const fail = (failure: Failure): Outcome => ({ ok: false, failure });
-const NO_REWARD: Reward = { coins: 0, xp: 0, produce: null };
+const NO_REWARD: Reward = { coins: 0, xp: 0, produce: [] };
+
+// Turns areaBlocker's answer into the failure to report.
+function blockedBy(blocker: 'offFarm' | 'full' | FarmObject): Failure {
+  if (blocker === 'offFarm') return { code: 'noRoom' };
+  if (blocker === 'full') return { code: 'squareFull' };
+  return { code: 'blocked', by: blocker };
+}
 
 function succeed(
   kind: ActionKind,
@@ -103,7 +113,7 @@ export function plow(state: FarmState, x: number, y: number, now: number): Outco
   if (state.coins < PLOW_COST) return fail({ code: 'notEnoughCoins', needed: PLOW_COST });
 
   const plot: Plot = { id: existing?.id ?? `o${state.nextId}`, kind: 'plot', x, y, state: 'plowed' };
-  return succeed('plow', put(state, plot), { coins: -PLOW_COST, xp: PLOW_XP, produce: null }, plot, now);
+  return succeed('plow', put(state, plot), { coins: -PLOW_COST, xp: PLOW_XP, produce: [] }, plot, now);
 }
 
 export function plant(state: FarmState, x: number, y: number, cropId: CropId, now: number): Outcome {
@@ -124,21 +134,35 @@ export function plant(state: FarmState, x: number, y: number, cropId: CropId, no
     witherAt: rollWitherAt(state.seed, x, y, cropId, now),
     fertilized: false,
   };
-  return succeed('plant', put(state, plot), { coins: -crop.seed, xp: crop.plantXp, produce: null }, plot, now);
+  return succeed('plant', put(state, plot), { coins: -crop.seed, xp: crop.plantXp, produce: [] }, plot, now);
 }
 
-// Harvest a ripe crop, or collect from a ready tree or animal.
+// Harvest a ripe crop, or collect from a ready tree, or from every ready
+// animal sharing the square.
 export function harvest(state: FarmState, x: number, y: number, now: number): Outcome {
   const existing = objectAt(state, x, y);
   if (!existing) return fail({ code: 'nothingThere' });
 
   // Trees and animals fill the basket instead of paying on the spot.
   if (existing.kind === 'tree' || existing.kind === 'animal') {
-    if (!isProducerReady(existing, now)) return fail({ code: 'producing', producer: existing });
-    const produce = producerData(existing).product;
-    const collected = put(state, { ...existing, lastHarvestAt: now });
-    const basket = { ...collected.basket, [produce]: (collected.basket[produce] ?? 0) + 1 };
-    return succeed('harvest', { ...collected, basket }, { coins: 0, xp: HARVEST_XP, produce }, existing, now);
+    const producers = objectsAt(state, x, y).filter((o): o is Producer => o.kind === 'tree' || o.kind === 'animal');
+    const ready = producers.filter((o) => isProducerReady(o, now));
+    if (ready.length === 0) {
+      // Report whichever will be ready soonest.
+      const next = producers.reduce((a, b) => (producerReadyAt(b) < producerReadyAt(a) ? b : a));
+      return fail({ code: 'producing', producer: next });
+    }
+    let collected = state;
+    const basket = { ...state.basket };
+    const produce: ProduceId[] = [];
+    for (const p of ready) {
+      collected = put(collected, { ...p, lastHarvestAt: now });
+      const id = producerData(p).product;
+      basket[id] = (basket[id] ?? 0) + 1;
+      produce.push(id);
+    }
+    const reward = { coins: 0, xp: HARVEST_XP * ready.length, produce };
+    return succeed('harvest', { ...collected, basket }, reward, existing, now);
   }
 
   if (existing.kind !== 'plot' || existing.state !== 'planted') return fail({ code: 'notPlowed' });
@@ -148,7 +172,7 @@ export function harvest(state: FarmState, x: number, y: number, now: number): Ou
   const reward = {
     coins: CROPS[existing.cropId].sells,
     xp: HARVEST_XP + (existing.fertilized ? FERTILIZED_BONUS_XP : 0),
-    produce: null,
+    produce: [],
   };
   return succeed('harvest', put(state, plot), reward, plot, now);
 }
@@ -159,8 +183,9 @@ export function harvest(state: FarmState, x: number, y: number, now: number): Ou
 export function place(state: FarmState, item: Placeable, x: number, y: number, now: number): Outcome {
   const info = productInfo(item);
   if (levelForXp(state.xp) < info.level) return fail({ code: 'levelTooLow', level: info.level });
-  const blocker = areaBlocker(state, { x, y, width: info.width, depth: info.depth });
-  if (blocker) return fail(blocker === 'offFarm' ? { code: 'noRoom' } : { code: 'blocked', by: blocker });
+  const animal = item.kind === 'animal' ? { animal: item.id } : {};
+  const blocker = areaBlocker(state, { x, y, width: info.width, depth: info.depth }, animal);
+  if (blocker) return fail(blockedBy(blocker));
   if (state.coins < info.price) return fail({ code: 'notEnoughCoins', needed: info.price });
 
   const id = `o${state.nextId}`;
@@ -170,7 +195,7 @@ export function place(state: FarmState, item: Placeable, x: number, y: number, n
       : item.kind === 'tree'
         ? { id, kind: 'tree', typeId: item.id, x, y, lastHarvestAt: now }
         : { id, kind: 'animal', typeId: item.id, x, y, lastHarvestAt: now };
-  return succeed('place', put(state, obj), { coins: -info.price, xp: info.buyXp, produce: null }, obj, now);
+  return succeed('place', put(state, obj), { coins: -info.price, xp: info.buyXp, produce: [] }, obj, now);
 }
 
 // Place gift number `index` from the gift box. Gifts are free and give no XP;
@@ -179,8 +204,9 @@ export function placeGift(state: FarmState, index: number, x: number, y: number,
   const gift = state.gifts[index];
   if (!gift) return fail({ code: 'nothingThere' });
   const { width, depth } = productInfo(gift);
-  const blocker = areaBlocker(state, { x, y, width, depth });
-  if (blocker) return fail(blocker === 'offFarm' ? { code: 'noRoom' } : { code: 'blocked', by: blocker });
+  const animal = gift.kind === 'animal' ? { animal: gift.id } : {};
+  const blocker = areaBlocker(state, { x, y, width, depth }, animal);
+  if (blocker) return fail(blockedBy(blocker));
 
   const id = `o${state.nextId}`;
   const obj: FarmObject =
@@ -198,8 +224,8 @@ export function move(state: FarmState, id: string, x: number, y: number, now: nu
   const obj = state.objects.find((o) => o.id === id);
   if (!obj) return fail({ code: 'nothingThere' });
   const { width, depth } = footprint(obj);
-  const blocker = areaBlocker(state, { x, y, width, depth }, id);
-  if (blocker) return fail(blocker === 'offFarm' ? { code: 'noRoom' } : { code: 'blocked', by: blocker });
+  const blocker = areaBlocker(state, { x, y, width, depth }, { ignoreId: id, ...(obj.kind === 'animal' ? { animal: obj.typeId } : {}) });
+  if (blocker) return fail(blockedBy(blocker));
   return succeed('move', put(state, { ...obj, x, y }), NO_REWARD, { x, y }, now);
 }
 
@@ -229,7 +255,7 @@ export function sell(state: FarmState, id: string, now: number): Outcome {
   if (!obj) return fail({ code: 'nothingThere' });
   const value = sellValue(obj);
   if (value === null) return fail({ code: 'cantSell', obj });
-  return succeed('sell', remove(state, id), { coins: value, xp: 0, produce: null }, obj, now);
+  return succeed('sell', remove(state, id), { coins: value, xp: 0, produce: [] }, obj, now);
 }
 
 // ---- The multi-tool ----

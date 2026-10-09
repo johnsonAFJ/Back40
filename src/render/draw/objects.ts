@@ -8,9 +8,12 @@ import { isProducerReady } from '../../core/producers';
 import { footprint, type FarmObject } from '../../core/state';
 import { drawBuilding } from './buildings';
 import { drawCrop } from './crops';
+import type { Slot } from '../animalSlots';
 import { drawAnimal, drawDecoration, drawFruitTree, NO_LINKS, type Links } from './items';
 
-export function drawFarmObject(ctx: CanvasRenderingContext2D, obj: FarmObject, now: number, links: Links): void {
+// `slot` is where an animal stands within its square (see animalSlots.ts);
+// it's ignored for everything else.
+export function drawFarmObject(ctx: CanvasRenderingContext2D, obj: FarmObject, now: number, links: Links, slot?: Slot): void {
   switch (obj.kind) {
     case 'plot':
       if (obj.state === 'planted') drawCrop(ctx, obj.x, obj.y, obj.cropId, stage(obj, now));
@@ -22,7 +25,9 @@ export function drawFarmObject(ctx: CanvasRenderingContext2D, obj: FarmObject, n
       drawFruitTree(ctx, obj.x, obj.y, obj.typeId, isProducerReady(obj, now));
       return;
     case 'animal':
-      drawAnimal(ctx, obj.x, obj.y, obj.typeId, isProducerReady(obj, now));
+      // drawAnimal centers on (x + 0.5, y + 0.5), so shift by the slot's
+      // offset from the middle of the square.
+      drawAnimal(ctx, obj.x + (slot?.u ?? 0.5) - 0.5, obj.y + (slot?.v ?? 0.5) - 0.5, obj.typeId, isProducerReady(obj, now));
       return;
     case 'decoration':
       drawDecoration(ctx, obj.typeId, { x: obj.x, y: obj.y, ...footprint(obj) }, links);

@@ -3,7 +3,7 @@
 // stage from plantedAt and the clock.
 
 import { BUILDINGS, type BuildingId } from './data/buildings';
-import { DECORATIONS, type AnimalId, type DecorationId, type TreeId } from './data/items';
+import { ANIMAL_SPACE, DECORATIONS, SQUARE_SPACE, type AnimalId, type DecorationId, type TreeId } from './data/items';
 import type { NeighborId } from './data/neighbors';
 import type { ProduceId } from './data/produce';
 import type { Placeable } from './catalog';
@@ -13,7 +13,7 @@ import { EXPANSIONS } from './data/expansions';
 import { HOUR, MINUTE } from './clock';
 import { random01 } from './rng';
 
-export const SAVE_VERSION = 5;
+export const SAVE_VERSION = 6;
 
 // A plot is always in exactly one of these states. Fields that only make
 // sense for a growing crop only exist on the 'planted' variant, so a plowed
@@ -113,20 +113,42 @@ export function footprint(obj: FarmObject): { readonly width: number; readonly d
   }
 }
 
-export function objectAt(state: FarmState, x: number, y: number): FarmObject | null {
-  for (const obj of state.objects) {
+// Everything on a tile. Usually one thing; a square of animals can hold
+// several.
+export function objectsAt(state: FarmState, x: number, y: number): FarmObject[] {
+  return state.objects.filter((obj) => {
     const { width, depth } = footprint(obj);
-    if (x >= obj.x && x < obj.x + width && y >= obj.y && y < obj.y + depth) return obj;
+    return x >= obj.x && x < obj.x + width && y >= obj.y && y < obj.y + depth;
+  });
+}
+
+// The first thing on a tile, for rules where it only matters whether the
+// tile is taken and by what kind of thing.
+export function objectAt(state: FarmState, x: number, y: number): FarmObject | null {
+  return objectsAt(state, x, y)[0] ?? null;
+}
+
+// How much of a square's space its animals use, or null if something other
+// than animals is there (which leaves no room for any).
+export function spaceUsed(objects: readonly FarmObject[]): number | null {
+  let used = 0;
+  for (const o of objects) {
+    if (o.kind !== 'animal') return null;
+    used += ANIMAL_SPACE[o.typeId];
   }
-  return null;
+  return used;
 }
 
 type Area = { readonly x: number; readonly y: number; readonly width: number; readonly depth: number };
 
-// Why an area can't take something: part of it is off the farm, or the
-// first object found in the way. Null when the area is clear. `ignoreId` is
+// What's going into an area: an animal can share a square with other
+// animals if there's space; anything else needs the area empty. `ignoreId` is
 // the object being moved, which doesn't block its own new spot.
-export function areaBlocker(state: FarmState, area: Area, ignoreId?: string): 'offFarm' | FarmObject | null {
+export type Incoming = { readonly animal?: AnimalId; readonly ignoreId?: string };
+
+// Why an area can't take something: part of it is off the farm, a square of
+// animals is full, or the first object in the way. Null when it fits.
+export function areaBlocker(state: FarmState, area: Area, incoming: Incoming = {}): 'offFarm' | 'full' | FarmObject | null {
   for (let dx = 0; dx < area.width; dx++) {
     for (let dy = 0; dy < area.depth; dy++) {
       if (!isOnFarm(state, area.x + dx, area.y + dy)) return 'offFarm';
@@ -134,15 +156,19 @@ export function areaBlocker(state: FarmState, area: Area, ignoreId?: string): 'o
   }
   for (let dx = 0; dx < area.width; dx++) {
     for (let dy = 0; dy < area.depth; dy++) {
-      const there = objectAt(state, area.x + dx, area.y + dy);
-      if (there && there.id !== ignoreId) return there;
+      const there = objectsAt(state, area.x + dx, area.y + dy).filter((o) => o.id !== incoming.ignoreId);
+      const first = there[0];
+      if (!first) continue;
+      const used = spaceUsed(there);
+      if (incoming.animal === undefined || used === null) return first;
+      if (used + ANIMAL_SPACE[incoming.animal] > SQUARE_SPACE) return 'full';
     }
   }
   return null;
 }
 
-export function isAreaFree(state: FarmState, area: Area, ignoreId?: string): boolean {
-  return areaBlocker(state, area, ignoreId) === null;
+export function isAreaFree(state: FarmState, area: Area, incoming: Incoming = {}): boolean {
+  return areaBlocker(state, area, incoming) === null;
 }
 
 // When a crop withers: safe for one grow time after ripening, then a seeded

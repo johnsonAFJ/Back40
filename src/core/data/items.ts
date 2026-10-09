@@ -33,6 +33,18 @@ export const ANIMALS = {
   horse: { name: 'Horse', level: 15, price: 900, buyXp: 9, product: 'hair', hours: 72 },
 } as const satisfies Record<string, Producer>;
 
+// Small animals share a square. Each square has SQUARE_SPACE spaces, and each
+// animal takes this many: four chickens, two sheep or pigs, or one cow or
+// horse fit in a square, and mixes work as long as they add up.
+export const SQUARE_SPACE = 4;
+export const ANIMAL_SPACE: Readonly<Record<keyof typeof ANIMALS, number>> = {
+  chicken: 1,
+  sheep: 2,
+  pig: 2,
+  cow: 4,
+  horse: 4,
+};
+
 export type Decoration = {
   readonly name: string;
   readonly level: number;

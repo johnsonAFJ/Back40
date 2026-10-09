@@ -192,6 +192,29 @@ for from the basket:
 | Truffles | Pig | 140 |
 | Horsehair | Horse | 260 |
 
+### Animals share squares
+
+Small animals can share a square. Each square has 4 spaces:
+
+| Animal | Spaces | Per square |
+| --- | --- | --- |
+| Chicken | 1 | 4 |
+| Sheep, pig | 2 | 2 |
+| Cow, horse | 4 | 1 |
+
+Different animals can share as long as they add up (a sheep and two
+chickens, say). Nothing else can share a square with animals. Placing is
+still one animal per click; a full square says "No room for another animal on
+that square".
+
+Within a square each animal stands in its own spot: a quarter for a chicken,
+a half for a sheep or pig, the whole square for a cow or horse. The spots are
+worked out for drawing only (`src/render/animalSlots.ts`); the save just
+records each animal's square. Clicking with the multi-tool collects from
+every ready animal in the square at once. Move and Sell pick the particular
+animal under the pointer. When animals start to wander (milestone 7), these
+spots are where they wander from.
+
 ### The harvest basket
 
 Produce from trees and animals goes into the basket instead of paying out on
@@ -211,8 +234,9 @@ roots, the horse swishes its tail).
 
 - **Only the drawing moves.** The save keeps each animal on its tile, and
   moving, selling and collecting all work on that tile, so no rule changes.
-- **Each animal stays within its own tile**, so it never walks through a
-  fence, a crop or a building.
+- **Each animal stays within its own square**, around its spot in it (see
+  "Animals share squares"), so it never walks through a fence, a crop or a
+  building, and animals sharing a square don't wander into each other.
 - **Every animal moves differently**, from seeded randomness keyed by its id,
   like withering. Its path is worked out from the time, not stored.
 - **Clicks follow the drawing.** Hit-testing (`src/render/hit.ts`) uses the
@@ -455,7 +479,7 @@ Stored in `localStorage` under the key `back40`. Every GitHub Pages project on
 
 ```json
 {
-  "version": 5,
+  "version": 6,
   "seed": 482913,
   "createdAt": 1791436800000,
   "lastSeenAt": 1791480000000,
@@ -492,7 +516,9 @@ Stored in `localStorage` under the key `back40`. Every GitHub Pages project on
   `basket`, the harvest basket's contents by produce, empty for older farms.
   Version 5 added `neighbors` (who has moved in and today's helps), `gifts`,
   `feed` and `neighborsCheckedAt`. Older farms start from their last play
-  time, so they aren't flooded with visits that never happened.
+  time, so they aren't flooded with visits that never happened. Version 6 let
+  animals share a square; nothing in the save changed shape, but the new
+  number stops older builds from reading a shared square as an overlap.
 - A save from a **newer** version than the game knows (say, from a test build
   of the next milestone) is never replaced. The game shows a message and
   doesn't save at all until the right version is open.

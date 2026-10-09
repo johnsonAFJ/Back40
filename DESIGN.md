@@ -39,6 +39,7 @@ Departures happen for a few reasons, and each entry below names which:
 | Premium currency | Farm Cash, bought with real money | None | Scope |
 | Farmer avatar | Walked to each plot; actions queued | Actions happen instantly | Scope (open question in SPEC) |
 | Sound | Music and effects | None | Scope |
+| Animals per square | A finer grid, so many small animals fit in a pen | Squares hold 4 spaces: 4 chickens, 2 sheep or pigs, or 1 cow or horse | Our own choice (see below) |
 | Tree and animal produce | Sold the moment it was collected | Goes into a harvest basket, sold when you choose | Our own choice (see below) |
 | Saves | Zynga's servers | The browser, with backup export and import | Scope |
 
@@ -141,4 +142,13 @@ randomness once, then treat it as fact.
 On the first try, Martha's strawberries (4 hours) were all ripe by noon, so
 there was nothing to help with. Their crops now hold a growth stage for the
 whole day, which keeps every visit worth making.
+
+### Animals share squares
+
+A pen made of fences takes up the squares around it, so with one animal per
+square a 3 x 3 fence ring held a single chicken, which looked silly. The
+original avoided this with a finer grid underneath everything. Rather than
+change the whole grid, Back40 lets animals share a square by size. One click
+still places one animal, so filling a pen is still a choice, and one click
+collects the whole square so a full pen isn't a chore.
 

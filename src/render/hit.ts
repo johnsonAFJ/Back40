@@ -7,6 +7,7 @@
 // screen: the footprint's diamond swept upward by the object's height.
 
 import { footprint, type FarmObject, type FarmState } from '../core/state';
+import { animalSlots } from './animalSlots';
 import { footprintCorners, lift } from './draw/shapes';
 import type { WorldPoint } from './iso';
 
@@ -57,13 +58,23 @@ function inside(p: WorldPoint, polygon: readonly WorldPoint[]): boolean {
 }
 
 export function objectAtPoint(farm: FarmState, p: WorldPoint): FarmObject | null {
+  const slots = animalSlots(farm.objects);
   const tall = farm.objects
     .filter((o) => height(o) > 0)
-    .map((o) => ({ o, ...footprint(o) }))
+    .map((o) => {
+      // An animal sharing a square is tested around its own spot, a
+      // quarter-size box, so each one in a crowded pen can be picked.
+      const slot = slots.get(o.id);
+      const shared = slot && (slot.u !== 0.5 || slot.v !== 0.5);
+      const box = shared
+        ? { x: o.x + slot.u - 0.25, y: o.y + slot.v - 0.25, width: 0.5, depth: 0.5, inset: 0 }
+        : { x: o.x, y: o.y, ...footprint(o), inset: 0.1 };
+      return { o, box };
+    })
     // Nearest first, the reverse of drawing order.
-    .sort((a, b) => b.o.x + b.width / 2 + b.o.y + b.depth / 2 - (a.o.x + a.width / 2 + a.o.y + a.depth / 2));
-  for (const { o, width, depth } of tall) {
-    const [top, right, bottom, left] = footprintCorners({ x: o.x, y: o.y, width, depth }, 0.1);
+    .sort((a, b) => b.box.x + b.box.width / 2 + b.box.y + b.box.depth / 2 - (a.box.x + a.box.width / 2 + a.box.y + a.box.depth / 2));
+  for (const { o, box } of tall) {
+    const [top, right, bottom, left] = footprintCorners(box, box.inset);
     const h = height(o);
     if (inside(p, [left, lift(left, h), lift(top, h), lift(right, h), right, bottom])) return o;
   }
