@@ -25,7 +25,8 @@ import type { WorldPoint } from './iso';
 function height(obj: FarmObject): number {
   switch (obj.kind) {
     case 'plot':
-      return obj.state === 'planted' ? 14 : 0;
+      // Crops are drawn oversized, up to the height of a 192-pixel art cell.
+      return obj.state === 'planted' ? 64 : 0;
     case 'building':
       return 80;
     case 'tree':
@@ -81,7 +82,8 @@ export function objectAtPoint(
       const shared = slot && (slot.u !== 0.5 || slot.v !== 0.5);
       const box = shared
         ? { x: o.x + slot.u - 0.25, y: o.y + slot.v - 0.25, width: 0.5, depth: 0.5, inset: 0 }
-        : { x: o.x, y: o.y, ...footprint(o), inset: 0.1 };
+        : // Crops spill past their plot's corners; everything else stays inside.
+          { x: o.x, y: o.y, ...footprint(o), inset: o.kind === 'plot' ? -0.25 : 0.1 };
       return { o, box };
     })
     // Nearest first, the reverse of drawing order.
