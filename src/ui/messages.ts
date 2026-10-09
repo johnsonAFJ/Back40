@@ -10,7 +10,7 @@ import { ANIMALS, DECORATIONS, TREES } from '../core/data/items';
 import { PRODUCE } from '../core/data/produce';
 import { stage, timeUntilReady } from '../core/growth';
 import { isProducerReady, producerData, timeUntilProduce } from '../core/producers';
-import { isOnFarm, objectAt, type FarmObject, type FarmState } from '../core/state';
+import { isOnFarm, objectAt, objectsAt, type FarmObject, type FarmState, type Producer } from '../core/state';
 import { formatCoins, formatDuration } from './format';
 
 export function objectName(obj: FarmObject): string {
@@ -44,6 +44,14 @@ export function describeTile(farm: FarmState, x: number, y: number, seed: CropId
       return objectName(obj);
     case 'tree':
     case 'animal': {
+      // A square several animals share is described as a group.
+      const group = objectsAt(farm, x, y).filter((o): o is Producer => o.kind === 'animal');
+      if (group.length > 1) {
+        const ready = group.filter((o) => isProducerReady(o, now)).length;
+        if (ready > 0) return `${group.length} animals: ${ready} ready to collect`;
+        const soonest = Math.min(...group.map((o) => timeUntilProduce(o, now)));
+        return `${group.length} animals: next ready in ${formatDuration(soonest)}`;
+      }
       const data = producerData(obj);
       const produce = PRODUCE[data.product].name;
       return isProducerReady(obj, now)
@@ -79,9 +87,8 @@ export function describeTile(farm: FarmState, x: number, y: number, seed: CropId
   }
 }
 
-// What the Sell tool would do to this tile.
-export function describeSell(farm: FarmState, x: number, y: number): string | null {
-  const obj = objectAt(farm, x, y);
+// What the Sell tool would do to this object.
+export function describeSell(obj: FarmObject | null): string | null {
   if (!obj) return null;
   const value = sellValue(obj);
   if (value === null) return `The ${objectName(obj).toLowerCase()} can't be sold`;
@@ -97,6 +104,8 @@ export function failureMessage(failure: Failure, now: number): string {
       return `The ${objectName(failure.by).toLowerCase()} is in the way`;
     case 'noRoom':
       return "It doesn't fit there";
+    case 'squareFull':
+      return 'No room for another animal on that square';
     case 'alreadyPlowed':
       return 'Already plowed';
     case 'notPlowed':

@@ -7,12 +7,12 @@
 
 import { isBuildingId } from './data/buildings';
 import { isCropId } from './data/crops';
-import { isAnimalId, isDecorationId, isTreeId } from './data/items';
+import { SQUARE_SPACE, isAnimalId, isDecorationId, isTreeId } from './data/items';
 import { isProduceId } from './data/produce';
 import { NEIGHBORS, type NeighborId } from './data/neighbors';
 import type { Placeable } from './catalog';
 import { EXPANSIONS } from './data/expansions';
-import { FEED_LENGTH, SAVE_VERSION, footprint, type Basket, type FarmObject, type FarmState, type FeedEvent, type NeighborRecord } from './state';
+import { FEED_LENGTH, SAVE_VERSION, footprint, spaceUsed, type Basket, type FarmObject, type FarmState, type FeedEvent, type NeighborRecord } from './state';
 
 // `newer` means the save came from a later version of the game than this
 // one. It isn't broken, so it must never be replaced; see platform/storage.ts.
@@ -127,6 +127,10 @@ const MIGRATIONS: Readonly<Record<number, (raw: Json) => Json>> = {
   // starts from the last time the farm was played, so an old farm isn't
   // flooded with visits it never had.
   4: (raw) => ({ ...raw, version: 5, neighbors: {}, gifts: [], feed: [], neighborsCheckedAt: raw['lastSeenAt'] }),
+  // Version 6 lets small animals share a square. Nothing in an older save
+  // changes; the new number just stops older versions of the game from
+  // reading a shared square as two objects overlapping by mistake.
+  5: (raw) => ({ ...raw, version: 6 }),
 };
 
 const isNeighborId = (v: unknown): v is NeighborId => typeof v === 'string' && Object.hasOwn(NEIGHBORS, v);
@@ -218,7 +222,7 @@ export function parseSave(input: unknown): FarmState {
 
   const objects = objectsRaw.map(parseObject);
   const ids = new Set<string>();
-  const taken = new Set<string>();
+  const onTile = new Map<string, FarmObject[]>();
   for (const obj of objects) {
     if (ids.has(obj.id)) throw new SaveError(`Two objects share the id ${obj.id}`);
     ids.add(obj.id);
@@ -229,8 +233,14 @@ export function parseSave(input: unknown): FarmState {
         const y = obj.y + dy;
         if (x < 0 || y < 0 || x >= size || y >= size) throw new SaveError(`${obj.id} sits off the farm`);
         const key = `${x},${y}`;
-        if (taken.has(key)) throw new SaveError(`Two objects overlap at ${key}`);
-        taken.add(key);
+        const there = [...(onTile.get(key) ?? []), obj];
+        // Animals may share a square if they fit; nothing else may overlap.
+        if (there.length > 1) {
+          const used = spaceUsed(there);
+          if (used === null) throw new SaveError(`Two objects overlap at ${key}`);
+          if (used > SQUARE_SPACE) throw new SaveError(`Too many animals share the square at ${key}`);
+        }
+        onTile.set(key, there);
       }
     }
   }

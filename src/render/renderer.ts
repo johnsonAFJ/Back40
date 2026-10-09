@@ -23,6 +23,7 @@ import {
   isOnFarm,
 } from './draw/ground';
 import { drawFlatDecoration, isFlat, NO_LINKS, type Links } from './draw/items';
+import { animalSlots, type Slot } from './animalSlots';
 import { drawCrows, drawHungry, drawSparkle } from './draw/marks';
 import { drawFarmObject, drawProduct } from './draw/objects';
 import { PALETTE } from './draw/palette';
@@ -144,15 +145,18 @@ export function render(ctx: CanvasRenderingContext2D, scene: Scene): void {
   if (highlight && !ghost) drawHighlight(ctx, highlight, camera.zoom);
   if (ghost) drawGhostFootprint(ctx, ghost, farm);
 
-  // Object pass, back to front.
+  // Object pass, back to front. Animals sharing a square each stand in
+  // their own spot, and are depth-sorted by that spot.
+  const slots = animalSlots(objects);
   const drawables: Drawable[] = [];
   for (const obj of objects) {
     const { width, depth } = footprint(obj);
+    const slot = slots.get(obj.id);
     drawables.push({
-      depth: depthOf(obj.x, obj.y, width, depth),
+      depth: slot ? obj.x + slot.u + obj.y + slot.v : depthOf(obj.x, obj.y, width, depth),
       x: obj.x,
       draw: () => {
-        drawFarmObject(ctx, obj, now, obj.kind === 'decoration' ? linksAt(obj.x, obj.y, obj.typeId) : NO_LINKS);
+        drawFarmObject(ctx, obj, now, obj.kind === 'decoration' ? linksAt(obj.x, obj.y, obj.typeId) : NO_LINKS, slot);
         if (obj.kind === 'plot' && obj.state === 'planted' && obj.fertilized) drawSparkle(ctx, obj.x, obj.y);
         if (scene.marks.crows.has(obj.id)) drawCrows(ctx, obj.x, obj.y);
         if (scene.marks.hungry.has(obj.id)) drawHungry(ctx, obj.x, obj.y);
@@ -161,7 +165,7 @@ export function render(ctx: CanvasRenderingContext2D, scene: Scene): void {
   }
   if (ghost) {
     const { width, depth } = ghostSize(ghost);
-    drawables.push({ depth: depthOf(ghost.x, ghost.y, width, depth), x: ghost.x, draw: () => drawGhost(ctx, ghost, now) });
+    drawables.push({ depth: depthOf(ghost.x, ghost.y, width, depth), x: ghost.x, draw: () => drawGhost(ctx, ghost, now, objects) });
   }
   for (let y = range.minY; y <= range.maxY; y++) {
     for (let x = range.minX; x <= range.maxX; x++) {
@@ -192,12 +196,21 @@ function drawGhostFootprint(ctx: CanvasRenderingContext2D, ghost: Ghost, farm: F
   }
 }
 
-function drawGhost(ctx: CanvasRenderingContext2D, ghost: Ghost, now: number): void {
+// Where an animal would stand if it joined the animals already on its
+// square, so the preview shows it in the spot it will actually take.
+function joiningSlot(objects: readonly FarmObject[], animal: FarmObject): Slot | undefined {
+  return animalSlots([...objects.filter((o) => o.id !== animal.id), animal]).get(animal.id);
+}
+
+function drawGhost(ctx: CanvasRenderingContext2D, ghost: Ghost, now: number, objects: readonly FarmObject[]): void {
   ctx.globalAlpha = ghost.fits ? 0.85 : 0.5;
   if (ghost.kind === 'product') {
     const { width, depth } = productInfo(ghost.product);
     if (ghost.product.kind === 'decoration' && isFlat(ghost.product.id)) {
       drawFlatDecoration(ctx, ghost.product.id, ghost.x, ghost.y);
+    } else if (ghost.product.kind === 'animal') {
+      const preview: FarmObject = { id: '~preview', kind: 'animal', typeId: ghost.product.id, x: ghost.x, y: ghost.y, lastHarvestAt: 0 };
+      drawFarmObject(ctx, preview, now, NO_LINKS, joiningSlot(objects, preview));
     } else {
       drawProduct(ctx, ghost.product, ghost.x, ghost.y, width, depth);
     }
@@ -205,7 +218,7 @@ function drawGhost(ctx: CanvasRenderingContext2D, ghost: Ghost, now: number): vo
     const moved = { ...ghost.obj, x: ghost.x, y: ghost.y };
     if (moved.kind === 'plot') drawSoil(ctx, moved.x, moved.y, moved.state === 'harvested' ? 'harvested' : 'plowed');
     if (moved.kind === 'decoration' && isFlat(moved.typeId)) drawFlatDecoration(ctx, moved.typeId, moved.x, moved.y);
-    drawFarmObject(ctx, moved, now, NO_LINKS);
+    drawFarmObject(ctx, moved, now, NO_LINKS, moved.kind === 'animal' ? joiningSlot(objects, moved) : undefined);
   }
   ctx.globalAlpha = 1;
 }

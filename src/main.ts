@@ -9,12 +9,12 @@ import { sellBasket, sellProduce, type Sale } from './core/basket';
 import { addCoins, farmNow, levelUp as cheatLevelUp, readyEverything, skipAhead } from './core/cheats';
 import { systemClock } from './core/clock';
 import { NEIGHBORS, type NeighborId } from './core/data/neighbors';
-import { PRODUCE } from './core/data/produce';
+import { PRODUCE, type ProduceId } from './core/data/produce';
 import { expand, nextExpansion } from './core/land';
 import { levelForXp } from './core/levels';
 import { HELP_COINS, HELP_XP, help, helpsLeft, syncNeighbors, visit, type Visit } from './core/neighbors';
 import { newSeed } from './core/rng';
-import { farmSize, footprint, isAreaFree, isOnFarm, newFarm, objectAt, type FarmState, type FeedEvent } from './core/state';
+import { farmSize, footprint, isAreaFree, isOnFarm, newFarm, objectAt, objectsAt, type FarmObject, type FarmState, type FeedEvent } from './core/state';
 import { unlocksBetween } from './core/unlocks';
 import { MIN_ZOOM, clampToBounds, pan, screenToWorld, worldToScreen, zoomAt, type Bounds, type Camera, type Viewport } from './render/camera';
 import { liveEffects, type FloatingText } from './render/effects';
@@ -69,6 +69,9 @@ let view: Viewport = { width: 1, height: 1 };
 let pixelRatio = 1;
 let camera: Camera = fittedCamera();
 let highlight: TilePoint | null = null;
+// The particular thing under the pointer, when there is one. On a square
+// several animals share, this says which one Move or Sell would pick.
+let highlightObj: FarmObject | null = null;
 let pointerKind: 'mouse' | 'touch' = 'mouse';
 let effects: FloatingText[] = [];
 
@@ -145,7 +148,8 @@ function ghostAt(at: TilePoint | null): Ghost | null {
     const { width, depth } = productInfo(mode.item);
     const x = at.x - Math.floor((width - 1) / 2);
     const y = at.y - Math.floor((depth - 1) / 2);
-    return { kind: 'product', product: mode.item, x, y, fits: isAreaFree(farm, { x, y, width, depth }) };
+    const incoming = mode.item.kind === 'animal' ? { animal: mode.item.id } : {};
+    return { kind: 'product', product: mode.item, x, y, fits: isAreaFree(farm, { x, y, width, depth }, incoming) };
   }
   if (mode.kind === 'gift') {
     const gift = farm.gifts[mode.index];
@@ -153,12 +157,14 @@ function ghostAt(at: TilePoint | null): Ghost | null {
     const { width, depth } = productInfo(gift);
     const x = at.x - Math.floor((width - 1) / 2);
     const y = at.y - Math.floor((depth - 1) / 2);
-    return { kind: 'product', product: gift, x, y, fits: isAreaFree(farm, { x, y, width, depth }) };
+    const incoming = gift.kind === 'animal' ? { animal: gift.id } : {};
+    return { kind: 'product', product: gift, x, y, fits: isAreaFree(farm, { x, y, width, depth }, incoming) };
   }
   if (mode.kind === 'move' && mode.held) {
     const x = at.x - mode.grab.dx;
     const y = at.y - mode.grab.dy;
-    const fits = isAreaFree(farm, { x, y, ...footprint(mode.held) }, mode.held.id);
+    const incoming = { ignoreId: mode.held.id, ...(mode.held.kind === 'animal' ? { animal: mode.held.typeId } : {}) };
+    const fits = isAreaFree(farm, { x, y, ...footprint(mode.held) }, incoming);
     return { kind: 'object', obj: mode.held, x, y, fits };
   }
   return null;
@@ -199,10 +205,10 @@ function tooltipText(t: TilePoint): string | null {
     case 'farm':
       return describeTile(farm, t.x, t.y, market.selected(), now());
     case 'sell':
-      return describeSell(farm, t.x, t.y);
+      return describeSell(chosenAt(t));
     case 'move': {
       if (mode.held) return null;
-      const obj = objectAt(farm, t.x, t.y);
+      const obj = chosenAt(t);
       return obj ? `Pick up ${objectName(obj).toLowerCase()}` : null;
     }
     case 'place':
@@ -300,7 +306,10 @@ function apply(outcome: Outcome): boolean {
   const { coins, xp } = outcome.reward;
   const lines: Array<readonly [string, string]> = [];
   if (coins !== 0) lines.push([`${coins > 0 ? '+' : '−'}${formatCoins(Math.abs(coins))}`, coins > 0 ? '#ffd23f' : '#ffe9c2']);
-  if (outcome.reward.produce) lines.push([`+1 ${PRODUCE[outcome.reward.produce].single}`, '#fff3c4']);
+  // "+3 eggs", "+1 wool": one line per kind collected.
+  const counts = new Map<ProduceId, number>();
+  for (const p of outcome.reward.produce) counts.set(p, (counts.get(p) ?? 0) + 1);
+  for (const [id, n] of counts) lines.push([`+${n} ${n === 1 ? PRODUCE[id].single : PRODUCE[id].name}`, '#fff3c4']);
   if (xp > 0) lines.push([`+${xp} XP`, '#9fe3ff']);
   float(outcome.at, lines);
 
@@ -357,7 +366,7 @@ async function tapTile(t: TilePoint): Promise<void> {
     }
     case 'move': {
       if (!mode.held) {
-        const obj = objectAt(farm, t.x, t.y);
+        const obj = chosenAt(t);
         if (obj) setMode({ kind: 'move', held: obj, grab: { dx: t.x - obj.x, dy: t.y - obj.y } });
         return;
       }
@@ -366,7 +375,7 @@ async function tapTile(t: TilePoint): Promise<void> {
       return;
     }
     case 'sell': {
-      const obj = objectAt(farm, t.x, t.y);
+      const obj = chosenAt(t);
       if (!obj) return;
       const value = sellValue(obj);
       if (value === null) {
@@ -456,6 +465,14 @@ async function expandFarm(): Promise<void> {
 // the pointer. Otherwise a click on something standing up (a tree's leaves,
 // a barn's roof) means that thing, even where it's drawn over the tiles
 // behind it.
+// The thing Move or Sell would act on at tile `t`: the one under the pointer
+// if it's on that tile (which matters when animals share a square),
+// otherwise whatever is there.
+function chosenAt(t: TilePoint): FarmObject | null {
+  if (highlightObj && objectsAt(farm, t.x, t.y).some((o) => o.id === highlightObj?.id)) return highlightObj;
+  return objectAt(farm, t.x, t.y);
+}
+
 function farmTileAt(at: ScreenPoint): TilePoint | null {
   const shown = shownFarm();
   const w = screenToWorld(camera, view, at);
@@ -501,8 +518,12 @@ canvas.addEventListener('pointerdown', (e) => {
 attachInput(canvas, {
   pan: (dx, dy) => setCamera(pan(camera, dx, dy)),
   zoom: (anchor, factor) => setCamera(zoomAt(camera, view, anchor, factor)),
-  hover: (at) => setHighlight(at ? farmTileAt(at) : null),
+  hover: (at) => {
+    highlightObj = at ? objectAtPoint(shownFarm(), screenToWorld(camera, view, at)) : null;
+    setHighlight(at ? farmTileAt(at) : null);
+  },
   tap: (at) => {
+    highlightObj = objectAtPoint(shownFarm(), screenToWorld(camera, view, at));
     const t = farmTileAt(at);
     // On a phone there's no hover, so the tapped tile is the highlight.
     if (pointerKind === 'touch' || !highlight) setHighlight(t);

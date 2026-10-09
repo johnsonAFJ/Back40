@@ -171,6 +171,6 @@ describe('saves from milestone 5.5', () => {
   it('start with no neighbors, gifts or news, and no backlog', () => {
     const { neighbors: _a, gifts: _b, feed: _c, neighborsCheckedAt: _d, ...v4 } = { ...newFarm(MIDNIGHT, 11), version: 4 };
     const loaded = parseSave(JSON.parse(JSON.stringify(v4)));
-    expect(loaded).toMatchObject({ version: 5, neighbors: {}, gifts: [], feed: [], neighborsCheckedAt: v4.lastSeenAt });
+    expect(loaded).toMatchObject({ version: 6, neighbors: {}, gifts: [], feed: [], neighborsCheckedAt: v4.lastSeenAt });
   });
 });

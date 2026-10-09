@@ -26,7 +26,7 @@ describe('collecting', () => {
     const before = farmWithAnimals();
     const later = START + 72 * HOUR;
     const outcome = harvest(before, 9, 9, later);
-    expect(outcome).toMatchObject({ ok: true, reward: { coins: 0, xp: 1, produce: 'eggs' } });
+    expect(outcome).toMatchObject({ ok: true, reward: { coins: 0, xp: 1, produce: ['eggs'] } });
     let farm = ok(outcome);
     farm = ok(harvest(farm, 10, 9, later));
     farm = ok(harvest(farm, 11, 9, later));
@@ -38,7 +38,7 @@ describe('collecting', () => {
 
   it('leaves crops selling on the spot', () => {
     const farm = newFarm(START, 9);
-    expect(harvest(farm, 5, 5, START + HOUR)).toMatchObject({ reward: { coins: 35, produce: null } });
+    expect(harvest(farm, 5, 5, START + HOUR)).toMatchObject({ reward: { coins: 35, produce: [] } });
   });
 });
 
