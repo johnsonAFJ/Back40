@@ -26,7 +26,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a big mound of leaves heaped with oversized bright red strawberries, each berry about 24 px across, a dozen or so showing.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -48,7 +48,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a thick sheaf of tall golden stalks, crowded together, with fat oversized grain heads leaning over at the top.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -70,7 +70,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a bushy mound of pale-green leaves hung with big fuzzy green pods, each pod about 30 px long.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -92,7 +92,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a low mound of clover-like leaves with a pile of big tan peanut shells spilling out at its base, each shell about 26 px long.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -114,7 +114,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: dark green leaves around three or four huge glossy purple eggplants, each about 60 px long, piled together.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -136,7 +136,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a round shrub smothered in big cones of pale purple blossom, each cone about 40 px tall.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -158,7 +158,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: broad leaves along the ground with three or four huge yellow squash, each about 60 px long, piled together.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -180,7 +180,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: broad leaves and curling vines around three huge round orange pumpkins, each about 64 px across.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -202,8 +202,8 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
-- Cell 4 (x 576 to 767): ready. Ripe and oversized: three or four huge rosettes of deep green crinkled leaves, crowded together and filling the plot.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
+- Cell 4 (x 576 to 767): ready. Ripe and oversized: three or four huge rosettes of bright, fresh green crinkled leaves with pale veins and strong highlights, each rosette clearly its own, crowded together and filling the plot. They must look much bigger, brighter and glossier than the growing stage.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
 
@@ -224,7 +224,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: silvery-green leaves topped with three or four huge artichoke buds, each about 44 px across.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -246,7 +246,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a dense clump of bright green grass-like stalks with fat, drooping pale golden grain heads.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -268,7 +268,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a big mound of leafy canes heaped with oversized deep pink-red raspberries, each about 22 px across.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -290,7 +290,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a crowded bunch of green stems topped with big yellow trumpet flowers, each flower about 34 px across.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -312,7 +312,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: woody plants covered in huge fluffy white cotton bolls, each about 30 px across, like a heap of clouds.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -334,7 +334,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a low mound of dark vines heaped with oversized dark red cranberries, each about 18 px across.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -356,7 +356,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a mound of feathery leaves hung with big plump tan pods, each about 26 px long.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -378,7 +378,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: dark green leaves around four or five huge chunky green bell peppers, each about 40 px across.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -400,7 +400,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: huge wavy leaves on a thick bunch of bright red-pink stalks, filling the plot.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -422,7 +422,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: leafy plants hung with big glossy red chili peppers, each about 36 px long, a dozen or so showing.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -444,7 +444,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a mound of twining vines covered in big blue trumpet flowers, each about 30 px across.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -466,7 +466,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: two or three huge spiky blue-green succulent rosettes, crowded together and filling the plot.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -488,7 +488,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: spiky leaves around three huge golden pineapples, each about 56 px tall with a leafy crown.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -510,7 +510,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a crowded bunch of green stems topped with big red cup-shaped tulips, each about 30 px tall.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -532,7 +532,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: broad leaves around four or five huge pale yellow scalloped squash, each about 44 px across.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -554,7 +554,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a big mound of leaves heaped with clusters of oversized blueberries, each berry about 18 px across.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -576,7 +576,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: darker vine leaves around three fat watermelons, each about 80 px long, in a light bright green with bold dark-green stripes and a strong highlight, sitting at different angles, some tilted up so their rounded ends show.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -598,7 +598,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: short vines on wooden stakes hung with big purple grape bunches, each bunch about 44 px tall.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -620,7 +620,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: staked leafy plants hung with big round red tomatoes, each about 30 px across, eight or so showing.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -642,7 +642,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a round bush covered in big pink roses, each bloom about 30 px across.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -664,7 +664,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a thick clump of tall green-and-gold jointed canes with long arching leaves, rising nearly to the top of the cell.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -686,7 +686,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a mound of feathery green tops with five or six fat orange carrot shoulders showing above the soil, each about 26 px across.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -708,7 +708,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a glossy dark-green shrub hung with big clusters of red coffee cherries, each cherry about 16 px across.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -730,7 +730,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: three tall stems with huge yellow sunflowers facing the viewer, each flower about 56 px across with a brown center.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -752,7 +752,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: blue-green leaves around three or four huge dark green broccoli heads, each about 50 px across.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
@@ -774,7 +774,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
 - Cell 4 (x 576 to 767): ready. Ripe and oversized: a thick clump of tall green stalks with big yellow corn ears peeking out of their husks, and tassels on top, rising nearly to the top of the cell.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
