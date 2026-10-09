@@ -36,3 +36,7 @@ Art comes from Claude Design using the prompts in [prompts/](prompts/). Save
 each PNG into `src/art/` with the name the prompt gives and reload: it
 replaces the code-drawn version of that one thing. See
 [ART_BRIEF.md](ART_BRIEF.md) for the full spec.
+
+Done so far: all five animals and the first 29 crops. Still code-drawn:
+the six crops added from the 2009 chart, trees, buildings, decorations and
+basket icons.
