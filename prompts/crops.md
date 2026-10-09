@@ -115,7 +115,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
 - Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
-- Cell 4 (x 576 to 767): ready. Ripe and oversized: dark green leaves around three or four huge glossy purple eggplants, each about 60 px long, piled together.
+- Cell 4 (x 576 to 767): ready. Ripe and oversized: two or three upright, bushy eggplant plants with broad dark green leaves, with three or four huge glossy purple eggplants hanging down from the stems, each about 60 px long. The eggplants grow on the bushes, not lying on the ground.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
 
@@ -379,7 +379,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
 - Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
-- Cell 4 (x 576 to 767): ready. Ripe and oversized: dark green leaves around four or five huge chunky green bell peppers, each about 40 px across.
+- Cell 4 (x 576 to 767): ready. Ripe and oversized: two or three upright, bushy pepper plants with sturdy stems and dark green leaves, with four or five huge chunky bright green bell peppers hanging from the branches, each about 40 px across. The peppers grow on the bushes, not lying on the ground.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
 
@@ -423,7 +423,7 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
 - Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
-- Cell 4 (x 576 to 767): ready. Ripe and oversized: leafy plants hung with big glossy red chili peppers, each about 36 px long, a dozen or so showing.
+- Cell 4 (x 576 to 767): ready. Ripe and oversized: two or three upright, bushy pepper plants with branching stems and dark green leaves, hung all over with big glossy red chili peppers dangling from the branches, each about 36 px long, a dozen or so showing. The peppers grow on the bushes, not lying on the ground.
 - Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
 
