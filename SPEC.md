@@ -201,7 +201,7 @@ roots, the horse swishes its tail).
 
 Decorations are bought, placed and moved freely. They give XP once, when
 bought, at roughly 1 XP per 100 coins with a minimum of 1. Selling a
-decoration, tree or animal returns 5% of its price, rounded down.
+decoration, tree or animal returns a third of its price, rounded down.
 
 | Item | Level | Price | XP | Size |
 | --- | --- | --- | --- | --- |

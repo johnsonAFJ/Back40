@@ -59,8 +59,9 @@ export type TreeId = keyof typeof TREES;
 export type AnimalId = keyof typeof ANIMALS;
 export type DecorationId = keyof typeof DECORATIONS;
 
-// Selling a tree, animal or decoration returns this share of its price.
-export const SELL_BACK = 0.05;
+// Selling a tree, animal or decoration returns this share of its price,
+// rounded down. It was 5%, which made a 75 coin fence sell for 3.
+export const SELL_BACK = 1 / 3;
 
 // Object.keys loses the literal key types; these restore them for each table.
 export const TREE_IDS = Object.keys(TREES) as TreeId[];

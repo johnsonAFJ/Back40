@@ -88,14 +88,21 @@ describe('moving', () => {
 });
 
 describe('selling', () => {
-  it('returns 5% of the price, rounded down', () => {
+  it('returns a third of the price, rounded down', () => {
     const farm = ok(place(richFarm(), { kind: 'decoration', id: 'hayBale' }, 9, 9, START));
     const bale = objectAt(farm, 9, 9);
     if (!bale) throw new Error('bale missing');
-    expect(sellValue(bale)).toBe(5);
+    expect(sellValue(bale)).toBe(33);
     const sold = ok(sell(farm, bale.id, START));
-    expect(sold.coins).toBe(farm.coins + 5);
+    expect(sold.coins).toBe(farm.coins + 33);
     expect(objectAt(sold, 9, 9)).toBeNull();
+  });
+
+  it('sells a 75 coin picket fence for 25', () => {
+    const farm = ok(place(richFarm(), { kind: 'decoration', id: 'picketFence' }, 9, 9, START));
+    const fence = objectAt(farm, 9, 9);
+    if (!fence) throw new Error('fence missing');
+    expect(sellValue(fence)).toBe(25);
   });
 
   it('removes a plot for nothing, crop and all', () => {

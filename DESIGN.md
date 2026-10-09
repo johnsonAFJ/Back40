@@ -87,6 +87,14 @@ stored or keyed by day. If they were rolled each time the game loaded,
 reloading would be a free re-roll. Random events have to be decided once and
 then become facts.
 
+### Selling things back
+
+Selling a tree, animal or decoration first returned 5% of its price, so a 75
+coin picket fence sold for 3. Rearranging the farm felt like throwing money
+away. It now returns a third (the picket fence sells for 25), which still
+costs something to change your mind but doesn't punish redecorating. Worth
+another look once there's more to buy.
+
 ### XP versus coins
 
 Every action in the original converts between coins and XP at a roughly stable
