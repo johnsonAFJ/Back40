@@ -598,9 +598,9 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 - Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
 - Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. The same trellis, with young leafy vines climbing the posts and partway along the rails, about two-thirds of full leafiness, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
-- Cell 4 (x 576 to 767): ready. Ripe and oversized: a grapevine trained on a simple wooden trellis: two posts with two wires or rails between them, running straight left to right across the plot from near its left corner to near its right corner, about 70 px tall. Twisting brown vines climb the posts and run along the rails, covered in broad lobed grape leaves, with big purple grape bunches hanging below the rails, each bunch about 44 px tall. The trellis runs exactly left to right so neighboring plots line up into vineyard rows.
-- Cell 5 (x 768 to 959): withered. The same trellis, its vines and leaves brown, drooping and dead, the crop shriveled.
+- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
+- Cell 4 (x 576 to 767): ready. Ripe and oversized: short vines on wooden stakes hung with big purple grape bunches, each bunch about 44 px tall.
+- Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
 ```
 
 ## Tomatoes
