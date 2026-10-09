@@ -226,7 +226,7 @@ sell the moment they're harvested, so a big field never needs an extra step.
 The basket is saved with the farm, has no size limit, and gives milestone 6's
 neighbor gifts and requests something to work with.
 
-### Animal movement (milestone 7)
+### Animal movement
 
 All five animals come to life together in milestone 7: they wander, pause and
 do their idle action (the chicken pecks, the cow and sheep graze, the pig
@@ -244,9 +244,12 @@ roots, the horse swishes its tail).
 - **It costs battery, so it holds back.** Animals on screen mean redrawing
   every frame instead of about once a second. It pauses in a hidden tab and
   stays still when the system's "reduce motion" setting is on.
-- **Order of work:** build the wandering with the code-drawn animals first, so
-  the movement is right before the art arrives, then swap in the sprite sheets
-  described in ART_BRIEF.md.
+- **How it moves** (`src/render/animalMotion.ts`): the animal lives in
+  4.5-second beats. In each it walks for 1.4 seconds to a new point within
+  its reach (0.22 of a tile alone, 0.1 sharing a square), then stands, and in
+  about half the beats does its idle action. With code-drawn animals that's a
+  bob while walking and a tip forward to peck; with a sprite sheet it plays
+  the walk and action frames.
 
 ## Decorations and buildings
 
@@ -468,9 +471,13 @@ into short toasts.
   thing, even where it's drawn over the tiles behind it. Each object is
   tested against its outline on screen, nearest first, before falling back
   to the ground tile. See `src/render/hit.ts`.
-- All art is drawn in code for now. Every sprite goes through one
-  `drawSprite(id, ...)` function, so swapping in image files later changes one
-  module.
+- Art is drawn in code until a PNG for it exists in `src/art/`
+  (`src/render/art.ts`). Each drawing function asks for the real art first and
+  draws its code version only if there isn't any, so art can arrive one file
+  at a time. Sheets are cut into a grid of cells. Things that stand on a point
+  (animals, trees, a scarecrow) are trimmed and placed by their feet; things
+  that fill a footprint (crops, buildings, a hay bale) are placed by the
+  cell's bottom middle. File names, sizes and layouts are in ART_BRIEF.md.
 
 ## Save file
 
@@ -525,16 +532,41 @@ Stored in `localStorage` under the key `back40`. Every GitHub Pages project on
 - Saving happens after every action. There is no save button.
 - If the stored save cannot be read, it is copied to `back40-unreadable-<time>`
   before a new farm starts, so a bad save never silently erases a farm.
-- **Export backup** writes `back40-<date>.json`. On a computer it downloads; in
-  the home-screen app on a phone it opens the share sheet ("Save to Files").
-  **Import** validates the file and asks before replacing the current farm.
+- Backups: see "Backups" above.
 
 ## Phones and installing
 
-Desktop first, touch supported throughout. Milestone 7 adds a web app manifest,
-icons and a service worker so Back40 can be added to a phone's home screen and
-opened offline, the same way HabitMonster works. The browser and the home-screen
-app keep separate saves; export and import move a farm between them.
+Desktop first, touch supported throughout. Back40 can be added to a phone's
+home screen (Safari: Share, then Add to Home Screen; Chrome: Install app) and
+then opens full screen like an app, offline too:
+
+- `public/manifest.webmanifest` gives the name, colors and icons. The icons
+  are drawn from the game's own art by `tools/icons.ts`
+  (http://localhost:8442/Back40/tools/icons.html).
+- `public/sw.js` is the service worker. The page is network-first, so a new
+  version shows up on the next open; everything else is cache-first, which is
+  safe because Vite names every built file after its contents. It's
+  registered with the build's commit (`?v=`), so each deploy gets a fresh
+  cache and the old one is deleted. It only runs in the built site, never on
+  the dev server.
+
+The browser and the home-screen app keep separate saves; backups move a farm
+between them.
+
+## Backups
+
+The **Farm menu** (the button above the zoom buttons) saves and loads
+backups:
+
+- **Save a backup** writes `back40-<date>.json`, the whole farm. On a
+  computer it downloads; in the home-screen app on a phone it opens the share
+  sheet ("Save to Files").
+- **Load a backup** reads one back. It's checked like any save and upgraded
+  if it's from an older version. The game shows both farms (level, coins,
+  how much is on them) and asks before replacing this one. A file that isn't
+  a backup, or that comes from a newer version, is refused with a message and
+  nothing changes.
+- The menu also shows the build and save version.
 
 ## Hosting
 
@@ -558,27 +590,23 @@ Merging deploys.
 | 5 | **Land** | Expansions with their level, neighbor and coin requirements. |
 | 5.5 | **Harvest basket** | Produce from trees and animals collects in a basket you sell from. |
 | 6 | **Neighbors** | Neighbor bar, farm visits and helping, overnight fertilizing, daily gifts and the gift box, news feed. |
-| 7 | **Polish** | Installable app, backup export and import, art pass, image-generation prompts in `prompts/`, and moving animals (see "Animal movement"). |
-| 8 | **Later** | Real multiplayer: accounts, cloud saves, real friends taking neighbor slots. Sound and music. |
+| 7 | **Polish** | Installable app, backups, moving animals, the real-art loader, and the Claude Design art brief and prompts. |
+| 8 | **Neighbor requests** | Neighbors ask for produce from your basket ("Martha would love 3 eggs"); filling a request pays bonus coins and XP, about double the items' sale price plus some XP. |
+| Later | | Real multiplayer (accounts, cloud saves, real friends in neighbor slots), sound and music, the walking farmer. |
 
 ## Not in version 1
 
 Sound and music, a premium currency, ribbons and achievements, crop mastery,
 multi-plot tools (tractor, seeder, harvester), the farmer avatar, real
 multiplayer, and any anti-cheat (test mode is a cheat panel on purpose).
+Fences, paths and ground stay code-drawn even when the rest has real art.
 
-## Open questions
+## Decided for later
 
-These don't block milestones 1 or 2. They get settled before the milestone that
-needs them.
-
-- **The farmer avatar.** In the original, your farmer walked to each plot and
-  actions queued up behind them. It adds a lot of charm, and a lot of work
-  (pathfinding, an action queue, animation). Not planned for version 1; worth
-  deciding before milestone 7.
-- **Neighbor requests.** Should neighbors ask for produce from your basket
-  ("Martha would love 3 eggs") in exchange for coins or XP? Raised after the
-  basket was built; left for after milestone 6.
+- **The farmer avatar.** The original's farmer walked to each plot while
+  clicks queued behind them. Charming, but it's pathfinding, an action queue
+  and a lot of animation: a milestone of its own, after the ones above.
+  Actions stay instant until then.
 
 ## Sources
 

@@ -152,3 +152,19 @@ change the whole grid, Back40 lets animals share a square by size. One click
 still places one animal, so filling a pen is still a choice, and one click
 collects the whole square so a full pen isn't a chore.
 
+### Animals move without being saved
+
+An animal's position at any moment comes from its id and the clock, so
+moving animals added nothing to the save and nothing to keep in sync. It
+also means the game can't "lose" an animal mid-walk: reload and it's
+somewhere along the same path. The trade-off is that animals can't react to
+anything (they don't flee crows or follow you), which suits a farm better
+than it would an adventure game.
+
+### Art arrives one file at a time
+
+The game never waits for a full art set. Every drawing function tries the
+real art first and falls back to its code version, so the first sheet that
+lands (say, the chicken) changes the farm right away and nothing else breaks.
+That's what made it safe to write the art brief before any art exists.
+

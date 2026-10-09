@@ -18,14 +18,19 @@ import { farmSize, footprint, isAreaFree, isOnFarm, newFarm, objectAt, objectsAt
 import { unlocksBetween } from './core/unlocks';
 import { MIN_ZOOM, clampToBounds, pan, screenToWorld, worldToScreen, zoomAt, type Bounds, type Camera, type Viewport } from './render/camera';
 import { liveEffects, type FloatingText } from './render/effects';
+import { clearThumbnails } from './render/thumbnails';
 import { TILE_HEIGHT, TILE_WIDTH, pickTile, screen, tile, tileCenter, tileToWorld, type ScreenPoint, type TilePoint } from './render/iso';
+import { ART_FILES, loadArt } from './render/art';
 import { objectAtPoint } from './render/hit';
 import { NO_MARKS, render, type Ghost } from './render/renderer';
+import { readBackup, saveBackup } from './platform/backup';
 import { loadFarm, saveFarm } from './platform/storage';
+import { SaveError } from './core/save';
 import { formatCoins } from './ui/format';
 import { createBasket } from './ui/basket';
 import { createHud } from './ui/hud';
 import { attachInput } from './ui/input';
+import { createFarmMenu, farmSummary } from './ui/farmMenu';
 import { createLevelUp } from './ui/levelUp';
 import { createMarket } from './ui/market';
 import { describeChore, describeSell, describeTile, expandFailureMessage, failureMessage, helpFailureMessage, objectName } from './ui/messages';
@@ -170,8 +175,13 @@ function ghostAt(at: TilePoint | null): Ghost | null {
   return null;
 }
 
+// Animals wander unless the device asks for reduced motion.
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
 // Draw only when something changed, and every frame while rewards are
-// floating. Calls during the same frame collapse into one draw.
+// floating or animals are moving. Calls during the same frame collapse into
+// one draw. The browser stops frames entirely while the tab is hidden, so a
+// pen of chickens costs nothing in the background.
 let frameRequested = false;
 function requestDraw(): void {
   if (frameRequested) return;
@@ -193,8 +203,10 @@ function requestDraw(): void {
       effects,
       frameTime,
       marks: v ? { crows: v.crows, hungry: v.hungry } : NO_MARKS,
+      motion: reducedMotion.matches ? null : clock.now() / 1000,
     });
-    if (effects.length > 0) requestDraw();
+    const animalsMoving = !reducedMotion.matches && (v?.farm ?? farm).objects.some((o) => o.kind === 'animal');
+    if (effects.length > 0 || animalsMoving) requestDraw();
   });
 }
 
@@ -438,6 +450,57 @@ function checkNeighbors(): readonly FeedEvent[] {
   const sync = syncNeighbors(farm, now(), tz());
   if (sync.events.length > 0) setFarm(sync.state);
   return sync.events;
+}
+
+// ---- Art ----
+
+// Any real art in src/art replaces the code-drawn version as it loads.
+loadArt(ART_FILES, () => {
+  clearThumbnails();
+  market.setFarm(farm);
+  requestDraw();
+});
+
+// ---- Installing ----
+
+// Offline support, only in the built site: on the dev server a cached old
+// version would just get in the way.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  void navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js?v=${__BUILD__}`);
+}
+
+// ---- Backups ----
+
+createFarmMenu(required('#menu-button', HTMLButtonElement), required('#farm-menu', HTMLDialogElement), {
+  save: () => void backUp(),
+  load: (file) => void restore(file),
+});
+
+async function backUp(): Promise<void> {
+  const d = new Date();
+  const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  if (await saveBackup(farm, date)) toast.show('Backup saved');
+}
+
+async function restore(file: File): Promise<void> {
+  let loaded: FarmState;
+  try {
+    loaded = await readBackup(file);
+  } catch (err) {
+    toast.show(
+      err instanceof SaveError && err.reason === 'newer'
+        ? 'That backup is from a newer version of Back40. Update the game first'
+        : "That file isn't a Back40 backup",
+    );
+    return;
+  }
+  const question = `Replace this farm (${farmSummary(farm)}) with the backup (${farmSummary(loaded)})? This farm will be lost unless you've saved a backup of it.`;
+  if (!(await askConfirm(question, 'Replace'))) return;
+  setFarm(loaded);
+  setMode({ kind: 'farm' });
+  setCamera(fittedCamera());
+  checkNeighbors();
+  toast.show('Backup loaded');
 }
 
 // ---- Land ----

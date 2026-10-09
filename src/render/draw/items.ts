@@ -2,6 +2,8 @@
 // its tile; the renderer has already set the camera transform.
 
 import type { AnimalId, DecorationId, TreeId } from '../../core/data/items';
+import { STILL, type Pose } from '../animalMotion';
+import { decorationHasArt, drawArt, GRIDS, UPRIGHT_DECORATIONS } from '../art';
 import { tile, tileCenter, tileToWorld, type WorldPoint } from '../iso';
 import { drawBarnLike } from './buildings';
 import { drawBox, ellipse, footprintCorners, lift, line, mix, polygon, SHADOW, type Footprint } from './shapes';
@@ -21,6 +23,8 @@ export function drawFruitTree(ctx: CanvasRenderingContext2D, x: number, y: numbe
   const c = tileCenter(tile(x, y));
   const look = TREE_LOOKS[id];
   ellipse(ctx, c.x + 4, c.y + 2, 18, 8, SHADOW);
+  // Real art stands its trunk on the middle of the square.
+  if (drawArt(ctx, `tree-${id}`, ready ? 1 : 0, c.x, c.y, 64)) return;
   ctx.fillStyle = '#7a5230';
   ctx.fillRect(c.x - 2.5, c.y - 16, 5, 16);
   const blobs: ReadonlyArray<readonly [number, number, number, string]> = [
@@ -59,9 +63,28 @@ function legs(ctx: CanvasRenderingContext2D, c: WorldPoint, spread: number, heig
   for (const dx of [-spread, -spread / 3, spread / 3, spread]) line(ctx, { ...c, x: c.x + dx, y: c.y - height }, { ...c, x: c.x + dx, y: c.y }, color, 2);
 }
 
-export function drawAnimal(ctx: CanvasRenderingContext2D, x: number, y: number, id: AnimalId, ready: boolean): void {
+export function drawAnimal(ctx: CanvasRenderingContext2D, x: number, y: number, id: AnimalId, ready: boolean, pose: Pose = STILL): void {
   const c = tileCenter(tile(x, y));
   ellipse(ctx, c.x + 2, c.y + 1, 13, 5, SHADOW);
+  // Real art: the pose picks the frame and row, and mirrors it to face right.
+  const index = (pose.away ? GRIDS.animal.cols : 0) + pose.frame;
+  if (drawArt(ctx, `animal-${id}`, index, c.x, c.y, 64, pose.facing === -1)) {
+    if (ready) productBubble(ctx, { ...c, x: c.x + 6, y: c.y - 34 }, PRODUCT_COLORS[id]);
+    return;
+  }
+  // The body is drawn facing left; mirror it to face right, lift it for a
+  // step, and tip it forward to peck or graze.
+  ctx.save();
+  ctx.translate(c.x, c.y - pose.bob);
+  ctx.scale(pose.facing, 1);
+  if (pose.acting) ctx.rotate(-0.22);
+  ctx.translate(-c.x, -c.y);
+  drawAnimalBody(ctx, c, id);
+  ctx.restore();
+  if (ready) productBubble(ctx, { ...c, x: c.x + 6, y: c.y - 34 }, PRODUCT_COLORS[id]);
+}
+
+function drawAnimalBody(ctx: CanvasRenderingContext2D, c: WorldPoint, id: AnimalId): void {
   switch (id) {
     case 'chicken':
       ellipse(ctx, c.x, c.y - 7, 6, 5, '#fbfbf7');
@@ -110,7 +133,6 @@ export function drawAnimal(ctx: CanvasRenderingContext2D, x: number, y: number, 
       return _exhaustive;
     }
   }
-  if (ready) productBubble(ctx, { ...c, x: c.x + 6, y: c.y - 34 }, PRODUCT_COLORS[id]);
 }
 
 // ---- Decorations ----
@@ -166,6 +188,14 @@ function drawFence(ctx: CanvasRenderingContext2D, x: number, y: number, links: L
 
 export function drawDecoration(ctx: CanvasRenderingContext2D, id: DecorationId, f: Footprint, links: Links): void {
   const c = tileCenter(tile(f.x, f.y));
+  if (decorationHasArt(id)) {
+    const front = tileToWorld(tile(f.x + f.width, f.y + f.depth));
+    // Upright things stand on the middle of their square; boxy things fill
+    // their footprint from its front corner.
+    const at = UPRIGHT_DECORATIONS.has(id) ? c : front;
+    ellipse(ctx, c.x + 3, c.y + 1, 10 * f.width, 4 * f.depth, SHADOW);
+    if (drawArt(ctx, `deco-${id}`, 0, at.x, at.y, ((f.width + f.depth) * 64) / 2)) return;
+  }
   switch (id) {
     case 'dirtPath':
       return;

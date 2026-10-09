@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#5f9a3a" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="icons/icon-180.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Back40" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Back40</title>
   </head>
   <body>
@@ -21,6 +28,9 @@
     <div id="mode-banner" class="mode-banner" role="status" hidden></div>
 
     <div class="zoom-controls">
+      <button id="menu-button" class="round" type="button" aria-haspopup="dialog" aria-label="Farm menu: backups" title="Farm menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14" /></svg>
+      </button>
       <button id="zoom-in" class="round" type="button" aria-label="Zoom in" title="Zoom in (+)">+</button>
       <button id="recenter" class="round" type="button" aria-label="Show whole farm" title="Show whole farm">⌂</button>
       <button id="zoom-out" class="round" type="button" aria-label="Zoom out" title="Zoom out (−)">−</button>
@@ -42,6 +52,7 @@
     <dialog id="neighbors" class="panel dialog" aria-label="Neighbors"></dialog>
     <dialog id="away" class="panel dialog" aria-label="While you were away"></dialog>
     <dialog id="notice" class="panel dialog" aria-label="This farm can't be opened"></dialog>
+    <dialog id="farm-menu" class="panel dialog" aria-label="Farm menu"></dialog>
 
     <script type="module" src="/src/main.ts"></script>
   </body>
