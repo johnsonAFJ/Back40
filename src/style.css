@@ -289,7 +289,7 @@ body {
 /* The test button sits on the right edge above the zoom buttons, where it
    can't collide with the coins and level at the top on a phone. */
 .test-toggle {
-  --test-bottom: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 64px + 3 * 52px);
+  --test-bottom: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 64px + 4 * 52px);
   position: fixed;
   bottom: var(--test-bottom);
   right: max(16px, env(safe-area-inset-right, 0px));
@@ -308,10 +308,10 @@ body {
 
 .test-panel {
   position: fixed;
-  bottom: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 64px + 3 * 52px + 50px);
+  bottom: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 64px + 4 * 52px + 50px);
   right: max(16px, env(safe-area-inset-right, 0px));
   width: min(320px, calc(100vw - 32px));
-  max-height: calc(100dvh - 380px);
+  max-height: calc(100dvh - 430px);
   min-height: 0;
   overflow-y: auto;
   padding: 14px 16px 16px;
@@ -931,6 +931,78 @@ body[data-mode='visit'] .hud-bottom {
 .notice-detail {
   font-size: 14px !important;
   font-weight: 500 !important;
+  color: var(--ink-soft);
+}
+
+/* Farm menu */
+
+.round svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.round {
+  display: grid;
+  place-items: center;
+}
+
+.farm-menu {
+  width: min(400px, calc(100vw - 32px));
+  padding-bottom: 12px;
+}
+
+.menu-section {
+  padding: 4px 20px 8px;
+}
+
+.menu-section h3 {
+  margin: 10px 0 4px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.menu-section p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.menu-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.file-button {
+  display: inline-grid;
+  place-items: center;
+  position: relative;
+}
+
+/* The real file input is invisible but covers its label, so clicking the
+   label opens the file picker. */
+.file-button input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-button:focus-within {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.menu-version {
+  margin: 8px 20px 0;
+  font-size: 12px;
   color: var(--ink-soft);
 }
 

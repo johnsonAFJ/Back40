@@ -28,4 +28,11 @@ copy and Claude tests on 8442, so test builds never touch the farm you play.
 Add `?test` to the address for the test panel: speed up the clock, skip ahead,
 add coins and levels, and start over.
 
-Status: milestone 6 (neighbors).
+Status: milestone 7 (installable app, backups, moving animals, art loader).
+
+## Adding art
+
+Art comes from Claude Design using the prompts in [prompts/](prompts/). Save
+each PNG into `src/art/` with the name the prompt gives and reload: it
+replaces the code-drawn version of that one thing. See
+[ART_BRIEF.md](ART_BRIEF.md) for the full spec.

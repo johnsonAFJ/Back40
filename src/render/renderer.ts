@@ -23,6 +23,7 @@ import {
   isOnFarm,
 } from './draw/ground';
 import { drawFlatDecoration, isFlat, NO_LINKS, type Links } from './draw/items';
+import { animalPose, STILL } from './animalMotion';
 import { animalSlots, type Slot } from './animalSlots';
 import { drawCrows, drawHungry, drawSparkle } from './draw/marks';
 import { drawFarmObject, drawProduct } from './draw/objects';
@@ -50,6 +51,9 @@ export type Scene = {
   readonly frameTime: number;
   // Chores on a neighbor's farm: crops with crows and hungry animals.
   readonly marks: Marks;
+  // Seconds on the clock animals move by, or null to keep them still (when
+  // the device asks for reduced motion).
+  readonly motion: number | null;
 };
 
 export type Marks = { readonly crows: ReadonlySet<string>; readonly hungry: ReadonlySet<string> };
@@ -152,14 +156,18 @@ export function render(ctx: CanvasRenderingContext2D, scene: Scene): void {
   for (const obj of objects) {
     const { width, depth } = footprint(obj);
     const slot = slots.get(obj.id);
+    const pose = slot && scene.motion !== null ? animalPose(obj.id, slot, scene.motion) : STILL;
     drawables.push({
-      depth: slot ? obj.x + slot.u + obj.y + slot.v : depthOf(obj.x, obj.y, width, depth),
+      depth: slot ? obj.x + slot.u + pose.du + obj.y + slot.v + pose.dv : depthOf(obj.x, obj.y, width, depth),
       x: obj.x,
       draw: () => {
-        drawFarmObject(ctx, obj, now, obj.kind === 'decoration' ? linksAt(obj.x, obj.y, obj.typeId) : NO_LINKS, slot);
+        drawFarmObject(ctx, obj, now, obj.kind === 'decoration' ? linksAt(obj.x, obj.y, obj.typeId) : NO_LINKS, slot, pose);
         if (obj.kind === 'plot' && obj.state === 'planted' && obj.fertilized) drawSparkle(ctx, obj.x, obj.y);
         if (scene.marks.crows.has(obj.id)) drawCrows(ctx, obj.x, obj.y);
-        if (scene.marks.hungry.has(obj.id)) drawHungry(ctx, obj.x, obj.y);
+        // The hungry bubble follows its animal around.
+        if (scene.marks.hungry.has(obj.id)) {
+          drawHungry(ctx, obj.x + (slot ? slot.u - 0.5 : 0) + pose.du, obj.y + (slot ? slot.v - 0.5 : 0) + pose.dv);
+        }
       },
     });
   }

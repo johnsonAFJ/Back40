@@ -9,6 +9,7 @@ import { drawCrop, drawSoil } from './draw/crops';
 import { drawFlatDecoration, isFlat } from './draw/items';
 import { drawProduct } from './draw/objects';
 import { drawProduceIcon } from './draw/produce';
+import { drawArt } from './art';
 
 const SIZE = 96;
 const cache = new Map<string, string>();
@@ -72,8 +73,16 @@ export function produceThumbnail(id: ProduceId): string {
   const ctx = canvas.getContext('2d');
   if (!ctx) return '';
   ctx.setTransform(pixelRatio, 0, 0, pixelRatio, (size / 2) * pixelRatio, (size / 2) * pixelRatio);
-  drawProduceIcon(ctx, id);
+  // Real icon art stands on the bottom of the icon, 40 pixels wide.
+  if (!drawArt(ctx, `produce-${id}`, 0, 0, 20, 40)) drawProduceIcon(ctx, id);
   const url = canvas.toDataURL('image/png');
   produceCache.set(id, url);
   return url;
+}
+
+// Forgets every cached picture, so the next market or basket opening redraws
+// them; called when real art finishes loading.
+export function clearThumbnails(): void {
+  cache.clear();
+  produceCache.clear();
 }

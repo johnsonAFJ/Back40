@@ -5,6 +5,7 @@ import type { CropId } from '../../core/data/crops';
 import type { Stage } from '../../core/growth';
 import { tile, tileToWorld, type WorldPoint } from '../iso';
 import { tileNoise } from './ground';
+import { drawArt } from '../art';
 import { footprintCorners, polygon } from './shapes';
 
 type Style = 'berry' | 'grain' | 'leafy' | 'vine' | 'flower' | 'stalk';
@@ -94,7 +95,12 @@ export function drawSoil(ctx: CanvasRenderingContext2D, x: number, y: number, ki
   }
 }
 
+const STAGE_INDEX: Record<Stage, number> = { seeded: 0, sprouting: 1, growing: 2, ready: 3, withered: 4 };
+
 export function drawCrop(ctx: CanvasRenderingContext2D, x: number, y: number, cropId: CropId, stage: Stage): void {
+  // Real art covers the whole plot, standing on its front corner.
+  const front = tileToWorld(tile(x + 1, y + 1));
+  if (drawArt(ctx, `crop-${cropId}`, STAGE_INDEX[stage], front.x, front.y, 64)) return;
   const art = ART[cropId];
   for (const [u, v] of SPOTS) {
     const base = tileToWorld(tile(x + u, y + v));

@@ -4,7 +4,8 @@
 
 import type { BuildingId } from '../../core/data/buildings';
 import { footprintCorners, lift, mix, polygon, SHADOW, type Footprint } from './shapes';
-import type { WorldPoint } from '../iso';
+import { tile, tileToWorld, type WorldPoint } from '../iso';
+import { drawArt } from '../art';
 
 type Look = {
   readonly wallLeft: string;
@@ -92,6 +93,9 @@ const LOOKS = {
 export type BuildingLook = keyof typeof LOOKS;
 
 export function drawBuilding(ctx: CanvasRenderingContext2D, typeId: BuildingId, f: Footprint): void {
+  // Real art stands on the front corner of the footprint and spans its width.
+  const front = tileToWorld(tile(f.x + f.width, f.y + f.depth));
+  if (drawArt(ctx, `building-${typeId}`, 0, front.x, front.y, ((f.width + f.depth) * 64) / 2)) return;
   drawHouse(ctx, LOOKS[typeId], f);
 }
 
