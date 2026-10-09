@@ -6,6 +6,7 @@ import { BUILDINGS } from '../core/data/buildings';
 import { CROPS, type CropId } from '../core/data/crops';
 import { PLOW_COST } from '../core/data/economy';
 import { ANIMALS, DECORATIONS, TREES } from '../core/data/items';
+import { PRODUCE } from '../core/data/produce';
 import { stage, timeUntilReady } from '../core/growth';
 import { isProducerReady, producerData, timeUntilProduce } from '../core/producers';
 import { isOnFarm, objectAt, type FarmObject, type FarmState } from '../core/state';
@@ -43,9 +44,10 @@ export function describeTile(farm: FarmState, x: number, y: number, seed: CropId
     case 'tree':
     case 'animal': {
       const data = producerData(obj);
+      const produce = PRODUCE[data.product].name;
       return isProducerReady(obj, now)
-        ? `${data.name}: ${data.product} ready to collect`
-        : `${data.name}: ${data.product} in ${formatDuration(timeUntilProduce(obj, now))}`;
+        ? `${data.name}: ${produce} ready to collect`
+        : `${data.name}: ${produce} in ${formatDuration(timeUntilProduce(obj, now))}`;
     }
     case 'plot':
       switch (obj.state) {
@@ -102,7 +104,7 @@ export function failureMessage(failure: Failure, now: number): string {
       return `${CROPS[failure.plot.cropId].name}: ready in ${formatDuration(timeUntilReady(failure.plot, now))}`;
     case 'producing': {
       const data = producerData(failure.producer);
-      return `${data.name}: ${data.product} in ${formatDuration(timeUntilProduce(failure.producer, now))}`;
+      return `${data.name}: ${PRODUCE[data.product].name} in ${formatDuration(timeUntilProduce(failure.producer, now))}`;
     }
     case 'notEnoughCoins':
       return `Not enough coins. You need ${formatCoins(failure.needed)}`;

@@ -13,13 +13,15 @@ does it too, including the harsh parts like withering. Softening happens by
 tuning numbers in `src/core/data/`, not by removing systems, and only after
 playing with the faithful version first.
 
-Departures happen for three reasons only, and each entry below names which:
+Departures happen for a few reasons, and each entry below names which:
 
 - **No Facebook.** The original leaned on real friends. Back40 simulates them
   until real multiplayer exists.
 - **Missing data.** Some 2009 values were never documented. Back40 fills the
   gap with its own numbers and says so.
 - **Scope.** Features left out of version 1 to ship a playable game sooner.
+- **Our own choice.** A deliberate change to how the game plays, explained in
+  its own note.
 
 ## Departures from the original
 
@@ -35,6 +37,7 @@ Departures happen for three reasons only, and each entry below names which:
 | Premium currency | Farm Cash, bought with real money | None | Scope |
 | Farmer avatar | Walked to each plot; actions queued | Actions happen instantly | Scope (open question in SPEC) |
 | Sound | Music and effects | None | Scope |
+| Tree and animal produce | Sold the moment it was collected | Goes into a harvest basket, sold when you choose | Our own choice (see below) |
 | Saves | Zynga's servers | The browser, with backup export and import | Scope |
 
 ### Neighbors arrive by level
@@ -112,4 +115,13 @@ crop planted "in the future" would un-grow. So the farm stores how far ahead
 its clock is, and that number only ever grows. Slowing down just stops the
 gap from widening. It's hidden behind `?test` rather than removed, because
 it's a tool for building the game, not part of playing it.
+
+### The harvest basket
+
+The original sold everything the instant it was collected. Back40 keeps that
+for crops, but tree and animal produce goes into a basket first. Seeing eggs
+and apples pile up makes the animals feel like they're producing something
+rather than just paying out, and it gives the neighbors in milestone 6
+something to trade in. Crops stay instant because a field of 36 plots would
+otherwise mean 36 more things to sell every few hours.
 

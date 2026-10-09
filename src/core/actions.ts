@@ -7,6 +7,7 @@ import { productInfo, type Placeable } from './catalog';
 import { CROPS, type CropId } from './data/crops';
 import { FERTILIZED_BONUS_XP, HARVEST_XP, PLOW_COST, PLOW_XP } from './data/economy';
 import { SELL_BACK } from './data/items';
+import type { ProduceId } from './data/produce';
 import { stage } from './growth';
 import { levelForXp } from './levels';
 import { isProducerReady, producerData } from './producers';
@@ -23,7 +24,9 @@ import {
   type Producer,
 } from './state';
 
-export type Reward = { readonly coins: number; readonly xp: number };
+// What an action earned. `produce` is a piece of fruit, an egg and so on,
+// collected into the basket rather than paid out.
+export type Reward = { readonly coins: number; readonly xp: number; readonly produce: ProduceId | null };
 
 export type Failure =
   | { readonly code: 'offFarm' }
@@ -52,7 +55,7 @@ export type Outcome =
   | { readonly ok: false; readonly failure: Failure };
 
 const fail = (failure: Failure): Outcome => ({ ok: false, failure });
-const NO_REWARD: Reward = { coins: 0, xp: 0 };
+const NO_REWARD: Reward = { coins: 0, xp: 0, produce: null };
 
 function succeed(
   kind: ActionKind,
@@ -100,7 +103,7 @@ export function plow(state: FarmState, x: number, y: number, now: number): Outco
   if (state.coins < PLOW_COST) return fail({ code: 'notEnoughCoins', needed: PLOW_COST });
 
   const plot: Plot = { id: existing?.id ?? `o${state.nextId}`, kind: 'plot', x, y, state: 'plowed' };
-  return succeed('plow', put(state, plot), { coins: -PLOW_COST, xp: PLOW_XP }, plot, now);
+  return succeed('plow', put(state, plot), { coins: -PLOW_COST, xp: PLOW_XP, produce: null }, plot, now);
 }
 
 export function plant(state: FarmState, x: number, y: number, cropId: CropId, now: number): Outcome {
@@ -121,7 +124,7 @@ export function plant(state: FarmState, x: number, y: number, cropId: CropId, no
     witherAt: rollWitherAt(state.seed, x, y, cropId, now),
     fertilized: false,
   };
-  return succeed('plant', put(state, plot), { coins: -crop.seed, xp: crop.plantXp }, plot, now);
+  return succeed('plant', put(state, plot), { coins: -crop.seed, xp: crop.plantXp, produce: null }, plot, now);
 }
 
 // Harvest a ripe crop, or collect from a ready tree or animal.
@@ -129,10 +132,13 @@ export function harvest(state: FarmState, x: number, y: number, now: number): Ou
   const existing = objectAt(state, x, y);
   if (!existing) return fail({ code: 'nothingThere' });
 
+  // Trees and animals fill the basket instead of paying on the spot.
   if (existing.kind === 'tree' || existing.kind === 'animal') {
     if (!isProducerReady(existing, now)) return fail({ code: 'producing', producer: existing });
-    const reward = { coins: producerData(existing).sells, xp: HARVEST_XP };
-    return succeed('harvest', put(state, { ...existing, lastHarvestAt: now }), reward, existing, now);
+    const produce = producerData(existing).product;
+    const collected = put(state, { ...existing, lastHarvestAt: now });
+    const basket = { ...collected.basket, [produce]: (collected.basket[produce] ?? 0) + 1 };
+    return succeed('harvest', { ...collected, basket }, { coins: 0, xp: HARVEST_XP, produce }, existing, now);
   }
 
   if (existing.kind !== 'plot' || existing.state !== 'planted') return fail({ code: 'notPlowed' });
@@ -142,6 +148,7 @@ export function harvest(state: FarmState, x: number, y: number, now: number): Ou
   const reward = {
     coins: CROPS[existing.cropId].sells,
     xp: HARVEST_XP + (existing.fertilized ? FERTILIZED_BONUS_XP : 0),
+    produce: null,
   };
   return succeed('harvest', put(state, plot), reward, plot, now);
 }
@@ -163,7 +170,7 @@ export function place(state: FarmState, item: Placeable, x: number, y: number, n
       : item.kind === 'tree'
         ? { id, kind: 'tree', typeId: item.id, x, y, lastHarvestAt: now }
         : { id, kind: 'animal', typeId: item.id, x, y, lastHarvestAt: now };
-  return succeed('place', put(state, obj), { coins: -info.price, xp: info.buyXp }, obj, now);
+  return succeed('place', put(state, obj), { coins: -info.price, xp: info.buyXp, produce: null }, obj, now);
 }
 
 // Move any object, crops and all, so its top corner lands on (x, y). Free.
@@ -202,7 +209,7 @@ export function sell(state: FarmState, id: string, now: number): Outcome {
   if (!obj) return fail({ code: 'nothingThere' });
   const value = sellValue(obj);
   if (value === null) return fail({ code: 'cantSell', obj });
-  return succeed('sell', remove(state, id), { coins: value, xp: 0 }, obj, now);
+  return succeed('sell', remove(state, id), { coins: value, xp: 0, produce: null }, obj, now);
 }
 
 // ---- The multi-tool ----

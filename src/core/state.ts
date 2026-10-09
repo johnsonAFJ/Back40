@@ -4,13 +4,14 @@
 
 import { BUILDINGS, type BuildingId } from './data/buildings';
 import { DECORATIONS, type AnimalId, type DecorationId, type TreeId } from './data/items';
+import type { ProduceId } from './data/produce';
 import { CROPS, type CropId } from './data/crops';
 import { CUSHION_GROW_TIMES, SAFE_GROW_TIMES, STARTER_CROP_MINUTES_LEFT, STARTING_COINS } from './data/economy';
 import { EXPANSIONS } from './data/expansions';
 import { HOUR, MINUTE } from './clock';
 import { random01 } from './rng';
 
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 
 // A plot is always in exactly one of these states. Fields that only make
 // sense for a growing crop only exist on the 'planted' variant, so a plowed
@@ -53,7 +54,12 @@ export type FarmState = {
   // milliseconds. Zero for any farm that's never been in test mode. See
   // core/cheats.ts.
   readonly timeOffset: number;
+  // Eggs, fruit and the rest, collected from trees and animals and waiting
+  // to be sold. A missing entry means none.
+  readonly basket: Basket;
 };
+
+export type Basket = { readonly [id in ProduceId]?: number };
 
 export function farmSize(state: FarmState): number {
   const expansion = EXPANSIONS[state.expansion] ?? EXPANSIONS[0];
@@ -157,5 +163,6 @@ export function newFarm(now: number, seed: number): FarmState {
     nextId,
     objects,
     timeOffset: 0,
+    basket: {},
   };
 }

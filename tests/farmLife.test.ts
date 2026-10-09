@@ -50,7 +50,9 @@ describe('trees and animals', () => {
 
     const coins = farm.coins;
     farm = ok(useMultiTool(farm, 9, 9, 'strawberries', START + 24 * HOUR));
-    expect(farm.coins).toBe(coins + 15);
+    // The egg goes in the basket; coins come when it's sold.
+    expect(farm.coins).toBe(coins);
+    expect(farm.basket).toEqual({ eggs: 1 });
     const chicken = objectAt(farm, 9, 9);
     if (chicken?.kind !== 'animal') throw new Error('chicken missing');
     expect(chicken.lastHarvestAt).toBe(START + 24 * HOUR);
@@ -121,11 +123,12 @@ describe('selling', () => {
 
 describe('saves from milestone 2', () => {
   it('migrate step by step to the current version with nothing lost', () => {
-    const { timeOffset: _, ...v1 } = { ...newFarm(START, 7), version: 1 };
+    const { timeOffset: _, basket: __, ...v1 } = { ...newFarm(START, 7), version: 1 };
     const loaded = parseSave(JSON.parse(JSON.stringify(v1)));
-    expect(loaded.version).toBe(3);
+    expect(loaded.version).toBe(4);
     expect(loaded.objects).toEqual(v1.objects);
     expect(loaded.timeOffset).toBe(0);
+    expect(loaded.basket).toEqual({});
   });
 
   it('round-trip trees, animals and decorations', () => {
