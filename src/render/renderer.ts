@@ -85,7 +85,7 @@ function visibleTiles(camera: Camera, view: Viewport): TileRange {
 }
 
 // Fences and paths join up with the same decoration on neighboring tiles.
-function linker(objects: readonly FarmObject[]): (x: number, y: number, id: DecorationId) => Links {
+export function linker(objects: readonly FarmObject[]): (x: number, y: number, id: DecorationId) => Links {
   const at = new Map<string, DecorationId>();
   for (const o of objects) if (o.kind === 'decoration' && DECORATIONS[o.typeId].connects) at.set(`${o.x},${o.y}`, o.typeId);
   return (x, y, id) =>

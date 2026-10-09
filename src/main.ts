@@ -19,9 +19,10 @@ import { unlocksBetween } from './core/unlocks';
 import { MIN_ZOOM, clampToBounds, pan, screenToWorld, worldToScreen, zoomAt, type Bounds, type Camera, type Viewport } from './render/camera';
 import { liveEffects, type FloatingText } from './render/effects';
 import { clearThumbnails } from './render/thumbnails';
-import { TILE_HEIGHT, TILE_WIDTH, pickTile, screen, tile, tileCenter, tileToWorld, type ScreenPoint, type TilePoint } from './render/iso';
+import { TILE_HEIGHT, TILE_WIDTH, pickTile, screen, tile, tileCenter, tileToWorld, type ScreenPoint, type TilePoint, type WorldPoint } from './render/iso';
 import { ART_FILES, loadArt } from './render/art';
 import { objectAtPoint } from './render/hit';
+import { pixelTest } from './render/pick';
 import { NO_MARKS, render, type Ghost } from './render/renderer';
 import { readBackup, saveBackup } from './platform/backup';
 import { loadFarm, saveFarm } from './platform/storage';
@@ -536,11 +537,17 @@ function chosenAt(t: TilePoint): FarmObject | null {
   return objectAt(farm, t.x, t.y);
 }
 
+// The thing drawn under a world point, checked against its actual drawing.
+function thingAt(shown: FarmState, w: WorldPoint): FarmObject | null {
+  const motion = reducedMotion.matches ? null : clock.now() / 1000;
+  return objectAtPoint(shown, w, pixelTest(shown, w, now(), motion));
+}
+
 function farmTileAt(at: ScreenPoint): TilePoint | null {
   const shown = shownFarm();
   const w = screenToWorld(camera, view, at);
   const holding = mode.kind === 'place' || mode.kind === 'gift' || (mode.kind === 'move' && mode.held !== null);
-  const obj = holding ? null : objectAtPoint(shown, w);
+  const obj = holding ? null : thingAt(shown, w);
   if (obj) {
     // Keep the exact tile when the pointer is over the object's own
     // footprint, so a big building is grabbed where it was clicked.
@@ -582,11 +589,11 @@ attachInput(canvas, {
   pan: (dx, dy) => setCamera(pan(camera, dx, dy)),
   zoom: (anchor, factor) => setCamera(zoomAt(camera, view, anchor, factor)),
   hover: (at) => {
-    highlightObj = at ? objectAtPoint(shownFarm(), screenToWorld(camera, view, at)) : null;
+    highlightObj = at ? thingAt(shownFarm(), screenToWorld(camera, view, at)) : null;
     setHighlight(at ? farmTileAt(at) : null);
   },
   tap: (at) => {
-    highlightObj = objectAtPoint(shownFarm(), screenToWorld(camera, view, at));
+    highlightObj = thingAt(shownFarm(), screenToWorld(camera, view, at));
     const t = farmTileAt(at);
     // On a phone there's no hover, so the tapped tile is the highlight.
     if (pointerKind === 'touch' || !highlight) setHighlight(t);
