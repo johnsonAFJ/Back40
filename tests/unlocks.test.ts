@@ -7,8 +7,8 @@ const names = (list: readonly Unlock[]): string[] =>
 describe('unlocks', () => {
   it('lists everything that unlocks at a level, across the whole market', () => {
     expect(names(unlocksAt(4))).toEqual(['crop:lilac', 'crop:squash', 'decoration:flowerPot']);
-    expect(names(unlocksAt(2))).toEqual(['animal:chicken']);
-    expect(unlocksAt(7).length).toBe(1);
+    expect(names(unlocksAt(2))).toEqual(['crop:raspberries', 'animal:chicken']);
+    expect(names(unlocksAt(7))).toEqual(['crop:blueberries']);
   });
 
   it('collects every unlock across a multi-level jump', () => {
@@ -16,7 +16,6 @@ describe('unlocks', () => {
       'crop:lilac',
       'crop:squash',
       'decoration:flowerPot',
-      'crop:pumpkin',
       'animal:cow',
       'expansion:14',
     ]);
@@ -24,15 +23,18 @@ describe('unlocks', () => {
 
   it('finds the next level with something new', () => {
     expect(nextUnlockLevel(1)).toBe(2);
-    expect(nextUnlockLevel(18)).toBe(19);
-    // After level 20's crops, the last expansion at 25 is all that's left.
-    expect(nextUnlockLevel(20)).toBe(25);
+    // Nothing new at 19; level 20 brings sugar cane, pink roses and more.
+    expect(nextUnlockLevel(18)).toBe(20);
+    // Sunflowers at 23 and corn at 24, then the last expansion at 25.
+    expect(nextUnlockLevel(20)).toBe(23);
+    expect(nextUnlockLevel(24)).toBe(25);
     expect(nextUnlockLevel(25)).toBeNull();
   });
 
   it('knows what a level can buy', () => {
     expect(isUnlocked({ kind: 'crop', id: 'strawberries' }, 1)).toBe(true);
-    expect(isUnlocked({ kind: 'crop', id: 'pumpkin' }, 4)).toBe(false);
+    expect(isUnlocked({ kind: 'crop', id: 'tomatoes' }, 9)).toBe(false);
+    expect(isUnlocked({ kind: 'crop', id: 'tomatoes' }, 10)).toBe(true);
     expect(isUnlocked({ kind: 'animal', id: 'horse' }, 15)).toBe(true);
   });
 });

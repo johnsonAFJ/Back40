@@ -1,6 +1,6 @@
 # Crops
 
-29 strips, one per crop. Paste one prompt at a time. Save each PNG to
+35 strips, one per crop. Paste one prompt at a time. Save each PNG to
 `src/art/` with the file name shown. The five starting crops come first.
 
 ## Strawberries
@@ -580,5 +580,125 @@ In each cell, the farm plot is the diamond in the bottom half of the cell: top c
 - Cell 2 (x 128 to 255): sprouting. Tiny two-leaf sprouts.
 - Cell 3 (x 256 to 383): growing. Leafy plants at about two-thirds height, no crop showing yet.
 - Cell 4 (x 384 to 511): ready. Full plants with the crop clearly visible: thorny bushes with pink roses.
+- Cell 5 (x 512 to 639): withered. The same plants brown, drooping and dead.
+```
+
+## Sugar Cane
+
+File: `crop-sugarCane.png`
+
+```
+Make a strip of five growth stages of one crop, Sugar Cane, for an isometric farming game.
+
+Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
+
+Canvas: exactly 640 x 128 pixels, transparent: 5 cells of 128 x 128 side by side, with no lines between them.
+
+In each cell, the farm plot is the diamond in the bottom half of the cell: top corner at (64, 64), right corner at (128, 96), bottom corner at (64, 128), left corner at (0, 96). The game draws the soil there, so draw only the plants: a small cluster of four to six plants spread evenly over that diamond, rising above it as tall as they need, but never outside the cell.
+
+- Cell 1 (x 0 to 127): seeded. A few small dark mounds where seeds went in.
+- Cell 2 (x 128 to 255): sprouting. Tiny two-leaf sprouts.
+- Cell 3 (x 256 to 383): growing. Leafy plants at about two-thirds height, no crop showing yet.
+- Cell 4 (x 384 to 511): ready. Full plants with the crop clearly visible: tall green-and-gold jointed canes with long leaves.
+- Cell 5 (x 512 to 639): withered. The same plants brown, drooping and dead.
+```
+
+## Carrots
+
+File: `crop-carrots.png`
+
+```
+Make a strip of five growth stages of one crop, Carrots, for an isometric farming game.
+
+Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
+
+Canvas: exactly 640 x 128 pixels, transparent: 5 cells of 128 x 128 side by side, with no lines between them.
+
+In each cell, the farm plot is the diamond in the bottom half of the cell: top corner at (64, 64), right corner at (128, 96), bottom corner at (64, 128), left corner at (0, 96). The game draws the soil there, so draw only the plants: a small cluster of four to six plants spread evenly over that diamond, rising above it as tall as they need, but never outside the cell.
+
+- Cell 1 (x 0 to 127): seeded. A few small dark mounds where seeds went in.
+- Cell 2 (x 128 to 255): sprouting. Tiny two-leaf sprouts.
+- Cell 3 (x 256 to 383): growing. Leafy plants at about two-thirds height, no crop showing yet.
+- Cell 4 (x 384 to 511): ready. Full plants with the crop clearly visible: feathery green tops with orange carrot shoulders showing above the soil.
+- Cell 5 (x 512 to 639): withered. The same plants brown, drooping and dead.
+```
+
+## Coffee
+
+File: `crop-coffee.png`
+
+```
+Make a strip of five growth stages of one crop, Coffee, for an isometric farming game.
+
+Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
+
+Canvas: exactly 640 x 128 pixels, transparent: 5 cells of 128 x 128 side by side, with no lines between them.
+
+In each cell, the farm plot is the diamond in the bottom half of the cell: top corner at (64, 64), right corner at (128, 96), bottom corner at (64, 128), left corner at (0, 96). The game draws the soil there, so draw only the plants: a small cluster of four to six plants spread evenly over that diamond, rising above it as tall as they need, but never outside the cell.
+
+- Cell 1 (x 0 to 127): seeded. A few small dark mounds where seeds went in.
+- Cell 2 (x 128 to 255): sprouting. Tiny two-leaf sprouts.
+- Cell 3 (x 256 to 383): growing. Leafy plants at about two-thirds height, no crop showing yet.
+- Cell 4 (x 384 to 511): ready. Full plants with the crop clearly visible: glossy dark-green shrubs with clusters of red coffee cherries.
+- Cell 5 (x 512 to 639): withered. The same plants brown, drooping and dead.
+```
+
+## Sunflowers
+
+File: `crop-sunflowers.png`
+
+```
+Make a strip of five growth stages of one crop, Sunflowers, for an isometric farming game.
+
+Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
+
+Canvas: exactly 640 x 128 pixels, transparent: 5 cells of 128 x 128 side by side, with no lines between them.
+
+In each cell, the farm plot is the diamond in the bottom half of the cell: top corner at (64, 64), right corner at (128, 96), bottom corner at (64, 128), left corner at (0, 96). The game draws the soil there, so draw only the plants: a small cluster of four to six plants spread evenly over that diamond, rising above it as tall as they need, but never outside the cell.
+
+- Cell 1 (x 0 to 127): seeded. A few small dark mounds where seeds went in.
+- Cell 2 (x 128 to 255): sprouting. Tiny two-leaf sprouts.
+- Cell 3 (x 256 to 383): growing. Leafy plants at about two-thirds height, no crop showing yet.
+- Cell 4 (x 384 to 511): ready. Full plants with the crop clearly visible: tall stems with big yellow sunflowers and brown centers.
+- Cell 5 (x 512 to 639): withered. The same plants brown, drooping and dead.
+```
+
+## Broccoli
+
+File: `crop-broccoli.png`
+
+```
+Make a strip of five growth stages of one crop, Broccoli, for an isometric farming game.
+
+Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
+
+Canvas: exactly 640 x 128 pixels, transparent: 5 cells of 128 x 128 side by side, with no lines between them.
+
+In each cell, the farm plot is the diamond in the bottom half of the cell: top corner at (64, 64), right corner at (128, 96), bottom corner at (64, 128), left corner at (0, 96). The game draws the soil there, so draw only the plants: a small cluster of four to six plants spread evenly over that diamond, rising above it as tall as they need, but never outside the cell.
+
+- Cell 1 (x 0 to 127): seeded. A few small dark mounds where seeds went in.
+- Cell 2 (x 128 to 255): sprouting. Tiny two-leaf sprouts.
+- Cell 3 (x 256 to 383): growing. Leafy plants at about two-thirds height, no crop showing yet.
+- Cell 4 (x 384 to 511): ready. Full plants with the crop clearly visible: blue-green leafy plants with dark green broccoli heads.
+- Cell 5 (x 512 to 639): withered. The same plants brown, drooping and dead.
+```
+
+## Corn
+
+File: `crop-corn.png`
+
+```
+Make a strip of five growth stages of one crop, Corn, for an isometric farming game.
+
+Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
+
+Canvas: exactly 640 x 128 pixels, transparent: 5 cells of 128 x 128 side by side, with no lines between them.
+
+In each cell, the farm plot is the diamond in the bottom half of the cell: top corner at (64, 64), right corner at (128, 96), bottom corner at (64, 128), left corner at (0, 96). The game draws the soil there, so draw only the plants: a small cluster of four to six plants spread evenly over that diamond, rising above it as tall as they need, but never outside the cell.
+
+- Cell 1 (x 0 to 127): seeded. A few small dark mounds where seeds went in.
+- Cell 2 (x 128 to 255): sprouting. Tiny two-leaf sprouts.
+- Cell 3 (x 256 to 383): growing. Leafy plants at about two-thirds height, no crop showing yet.
+- Cell 4 (x 384 to 511): ready. Full plants with the crop clearly visible: tall green stalks with yellow corn ears and tassels.
 - Cell 5 (x 512 to 639): withered. The same plants brown, drooping and dead.
 ```

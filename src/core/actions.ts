@@ -17,7 +17,7 @@ import {
   isOnFarm,
   objectAt,
   objectsAt,
-  rollWitherAt,
+  witherTime,
   type FarmObject,
   type FarmState,
   type PlantedPlot,
@@ -131,7 +131,7 @@ export function plant(state: FarmState, x: number, y: number, cropId: CropId, no
     state: 'planted',
     cropId,
     plantedAt: now,
-    witherAt: rollWitherAt(state.seed, x, y, cropId, now),
+    witherAt: witherTime(cropId, now),
     fertilized: false,
   };
   return succeed('plant', put(state, plot), { coins: -crop.seed, xp: crop.plantXp, produce: [] }, plot, now);

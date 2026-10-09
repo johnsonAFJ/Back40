@@ -114,6 +114,12 @@ Size: exactly **640 x 128**. Grid: **5 columns x 1 row**, each cell
 | grapes | Grapes | Short vines on stakes with purple grape bunches |
 | tomatoes | Tomatoes | Staked plants with round red tomatoes |
 | pinkRoses | Pink Roses | Thorny bushes with pink roses |
+| sugarCane | Sugar Cane | Tall green-and-gold jointed canes with long leaves |
+| carrots | Carrots | Feathery green tops with orange carrot shoulders showing above the soil |
+| coffee | Coffee | Glossy dark-green shrubs with clusters of red coffee cherries |
+| sunflowers | Sunflowers | Tall stems with big yellow sunflowers and brown centers |
+| broccoli | Broccoli | Blue-green leafy plants with dark green broccoli heads |
+| corn | Corn | Tall green stalks with yellow corn ears and tassels |
 
 ## 3. Fruit trees: one strip each
 
