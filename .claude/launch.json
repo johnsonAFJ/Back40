@@ -4,9 +4,9 @@
     {
       "name": "back40",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 8440,
-      "url": "http://localhost:8440"
+      "runtimeArgs": ["run", "dev", "--", "--port", "8442"],
+      "port": 8442,
+      "url": "http://localhost:8442"
     }
   ]
 }

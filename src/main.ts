@@ -3,22 +3,24 @@
 // src/core.
 
 import './style.css';
-import { move, place, sell, sellValue, useMultiTool, type Outcome } from './core/actions';
+import { move, place, placeGift, sell, sellValue, useMultiTool, type Outcome } from './core/actions';
 import { productInfo, type Placeable } from './core/catalog';
 import { sellBasket, sellProduce, type Sale } from './core/basket';
 import { addCoins, farmNow, levelUp as cheatLevelUp, readyEverything, skipAhead } from './core/cheats';
 import { systemClock } from './core/clock';
+import { NEIGHBORS, type NeighborId } from './core/data/neighbors';
 import { PRODUCE } from './core/data/produce';
 import { expand, nextExpansion } from './core/land';
 import { levelForXp } from './core/levels';
+import { HELP_COINS, HELP_XP, help, helpsLeft, syncNeighbors, visit, type Visit } from './core/neighbors';
 import { newSeed } from './core/rng';
-import { farmSize, footprint, isAreaFree, isOnFarm, newFarm, objectAt, type FarmState } from './core/state';
+import { farmSize, footprint, isAreaFree, isOnFarm, newFarm, objectAt, type FarmState, type FeedEvent } from './core/state';
 import { unlocksBetween } from './core/unlocks';
 import { MIN_ZOOM, clampToBounds, pan, screenToWorld, worldToScreen, zoomAt, type Bounds, type Camera, type Viewport } from './render/camera';
 import { liveEffects, type FloatingText } from './render/effects';
 import { TILE_HEIGHT, TILE_WIDTH, pickTile, screen, tile, tileCenter, tileToWorld, type ScreenPoint, type TilePoint } from './render/iso';
 import { objectAtPoint } from './render/hit';
-import { render, type Ghost } from './render/renderer';
+import { NO_MARKS, render, type Ghost } from './render/renderer';
 import { loadFarm, saveFarm } from './platform/storage';
 import { formatCoins } from './ui/format';
 import { createBasket } from './ui/basket';
@@ -26,7 +28,8 @@ import { createHud } from './ui/hud';
 import { attachInput } from './ui/input';
 import { createLevelUp } from './ui/levelUp';
 import { createMarket } from './ui/market';
-import { describeSell, describeTile, expandFailureMessage, failureMessage, objectName } from './ui/messages';
+import { describeChore, describeSell, describeTile, expandFailureMessage, failureMessage, helpFailureMessage, objectName } from './ui/messages';
+import { createNeighborsWindow, hasUnreadNews, showAway } from './ui/neighbors';
 import { createToast, createTooltip } from './ui/notices';
 import { createTestPanel, isTestMode } from './ui/testPanel';
 import { createConfirm, createToolbar, type Mode } from './ui/tools';
@@ -43,8 +46,19 @@ if (!ctxOrNull) throw new Error('This browser cannot draw on a canvas.');
 const ctx = ctxOrNull;
 
 const clock = systemClock;
-let farm: FarmState = loadFarm(clock.now());
-saveFarm(farm);
+const loaded = loadFarm(clock.now());
+// A save from a newer version of the game is never touched: this version
+// shows a message and plays nothing over it. See platform/storage.ts.
+const canSave = loaded.kind !== 'newer';
+let farm: FarmState = loaded.kind === 'newer' ? newFarm(clock.now(), newSeed()) : loaded.farm;
+persist();
+
+function persist(): boolean {
+  return canSave ? saveFarm(farm) : true;
+}
+
+// The device's time zone, so neighbor "days" run midnight to midnight here.
+const tz = (): number => new Date().getTimezoneOffset();
 
 // The farm's time: real time, plus however far test mode has moved it ahead.
 // Every rule gets its `now` from here.
@@ -71,7 +85,11 @@ const market = createMarket(required('#market', HTMLDialogElement), required('#m
   onSeed: () => setMode({ kind: 'farm' }),
   onBuy: (item) => setMode({ kind: 'place', item }),
   onExpand: () => void expandFarm(),
+  onGift: (index) => setMode({ kind: 'gift', index }),
 });
+const neighborsButton = required('#neighbors-button', HTMLButtonElement);
+const neighborsWindow = createNeighborsWindow(required('#neighbors', HTMLDialogElement), (id) => goVisit(id), updateNewsDot);
+neighborsButton.addEventListener('click', () => neighborsWindow.open(farm, now(), tz()));
 const toolbar = createToolbar(
   required('#tools', HTMLElement),
   required('#mode-banner', HTMLElement),
@@ -79,18 +97,30 @@ const toolbar = createToolbar(
   () => setMode({ kind: 'farm' }),
 );
 
+// ---- Whose farm is on screen ----
+
+// On a visit, the screen shows the neighbor's farm, rebuilt from the clock
+// each time it's needed; otherwise your own.
+function currentVisit(): Visit | null {
+  return mode.kind === 'visit' ? visit(farm, mode.neighbor, now(), tz()) : null;
+}
+
+function shownFarm(): FarmState {
+  return currentVisit()?.farm ?? farm;
+}
+
 // ---- Camera ----
 
 // The camera's center may roam anywhere over the farm's bounding box, so some
 // part of the farm is always on screen.
 function bounds(): Bounds {
-  const size = farmSize(farm);
+  const size = farmSize(shownFarm());
   return { minX: -size * (TILE_WIDTH / 2), maxX: size * (TILE_WIDTH / 2), minY: 0, maxY: size * TILE_HEIGHT };
 }
 
 // The zoom that fits the whole farm on screen with a margin, within limits.
 function fittedCamera(): Camera {
-  const size = farmSize(farm);
+  const size = farmSize(shownFarm());
   const fit = Math.min(view.width / (size * TILE_WIDTH * 1.1), view.height / (size * TILE_HEIGHT * 1.6));
   return {
     center: tileCenter(tile(size / 2 - 0.5, size / 2 - 0.5)),
@@ -117,6 +147,14 @@ function ghostAt(at: TilePoint | null): Ghost | null {
     const y = at.y - Math.floor((depth - 1) / 2);
     return { kind: 'product', product: mode.item, x, y, fits: isAreaFree(farm, { x, y, width, depth }) };
   }
+  if (mode.kind === 'gift') {
+    const gift = farm.gifts[mode.index];
+    if (!gift) return null;
+    const { width, depth } = productInfo(gift);
+    const x = at.x - Math.floor((width - 1) / 2);
+    const y = at.y - Math.floor((depth - 1) / 2);
+    return { kind: 'product', product: gift, x, y, fits: isAreaFree(farm, { x, y, width, depth }) };
+  }
   if (mode.kind === 'move' && mode.held) {
     const x = at.x - mode.grab.dx;
     const y = at.y - mode.grab.dy;
@@ -136,7 +174,20 @@ function requestDraw(): void {
     frameRequested = false;
     effects = liveEffects(effects, frameTime);
     const hiddenId = mode.kind === 'move' && mode.held ? mode.held.id : null;
-    render(ctx, { camera, view, pixelRatio, farm, now: now(), highlight, ghost: ghostAt(highlight), hiddenId, effects, frameTime });
+    const v = currentVisit();
+    render(ctx, {
+      camera,
+      view,
+      pixelRatio,
+      farm: v?.farm ?? farm,
+      now: now(),
+      highlight,
+      ghost: ghostAt(highlight),
+      hiddenId,
+      effects,
+      frameTime,
+      marks: v ? { crows: v.crows, hungry: v.hungry } : NO_MARKS,
+    });
     if (effects.length > 0) requestDraw();
   });
 }
@@ -155,7 +206,12 @@ function tooltipText(t: TilePoint): string | null {
       return obj ? `Pick up ${objectName(obj).toLowerCase()}` : null;
     }
     case 'place':
+    case 'gift':
       return null;
+    case 'visit': {
+      const v = currentVisit();
+      return v ? describeChore(v, t.x, t.y, now()) : null;
+    }
     default: {
       const _exhaustive: never = mode;
       return _exhaustive;
@@ -186,6 +242,17 @@ function bannerText(): string | null {
       return mode.held ? `Moving ${objectName(mode.held).toLowerCase()}. Click where it goes` : 'Click something to move it';
     case 'sell':
       return 'Click something to sell it';
+    case 'gift': {
+      const gift = farm.gifts[mode.index];
+      return gift ? `Placing your gift: ${productInfo(gift).name.toLowerCase()}. Click where it goes` : null;
+    }
+    case 'visit': {
+      const name = NEIGHBORS[mode.neighbor].name;
+      const left = helpsLeft(farm, mode.neighbor, now(), tz());
+      return left > 0
+        ? `${name}'s farm. ${left} ${left === 1 ? 'help' : 'helps'} left today`
+        : `${name}'s farm. You've helped all you can today`;
+    }
     default: {
       const _exhaustive: never = mode;
       return _exhaustive;
@@ -193,9 +260,18 @@ function bannerText(): string | null {
   }
 }
 
+// Where the camera was on your own farm, to come back to after a visit.
+let homeCamera: Camera | null = null;
+
 function setMode(next: Mode): void {
+  const wasVisiting = mode.kind === 'visit';
   mode = next;
   canvas.dataset['mode'] = mode.kind;
+  document.body.dataset['mode'] = mode.kind;
+  if (wasVisiting && mode.kind !== 'visit' && homeCamera) {
+    camera = homeCamera;
+    homeCamera = null;
+  }
   toolbar.show(mode, bannerText());
   refreshTooltip();
   requestDraw();
@@ -237,10 +313,16 @@ function apply(outcome: Outcome): boolean {
 // Replaces the farm, saves it and updates everything that shows it.
 function setFarm(next: FarmState): void {
   farm = next;
-  if (!saveFarm(farm)) toast.show("Couldn't save. This browser is blocking storage");
+  if (!persist()) toast.show("Couldn't save. This browser is blocking storage");
   hud.update(farm);
   market.setFarm(farm);
   basket.refresh(farm);
+  neighborsWindow.refresh(farm, now(), tz());
+  updateNewsDot();
+}
+
+function updateNewsDot(): void {
+  neighborsButton.dataset['news'] = String(hasUnreadNews(farm));
 }
 
 function sold(sale: Sale): void {
@@ -301,11 +383,52 @@ async function tapTile(t: TilePoint): Promise<void> {
       if (await askConfirm(question, obj.kind === 'plot' ? 'Remove' : 'Sell')) apply(sell(farm, obj.id, now()));
       return;
     }
+    case 'gift': {
+      const g = ghostAt(t);
+      if (g && apply(placeGift(farm, mode.index, g.x, g.y, now()))) setMode({ kind: 'farm' });
+      return;
+    }
+    case 'visit': {
+      const v = currentVisit();
+      const obj = v ? objectAt(v.farm, t.x, t.y) : null;
+      if (!obj) return;
+      const outcome = help(farm, mode.neighbor, obj.id, now(), tz());
+      if (!outcome.ok) {
+        toast.show(helpFailureMessage(outcome.failure, NEIGHBORS[mode.neighbor].name));
+        return;
+      }
+      const levelBefore = levelForXp(farm.xp);
+      setFarm(outcome.state);
+      float(outcome.at, [
+        [`+${HELP_COINS}`, '#ffd23f'],
+        [`+${HELP_XP} XP`, '#9fe3ff'],
+      ]);
+      celebrate(levelBefore);
+      // Refresh the banner's count of helps left.
+      setMode(mode);
+      return;
+    }
     default: {
       const _exhaustive: never = mode;
       return _exhaustive;
     }
   }
+}
+
+// ---- Neighbors ----
+
+function goVisit(id: NeighborId): void {
+  if (mode.kind !== 'visit') homeCamera = camera;
+  setMode({ kind: 'visit', neighbor: id });
+  setCamera(fittedCamera());
+}
+
+// Catch up on whatever the neighbors have done. Run on opening the game and
+// every second after.
+function checkNeighbors(): readonly FeedEvent[] {
+  const sync = syncNeighbors(farm, now(), tz());
+  if (sync.events.length > 0) setFarm(sync.state);
+  return sync.events;
 }
 
 // ---- Land ----
@@ -334,17 +457,18 @@ async function expandFarm(): Promise<void> {
 // a barn's roof) means that thing, even where it's drawn over the tiles
 // behind it.
 function farmTileAt(at: ScreenPoint): TilePoint | null {
+  const shown = shownFarm();
   const w = screenToWorld(camera, view, at);
-  const holding = mode.kind === 'place' || (mode.kind === 'move' && mode.held !== null);
-  const obj = holding ? null : objectAtPoint(farm, w);
+  const holding = mode.kind === 'place' || mode.kind === 'gift' || (mode.kind === 'move' && mode.held !== null);
+  const obj = holding ? null : objectAtPoint(shown, w);
   if (obj) {
     // Keep the exact tile when the pointer is over the object's own
     // footprint, so a big building is grabbed where it was clicked.
     const ground = pickTile(w);
-    return objectAt(farm, ground.x, ground.y)?.id === obj.id ? ground : tile(obj.x, obj.y);
+    return objectAt(shown, ground.x, ground.y)?.id === obj.id ? ground : tile(obj.x, obj.y);
   }
   const t = pickTile(w);
-  return isOnFarm(farm, t.x, t.y) ? t : null;
+  return isOnFarm(shown, t.x, t.y) ? t : null;
 }
 
 function setHighlight(next: TilePoint | null): void {
@@ -444,10 +568,12 @@ window.setInterval(() => {
   const real = clock.now();
   if (speed > 1) {
     farm = skipAhead(farm, (real - lastTick) * (speed - 1));
-    saveFarm(farm);
+    persist();
     testPanel?.update(farm.timeOffset, speed);
   }
   lastTick = real;
+  checkNeighbors();
+  if (mode.kind === 'visit') toolbar.show(mode, bannerText());
   refreshTooltip();
   requestDraw();
 }, 1000);
@@ -504,3 +630,38 @@ hud.update(farm);
 market.setFarm(farm);
 setMode({ kind: 'farm' });
 testPanel?.update(farm.timeOffset, speed);
+updateNewsDot();
+
+// What loading found, and what the neighbors did while the game was closed.
+switch (loaded.kind) {
+  case 'newer':
+    showNewerSave(required('#notice', HTMLDialogElement), loaded.message);
+    break;
+  case 'unreadable':
+    toast.show("Your saved farm couldn't be read, so a new one was started. A copy of the old one was kept.");
+    break;
+  case 'ok':
+  case 'new':
+    showAway(required('#away', HTMLDialogElement), checkNeighbors());
+    break;
+  default: {
+    const _exhaustive: never = loaded;
+    void _exhaustive;
+  }
+}
+
+// Blocks the game when the save is from a newer version, with a way out
+// that doesn't touch it.
+function showNewerSave(dialog: HTMLDialogElement, message: string): void {
+  dialog.innerHTML = `
+    <div class="confirm">
+      <p>${message}, so this version won't open it or save over it.</p>
+      <p class="notice-detail">This usually means a test version of the game was opened here. Open that version again, or reload once the update has finished.</p>
+      <div class="confirm-buttons">
+        <button type="button" class="primary" data-reload>Reload</button>
+      </div>
+    </div>`;
+  dialog.addEventListener('cancel', (e) => e.preventDefault());
+  dialog.querySelector('[data-reload]')?.addEventListener('click', () => window.location.reload());
+  dialog.showModal();
+}

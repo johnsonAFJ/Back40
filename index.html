@@ -29,12 +29,19 @@
     <footer class="hud hud-bottom">
       <button id="market-button" class="pill market-button" type="button" aria-haspopup="dialog" title="Open the market"></button>
       <nav id="tools" class="tools" aria-label="Tools"></nav>
+      <button id="neighbors-button" class="pill neighbors-button" type="button" aria-haspopup="dialog" title="Your neighbors and farm news">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3.2" /><circle cx="16" cy="9" r="2.6" /><path d="M2.5 19c.6-3.4 2.9-5.4 5.5-5.4s4.9 2 5.5 5.4M12.8 15.2c.9-1.2 2-1.8 3.2-1.8 2.2 0 4 1.7 4.6 4.6" /></svg>
+        <span>Neighbors</span>
+      </button>
     </footer>
 
     <dialog id="market" class="panel dialog" aria-label="Market"></dialog>
     <dialog id="levelup" class="panel dialog" aria-label="Level up"></dialog>
     <dialog id="confirm" class="panel dialog" aria-label="Are you sure?"></dialog>
     <dialog id="basket" class="panel dialog" aria-label="Harvest basket"></dialog>
+    <dialog id="neighbors" class="panel dialog" aria-label="Neighbors"></dialog>
+    <dialog id="away" class="panel dialog" aria-label="While you were away"></dialog>
+    <dialog id="notice" class="panel dialog" aria-label="This farm can't be opened"></dialog>
 
     <script type="module" src="/src/main.ts"></script>
   </body>

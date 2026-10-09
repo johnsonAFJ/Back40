@@ -2,6 +2,7 @@
 
 import { sellValue, type Failure } from '../core/actions';
 import type { ExpandFailure } from '../core/land';
+import type { HelpFailure, Visit } from '../core/neighbors';
 import { BUILDINGS } from '../core/data/buildings';
 import { CROPS, type CropId } from '../core/data/crops';
 import { PLOW_COST } from '../core/data/economy';
@@ -131,6 +132,37 @@ export function expandFailureMessage(failure: ExpandFailure): string {
       return `You need ${failure.needed} neighbors to expand, and have ${failure.have}`;
     case 'notEnoughCoins':
       return `Not enough coins. You need ${formatCoins(failure.needed)}`;
+    default: {
+      const _exhaustive: never = failure;
+      return _exhaustive;
+    }
+  }
+}
+
+// What clicking this tile on a neighbor's farm would do.
+export function describeChore(v: Visit, x: number, y: number, now: number): string | null {
+  const obj = objectAt(v.farm, x, y);
+  if (!obj) return null;
+  if (v.helpsLeft <= 0) return objectName(obj);
+  if (v.crows.has(obj.id)) return `Chase the crows off the ${objectName(obj).toLowerCase()}`;
+  if (v.hungry.has(obj.id)) return `Feed the ${objectName(obj).toLowerCase()}`;
+  if (obj.kind === 'plot' && obj.state === 'planted' && !obj.fertilized) {
+    const s = stage(obj, now);
+    if (s !== 'ready' && s !== 'withered') return `Fertilize the ${objectName(obj).toLowerCase()}`;
+  }
+  return objectName(obj);
+}
+
+export function helpFailureMessage(failure: HelpFailure, name: string): string {
+  switch (failure.code) {
+    case 'notHere':
+      return `${name} hasn't moved in yet`;
+    case 'noHelpsLeft':
+      return `You've helped ${name} all you can today. Come back tomorrow`;
+    case 'alreadyHelped':
+      return 'You already helped with that today';
+    case 'nothingToDo':
+      return 'Nothing to help with there';
     default: {
       const _exhaustive: never = failure;
       return _exhaustive;

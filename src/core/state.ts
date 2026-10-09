@@ -4,14 +4,16 @@
 
 import { BUILDINGS, type BuildingId } from './data/buildings';
 import { DECORATIONS, type AnimalId, type DecorationId, type TreeId } from './data/items';
+import type { NeighborId } from './data/neighbors';
 import type { ProduceId } from './data/produce';
+import type { Placeable } from './catalog';
 import { CROPS, type CropId } from './data/crops';
 import { CUSHION_GROW_TIMES, SAFE_GROW_TIMES, STARTER_CROP_MINUTES_LEFT, STARTING_COINS } from './data/economy';
 import { EXPANSIONS } from './data/expansions';
 import { HOUR, MINUTE } from './clock';
 import { random01 } from './rng';
 
-export const SAVE_VERSION = 4;
+export const SAVE_VERSION = 5;
 
 // A plot is always in exactly one of these states. Fields that only make
 // sense for a growing crop only exist on the 'planted' variant, so a plowed
@@ -57,7 +59,28 @@ export type FarmState = {
   // Eggs, fruit and the rest, collected from trees and animals and waiting
   // to be sold. A missing entry means none.
   readonly basket: Basket;
+  // Neighbors who have moved in, and how you've helped each one today.
+  readonly neighbors: { readonly [id in NeighborId]?: NeighborRecord };
+  // Gifts from neighbors, waiting to be placed for free.
+  readonly gifts: readonly Placeable[];
+  // The news feed, oldest first, at most FEED_LENGTH entries.
+  readonly feed: readonly FeedEvent[];
+  // The farm time up to which neighbor visits, gifts and news have been
+  // worked out. See core/neighbors.ts.
+  readonly neighborsCheckedAt: number;
 };
+
+// `day` is the day number (core/neighbors.ts dayIndex) that `helped` belongs
+// to; on any other day the list counts as empty.
+export type NeighborRecord = { readonly day: number; readonly helped: readonly string[] };
+
+export type FeedEvent =
+  | { readonly kind: 'movedIn'; readonly at: number; readonly neighbor: NeighborId }
+  | { readonly kind: 'fertilized'; readonly at: number; readonly neighbor: NeighborId; readonly count: number }
+  | { readonly kind: 'gift'; readonly at: number; readonly neighbor: NeighborId; readonly gift: Placeable }
+  | { readonly kind: 'harvested'; readonly at: number; readonly neighbor: NeighborId; readonly crop: CropId; readonly count: number };
+
+export const FEED_LENGTH = 30;
 
 export type Basket = { readonly [id in ProduceId]?: number };
 
@@ -164,5 +187,9 @@ export function newFarm(now: number, seed: number): FarmState {
     objects,
     timeOffset: 0,
     basket: {},
+    neighbors: {},
+    gifts: [],
+    feed: [],
+    neighborsCheckedAt: now,
   };
 }

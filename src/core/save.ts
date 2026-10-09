@@ -9,11 +9,21 @@ import { isBuildingId } from './data/buildings';
 import { isCropId } from './data/crops';
 import { isAnimalId, isDecorationId, isTreeId } from './data/items';
 import { isProduceId } from './data/produce';
+import { NEIGHBORS, type NeighborId } from './data/neighbors';
+import type { Placeable } from './catalog';
 import { EXPANSIONS } from './data/expansions';
-import { SAVE_VERSION, footprint, type Basket, type FarmObject, type FarmState } from './state';
+import { FEED_LENGTH, SAVE_VERSION, footprint, type Basket, type FarmObject, type FarmState, type FeedEvent, type NeighborRecord } from './state';
 
+// `newer` means the save came from a later version of the game than this
+// one. It isn't broken, so it must never be replaced; see platform/storage.ts.
 export class SaveError extends Error {
   override name = 'SaveError';
+  constructor(
+    message: string,
+    readonly reason: 'invalid' | 'newer' = 'invalid',
+  ) {
+    super(message);
+  }
 }
 
 type Json = { readonly [key: string]: unknown };
@@ -31,6 +41,12 @@ function num(obj: Json, key: string, where: string): number {
 function int(obj: Json, key: string, where: string): number {
   const value = num(obj, key, where);
   if (!Number.isInteger(value)) throw new SaveError(`${where}.${key} should be a whole number`);
+  return value;
+}
+
+function list(obj: Json, key: string, where: string): unknown[] {
+  const value = obj[key];
+  if (!Array.isArray(value)) throw new SaveError(`${where}.${key} should be a list`);
   return value;
 }
 
@@ -107,7 +123,61 @@ const MIGRATIONS: Readonly<Record<number, (raw: Json) => Json>> = {
   // Version 4 added the harvest basket. Older farms sold everything on the
   // spot, so their basket starts empty.
   3: (raw) => ({ ...raw, version: 4, basket: {} }),
+  // Version 5 added neighbors, gifts and the news feed. Neighbor activity
+  // starts from the last time the farm was played, so an old farm isn't
+  // flooded with visits it never had.
+  4: (raw) => ({ ...raw, version: 5, neighbors: {}, gifts: [], feed: [], neighborsCheckedAt: raw['lastSeenAt'] }),
 };
+
+const isNeighborId = (v: unknown): v is NeighborId => typeof v === 'string' && Object.hasOwn(NEIGHBORS, v);
+
+function parsePlaceable(raw: unknown, where: string): Placeable {
+  if (!isRecord(raw)) throw new SaveError(`${where} should be an object`);
+  const { kind, id } = raw;
+  if (kind === 'tree' && isTreeId(id)) return { kind, id };
+  if (kind === 'animal' && isAnimalId(id)) return { kind, id };
+  if (kind === 'decoration' && isDecorationId(id)) return { kind, id };
+  throw new SaveError(`${where} is not something that can be placed`);
+}
+
+function parseNeighbors(raw: unknown): FarmState['neighbors'] {
+  if (!isRecord(raw)) throw new SaveError('save.neighbors should be an object');
+  const out: { [id: string]: NeighborRecord } = {};
+  for (const [id, rec] of Object.entries(raw)) {
+    const where = `save.neighbors.${id}`;
+    if (!isNeighborId(id)) throw new SaveError(`${where} is not a known neighbor`);
+    if (!isRecord(rec)) throw new SaveError(`${where} should be an object`);
+    const helped = rec['helped'];
+    if (!Array.isArray(helped) || !helped.every((h) => typeof h === 'string')) {
+      throw new SaveError(`${where}.helped should be a list of ids`);
+    }
+    out[id] = { day: int(rec, 'day', where), helped };
+  }
+  return out;
+}
+
+function parseFeedEvent(raw: unknown, index: number): FeedEvent {
+  const where = `save.feed[${index}]`;
+  if (!isRecord(raw)) throw new SaveError(`${where} should be an object`);
+  const neighbor = raw['neighbor'];
+  if (!isNeighborId(neighbor)) throw new SaveError(`${where}.neighbor is not a known neighbor`);
+  const at = num(raw, 'at', where);
+  switch (raw['kind']) {
+    case 'movedIn':
+      return { kind: 'movedIn', at, neighbor };
+    case 'fertilized':
+      return { kind: 'fertilized', at, neighbor, count: int(raw, 'count', where) };
+    case 'gift':
+      return { kind: 'gift', at, neighbor, gift: parsePlaceable(raw['gift'], `${where}.gift`) };
+    case 'harvested': {
+      const crop = raw['crop'];
+      if (!isCropId(crop)) throw new SaveError(`${where}.crop is not a known crop`);
+      return { kind: 'harvested', at, neighbor, crop, count: int(raw, 'count', where) };
+    }
+    default:
+      throw new SaveError(`${where}.kind is not a known kind of news`);
+  }
+}
 
 function parseBasket(raw: unknown): Basket {
   if (!isRecord(raw)) throw new SaveError('save.basket should be an object');
@@ -127,6 +197,9 @@ function migrate(input: Json): Json {
   for (;;) {
     const version = raw['version'];
     if (version === SAVE_VERSION) return raw;
+    if (typeof version === 'number' && version > SAVE_VERSION) {
+      throw new SaveError(`This farm was saved by a newer version of Back40 (save version ${version})`, 'newer');
+    }
     const step = typeof version === 'number' ? MIGRATIONS[version] : undefined;
     if (!step) throw new SaveError(`This save is from version ${String(version)}, which this game doesn't know how to load`);
     raw = step(raw);
@@ -177,5 +250,9 @@ export function parseSave(input: unknown): FarmState {
     objects,
     timeOffset,
     basket: parseBasket(raw['basket']),
+    neighbors: parseNeighbors(raw['neighbors']),
+    gifts: list(raw, 'gifts', 'save').map((g, i) => parsePlaceable(g, `save.gifts[${i}]`)),
+    feed: list(raw, 'feed', 'save').map(parseFeedEvent).slice(-FEED_LENGTH),
+    neighborsCheckedAt: num(raw, 'neighborsCheckedAt', 'save'),
   };
 }

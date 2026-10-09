@@ -23,6 +23,7 @@ import {
   isOnFarm,
 } from './draw/ground';
 import { drawFlatDecoration, isFlat, NO_LINKS, type Links } from './draw/items';
+import { drawCrows, drawHungry, drawSparkle } from './draw/marks';
 import { drawFarmObject, drawProduct } from './draw/objects';
 import { PALETTE } from './draw/palette';
 import { drawEffects, type FloatingText } from './effects';
@@ -46,7 +47,12 @@ export type Scene = {
   readonly hiddenId: string | null;
   readonly effects: readonly FloatingText[];
   readonly frameTime: number;
+  // Chores on a neighbor's farm: crops with crows and hungry animals.
+  readonly marks: Marks;
 };
+
+export type Marks = { readonly crows: ReadonlySet<string>; readonly hungry: ReadonlySet<string> };
+export const NO_MARKS: Marks = { crows: new Set(), hungry: new Set() };
 
 type TileRange = { minX: number; maxX: number; minY: number; maxY: number };
 
@@ -145,7 +151,12 @@ export function render(ctx: CanvasRenderingContext2D, scene: Scene): void {
     drawables.push({
       depth: depthOf(obj.x, obj.y, width, depth),
       x: obj.x,
-      draw: () => drawFarmObject(ctx, obj, now, obj.kind === 'decoration' ? linksAt(obj.x, obj.y, obj.typeId) : NO_LINKS),
+      draw: () => {
+        drawFarmObject(ctx, obj, now, obj.kind === 'decoration' ? linksAt(obj.x, obj.y, obj.typeId) : NO_LINKS);
+        if (obj.kind === 'plot' && obj.state === 'planted' && obj.fertilized) drawSparkle(ctx, obj.x, obj.y);
+        if (scene.marks.crows.has(obj.id)) drawCrows(ctx, obj.x, obj.y);
+        if (scene.marks.hungry.has(obj.id)) drawHungry(ctx, obj.x, obj.y);
+      },
     });
   }
   if (ghost) {

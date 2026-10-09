@@ -29,7 +29,9 @@ Departures happen for a few reasons, and each entry below names which:
 | --- | --- | --- | --- |
 | Neighbors | Real Facebook friends | Five simulated neighbors who move in at levels 3, 6, 10, 15 and 20 | No Facebook |
 | Expansion requirements | Level, coins and a neighbor count | The same, but neighbors arrive by level (see below) | No Facebook |
-| Requests and wall posts | Help requests posted to friends' walls | A quiet news feed that never asks for anything | No Facebook |
+| Requests and wall posts | Help requests posted to friends' walls | A quiet news feed in the Neighbors window that never asks for anything | No Facebook |
+| Neighbor bar | A strip of friends along the bottom of the screen | A Neighbors button and window, which fits a phone | Scope |
+| Gifts | Anything, including seeds and premium items | Trees, animals and decorations up to 1,000 coins | Scope |
 | Level curve | Not documented for early levels | `20L - 5` XP per level | Missing data |
 | Trees, animals and decorations | Hundreds of items | 6 trees, 5 animals and 10 decorations, with our own prices | Missing data and scope |
 | Crop numbers | 2009 market values | Earliest complete listings found, mostly from about 2011 | Missing data |
@@ -124,4 +126,19 @@ and apples pile up makes the animals feel like they're producing something
 rather than just paying out, and it gives the neighbors in milestone 6
 something to trade in. Crops stay instant because a field of 36 plots would
 otherwise mean 36 more things to sell every few hours.
+
+### Neighbors happen on a schedule, not on a timer
+
+The simulated neighbors could have been driven by timers firing while the game
+is open, but then nothing would happen overnight, and reloading might fire
+them again. Instead, each day's events are fixed in advance by seeded
+randomness, and the game just replays whatever's happened since it last
+looked. It's the same idea as rolling withering once at planting: decide
+randomness once, then treat it as fact.
+
+### Crops on a neighbor's farm don't ripen
+
+On the first try, Martha's strawberries (4 hours) were all ripe by noon, so
+there was nothing to help with. Their crops now hold a growth stage for the
+whole day, which keeps every visit worth making.
 

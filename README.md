@@ -22,7 +22,10 @@ npm run dev
 
 Then open http://localhost:8440/Back40/. `npm test` runs the tests.
 
+When Claude is working on the game, port 8440 serves `main` from a separate
+copy and Claude tests on 8442, so test builds never touch the farm you play.
+
 Add `?test` to the address for the test panel: speed up the clock, skip ahead,
 add coins and levels, and start over.
 
-Status: milestone 5.5 (harvest basket).
+Status: milestone 6 (neighbors).

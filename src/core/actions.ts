@@ -173,6 +173,26 @@ export function place(state: FarmState, item: Placeable, x: number, y: number, n
   return succeed('place', put(state, obj), { coins: -info.price, xp: info.buyXp, produce: null }, obj, now);
 }
 
+// Place gift number `index` from the gift box. Gifts are free and give no XP;
+// the neighbor already paid.
+export function placeGift(state: FarmState, index: number, x: number, y: number, now: number): Outcome {
+  const gift = state.gifts[index];
+  if (!gift) return fail({ code: 'nothingThere' });
+  const { width, depth } = productInfo(gift);
+  const blocker = areaBlocker(state, { x, y, width, depth });
+  if (blocker) return fail(blocker === 'offFarm' ? { code: 'noRoom' } : { code: 'blocked', by: blocker });
+
+  const id = `o${state.nextId}`;
+  const obj: FarmObject =
+    gift.kind === 'decoration'
+      ? { id, kind: 'decoration', typeId: gift.id, x, y }
+      : gift.kind === 'tree'
+        ? { id, kind: 'tree', typeId: gift.id, x, y, lastHarvestAt: now }
+        : { id, kind: 'animal', typeId: gift.id, x, y, lastHarvestAt: now };
+  const gifts = state.gifts.filter((_, i) => i !== index);
+  return succeed('place', { ...put(state, obj), gifts }, NO_REWARD, obj, now);
+}
+
 // Move any object, crops and all, so its top corner lands on (x, y). Free.
 export function move(state: FarmState, id: string, x: number, y: number, now: number): Outcome {
   const obj = state.objects.find((o) => o.id === id);
