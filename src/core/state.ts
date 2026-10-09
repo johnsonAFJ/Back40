@@ -8,10 +8,9 @@ import type { NeighborId } from './data/neighbors';
 import type { ProduceId } from './data/produce';
 import type { Placeable } from './catalog';
 import { CROPS, type CropId } from './data/crops';
-import { CUSHION_GROW_TIMES, SAFE_GROW_TIMES, STARTER_CROP_MINUTES_LEFT, STARTING_COINS } from './data/economy';
+import { STARTER_CROP_MINUTES_LEFT, STARTING_COINS, WITHER_GROW_TIMES } from './data/economy';
 import { EXPANSIONS } from './data/expansions';
 import { HOUR, MINUTE } from './clock';
-import { random01 } from './rng';
 
 export const SAVE_VERSION = 6;
 
@@ -171,12 +170,10 @@ export function isAreaFree(state: FarmState, area: Area, incoming: Incoming = {}
   return areaBlocker(state, area, incoming) === null;
 }
 
-// When a crop withers: safe for one grow time after ripening, then a seeded
-// random moment within the cushion. Rolled once, at planting, and stored.
-export function rollWitherAt(seed: number, x: number, y: number, cropId: CropId, plantedAt: number): number {
-  const grow = CROPS[cropId].hours * HOUR;
-  const safeUntil = plantedAt + grow + grow * SAFE_GROW_TIMES;
-  return Math.round(safeUntil + random01(seed, x, y, plantedAt) * grow * CUSHION_GROW_TIMES);
+// When a crop withers: 2.5 grow times after planting. Stored at planting, so
+// changing the rule later doesn't move crops already in the ground.
+export function witherTime(cropId: CropId, plantedAt: number): number {
+  return plantedAt + CROPS[cropId].hours * HOUR * WITHER_GROW_TIMES;
 }
 
 // A brand new farm: farmhouse at the back corner, and six plots of
@@ -196,7 +193,7 @@ export function newFarm(now: number, seed: number): FarmState {
         state: 'planted',
         cropId: starterCrop,
         plantedAt,
-        witherAt: rollWitherAt(seed, x, y, starterCrop, plantedAt),
+        witherAt: witherTime(starterCrop, plantedAt),
         fertilized: false,
       });
     }

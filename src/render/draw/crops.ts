@@ -46,6 +46,12 @@ const ART: Record<CropId, CropArt> = {
   grapes: { style: 'berry', leaf: GREEN, fruit: '#6b2d7d' },
   tomatoes: { style: 'leafy', leaf: GREEN, fruit: '#e8392a' },
   pinkRoses: { style: 'flower', leaf: DARK_GREEN, fruit: '#f27aa6' },
+  sugarCane: { style: 'grain', leaf: '#6fae3c', fruit: '#c9d98a' },
+  carrots: { style: 'leafy', leaf: '#5fae38', fruit: '#f08a24' },
+  coffee: { style: 'berry', leaf: DARK_GREEN, fruit: '#b8302a' },
+  sunflowers: { style: 'flower', leaf: GREEN, fruit: '#f5c518' },
+  broccoli: { style: 'leafy', leaf: '#3f7f3a', fruit: '#4f9a3f' },
+  corn: { style: 'stalk', leaf: '#5a9a34', fruit: '#f2d14a' },
 };
 
 const SOIL = '#8a5a32';

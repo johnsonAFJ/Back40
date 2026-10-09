@@ -75,60 +75,66 @@ time left ("Strawberries, ready in 2h 14m").
 
 ### Withering
 
-Faithful to the original:
+A ripe crop withers **2.5 grow times after it was planted**, as in the 2009
+chart. Strawberries (4 hours) ripen at 4 hours and wither at 10; wheat
+(3 days) ripens at 3 days and withers at 7.5.
 
-- A ripe crop is **guaranteed safe** for a span equal to its grow time. A 4
-  hour strawberry crop ripens at 4 hours and is safe until 8 hours.
-- After that comes a **cushion** of half the grow time, during which each plot
-  withers at its own random moment. Strawberries can wither anywhere from 8 to
-  10 hours after planting.
-- Each plot's wither moment is rolled once, at planting, and stored as
-  `witherAt`. Rolling it once means reloading the game cannot re-roll a
-  luckier time.
+- The wither time is worked out at planting and stored as `witherAt`, so
+  changing the rule later doesn't move crops already in the ground.
 - A withered crop is worth nothing. Plowing it again costs 15 coins.
 
 ## Crops
 
-Starting values for levels 1 to 20, taken from fan-documented market listings
-(see Sources). Seed price excludes the 15 coin plow. Harvest XP is always 1,
-plus 1 if fertilized.
+Seed price excludes the 15 coin plow. Plant XP is what planting gives, as the
+original market listed it; plowing and harvesting add 1 each on top (2 for
+harvesting if fertilized).
 
-| Crop | Level | Seed | Sells for | Grows in | Plant XP |
-| --- | --- | --- | --- | --- | --- |
-| Strawberries | 1 | 10 | 35 | 4h | 1 |
-| Wheat | 1 | 13 | 61 | 12h | 1 |
-| Soybeans | 1 | 15 | 63 | 1d | 2 |
-| Peanuts | 1 | 20 | 78 | 16h | 1 |
-| Eggplant | 1 | 25 | 88 | 2d | 2 |
-| Lilac | 4 | 35 | 75 | 10h | 1 |
-| Squash | 4 | 40 | 121 | 2d | 2 |
-| Pumpkin | 5 | 30 | 68 | 8h | 1 |
-| Spinach | 6 | 35 | 95 | 14h | 2 |
-| Artichokes | 6 | 70 | 204 | 4d | 2 |
-| Rice | 7 | 45 | 96 | 12h | 1 |
-| Raspberries | 8 | 20 | 46 | 2h | 0 |
-| Daffodils | 8 | 60 | 135 | 2d | 2 |
-| Cotton | 9 | 75 | 207 | 3d | 2 |
-| Cranberries | 10 | 55 | 98 | 10h | 1 |
-| Chickpeas | 10 | 80 | 210 | 20h | 2 |
-| Bell Peppers | 11 | 75 | 198 | 2d | 2 |
-| Rhubarb | 11 | 65 | 150 | 16h | 1 |
-| Peppers | 12 | 70 | 162 | 1d | 2 |
-| Morning Glory | 13 | 60 | 123 | 12h | 1 |
-| Aloe Vera | 14 | 50 | 85 | 6h | 1 |
-| Pineapples | 15 | 95 | 242 | 2d | 2 |
-| Red Tulips | 15 | 75 | 159 | 1d | 2 |
-| Pattypan Squash | 16 | 65 | 160 | 16h | 1 |
-| Blueberries | 17 | 50 | 91 | 4h | 1 |
-| Watermelon | 18 | 130 | 348 | 4d | 2 |
-| Grapes | 19 | 85 | 270 | 1d | 2 |
-| Tomatoes | 20 | 100 | 173 | 8h | 1 |
-| Pink Roses | 20 | 120 | 254 | 2d | 2 |
+The 17 crops marked "2009 chart" come from a 2009 crop chart. The rest
+weren't on it and keep the values from fan-documented market listings from
+about 2011 (see Sources).
+
+| Crop | Level | Seed | Sells for | Grows in | Plant XP | Source |
+| --- | --- | --- | --- | --- | --- | --- |
+| Strawberries | 1 | 10 | 35 | 4h | 1 | 2009 chart |
+| Wheat | 1 | 15 | 52 | 3d | 3 | 2009 chart |
+| Soybeans | 1 | 15 | 63 | 1d | 2 | 2011 listing |
+| Peanuts | 1 | 20 | 78 | 16h | 1 | 2011 listing |
+| Eggplant | 1 | 25 | 72 | 2d | 3 | 2009 chart |
+| Pumpkins | 1 | 30 | 68 | 8h | 1 | 2009 chart |
+| Raspberries | 2 | 20 | 46 | 2h | 1 | 2009 chart |
+| Lilac | 4 | 35 | 75 | 10h | 1 | 2011 listing |
+| Squash | 4 | 40 | 121 | 2d | 2 | 2011 listing |
+| Spinach | 6 | 35 | 95 | 14h | 2 | 2011 listing |
+| Artichokes | 6 | 70 | 204 | 4d | 2 | 2011 listing |
+| Blueberries | 7 | 50 | 91 | 4h | 2 | 2009 chart |
+| Daffodils | 8 | 60 | 135 | 2d | 2 | 2011 listing |
+| Aloe Vera | 9 | 40 | 83 | 6h | 2 | 2009 chart |
+| Cotton | 9 | 75 | 207 | 3d | 2 | 2011 listing |
+| Tomatoes | 10 | 34 | 86 | 8h | 2 | 2009 chart |
+| Cranberries | 10 | 55 | 98 | 10h | 1 | 2011 listing |
+| Chickpeas | 10 | 80 | 210 | 20h | 2 | 2011 listing |
+| Watermelon | 11 | 50 | 172 | 4d | 3 | 2009 chart |
+| Rhubarb | 11 | 65 | 150 | 16h | 1 | 2011 listing |
+| Bell Peppers | 11 | 75 | 198 | 2d | 2 | 2011 listing |
+| Coffee | 12 | 50 | 117 | 16h | 2 | 2009 chart |
+| Peppers | 12 | 70 | 162 | 1d | 2 | 2011 listing |
+| Broccoli | 13 | 60 | 167 | 2d | 5 | 2009 chart |
+| Morning Glory | 13 | 60 | 123 | 12h | 1 | 2011 listing |
+| Rice | 14 | 45 | 98 | 12h | 2 | 2009 chart |
+| Grapes | 15 | 65 | 152 | 1d | 3 | 2009 chart |
+| Red Tulips | 15 | 75 | 159 | 1d | 2 | 2011 listing |
+| Pineapples | 15 | 95 | 242 | 2d | 2 | 2011 listing |
+| Pattypan Squash | 16 | 65 | 160 | 16h | 1 | 2011 listing |
+| Carrots | 18 | 35 | 84 | 12h | 2 | 2009 chart |
+| Sugar Cane | 20 | 45 | 103 | 8h | 2 | 2009 chart |
+| Pink Roses | 20 | 120 | 254 | 2d | 2 | 2011 listing |
+| Sunflowers | 23 | 80 | 182 | 1d | 3 | 2009 chart |
+| Corn | 24 | 40 | 128 | 3d | 3 | 2009 chart |
 
 The interesting tension, kept from the original: short crops earn more XP per
 hour if you keep coming back, long crops earn more coins per click and survive
-a night's sleep or a weekend away. Raspberries give no planting XP at all; they
-are a pure "I'm at my desk all afternoon" crop.
+a night's sleep or a weekend away. Raspberries (2 hours) are the "I'm at my
+desk all afternoon" crop; wheat and corn (3 days) are for a long weekend.
 
 ## Levels
 
@@ -149,8 +155,9 @@ Level is derived from total XP. XP needed to go from level `L` to `L + 1` is
 There is no level cap. The curve is ours; see DESIGN.md for why.
 
 Leveling up shows a short banner naming what unlocked (crops, trees, animals,
-decorations, an expansion, a new neighbor). Version 1 has content through level
-20; levels past that still count but unlock nothing until more content lands.
+decorations, an expansion, a new neighbor). Content runs to level 25 (corn at 24,
+the last expansion at 25); levels past that still count but unlock nothing
+until more content lands.
 
 ## Trees and animals
 
@@ -610,8 +617,10 @@ Fences, paths and ground stay code-drawn even when the rest has real art.
 
 ## Sources
 
-Crop prices, grow times and unlock levels come from fan-maintained market
-listings, mostly from around 2011, which is the earliest complete record found.
+Crop numbers for 17 crops come from a 2009 crop chart the project owner
+supplied; its net profits all check out against seed, sale price and the
+15-coin plow. The other crops come from fan-maintained market listings from
+around 2011.
 Plowing (15 coins, 1 XP), the 200 starting coins and the withering rule are
 documented for the original release.
 

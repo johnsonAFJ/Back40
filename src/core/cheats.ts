@@ -11,7 +11,7 @@ import { HOUR, MINUTE } from './clock';
 import { CROPS } from './data/crops';
 import { totalXpForLevel, levelForXp } from './levels';
 import { producerData } from './producers';
-import { rollWitherAt, type FarmState } from './state';
+import { witherTime, type FarmState } from './state';
 
 // The farm's time: real time plus however far test mode has pushed it.
 export function farmNow(state: FarmState, realNow: number): number {
@@ -43,7 +43,7 @@ export function readyEverything(state: FarmState, now: number): FarmState {
         if (o.state !== 'planted') return o;
         // A minute past ripe, so it reads as ready immediately.
         const plantedAt = now - CROPS[o.cropId].hours * HOUR - MINUTE;
-        return { ...o, plantedAt, witherAt: rollWitherAt(state.seed, o.x, o.y, o.cropId, plantedAt) };
+        return { ...o, plantedAt, witherAt: witherTime(o.cropId, plantedAt) };
       }
       case 'tree':
       case 'animal':

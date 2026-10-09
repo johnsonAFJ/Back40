@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { harvest, plant, plow, useMultiTool, type Outcome } from '../src/core/actions';
 import { HOUR, MINUTE } from '../src/core/clock';
 import { stage, timeUntilReady } from '../src/core/growth';
-import { newFarm, objectAt, rollWitherAt, type FarmState, type PlantedPlot } from '../src/core/state';
+import { newFarm, objectAt, witherTime, type FarmState, type PlantedPlot } from '../src/core/state';
 
 const START = Date.UTC(2026, 9, 8, 9, 0);
 const SEED = 1234;
@@ -98,21 +98,14 @@ describe('what you cannot do', () => {
 
   it('cannot plant a crop above your level', () => {
     const plowed = ok(plow(farm, 9, 9, START));
-    expect(plant(plowed, 9, 9, 'pumpkin', START)).toMatchObject({ ok: false, failure: { code: 'levelTooLow', level: 5 } });
+    expect(plant(plowed, 9, 9, 'tomatoes', START)).toMatchObject({ ok: false, failure: { code: 'levelTooLow', level: 10 } });
   });
 });
 
 describe('withering', () => {
-  it('is safe for one grow time after ripening, then withers within half a grow time', () => {
-    for (let x = 0; x < 50; x++) {
-      const witherAt = rollWitherAt(SEED, x, 0, 'strawberries', START);
-      expect(witherAt).toBeGreaterThanOrEqual(START + 8 * HOUR);
-      expect(witherAt).toBeLessThanOrEqual(START + 10 * HOUR);
-    }
-  });
-
-  it('rolls the same moment every time for the same planting', () => {
-    expect(rollWitherAt(SEED, 3, 4, 'wheat', START)).toBe(rollWitherAt(SEED, 3, 4, 'wheat', START));
+  it('happens 2.5 grow times after planting, as in the 2009 chart', () => {
+    expect(witherTime('strawberries', START)).toBe(START + 10 * HOUR);
+    expect(witherTime('wheat', START)).toBe(START + 180 * HOUR);
   });
 
   it('turns a ripe crop into a withered one that can only be plowed', () => {

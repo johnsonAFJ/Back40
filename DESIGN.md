@@ -34,7 +34,7 @@ Departures happen for a few reasons, and each entry below names which:
 | Gifts | Anything, including seeds and premium items | Trees, animals and decorations up to 1,000 coins | Scope |
 | Level curve | Not documented for early levels | `20L - 5` XP per level | Missing data |
 | Trees, animals and decorations | Hundreds of items | 6 trees, 5 animals and 10 decorations, with our own prices | Missing data and scope |
-| Crop numbers | 2009 market values | Earliest complete listings found, mostly from about 2011 | Missing data |
+| Crop numbers | 2009 market values | The 2009 chart for its 17 crops; about-2011 listings for the 18 it doesn't cover | Missing data |
 | Starting crops | The tutorial walked you through your first planting | 6 plots of strawberries ready 5 minutes after the farm is created | Scope (no tutorial yet) |
 | Premium currency | Farm Cash, bought with real money | None | Scope |
 | Farmer avatar | Walked to each plot; actions queued | Actions happen instantly | Scope (open question in SPEC) |
@@ -76,22 +76,22 @@ This is the one place Back40 bends real time, and only for a brand new farm.
 
 Withering is what made the original a daily habit. Short crops pay more XP per
 hour but punish you for walking away; long crops are forgiving but slow. Every
-planting is a small bet on when you'll be back. Back40 keeps the rule exactly
-(safe for one grow time after ripening, then a random moment within half a grow
-time) because the bet is the game.
+planting is a small bet on when you'll be back. Back40 keeps the 2009 rule:
+a crop withers 2.5 grow times after planting. It first used a random moment
+between 2 and 2.5 grow times, from a later fan guide; the 2009 chart's fixed
+2.5 is both more faithful and easier to plan around.
 
 If friends find it too harsh, adjust in this order:
 
-1. Lengthen the cushion (half a grow time to a full grow time).
-2. Lengthen the guaranteed-safe window.
-3. Add an item that unwithers crops, earned rather than bought.
+1. Raise `WITHER_GROW_TIMES` in `src/core/data/economy.ts` (2.5 to 3, say).
+2. Add an item that unwithers crops, earned rather than bought.
 
 ### Rolling randomness once
 
-Wither moments and neighbor events are rolled from a seeded generator and
-stored or keyed by day. If they were rolled each time the game loaded,
-reloading would be a free re-roll. Random events have to be decided once and
-then become facts.
+Neighbor events (and, before the 2009 chart, wither moments) are rolled from a
+seeded generator and stored or keyed by day. If they were rolled each time the
+game loaded, reloading would be a free re-roll. Random events have to be
+decided once and then become facts.
 
 ### Selling things back
 
@@ -167,4 +167,15 @@ The game never waits for a full art set. Every drawing function tries the
 real art first and falls back to its code version, so the first sheet that
 lands (say, the chicken) changes the farm right away and nothing else breaks.
 That's what made it safe to write the art brief before any art exists.
+
+### The 2009 crop chart
+
+A 2009 crop chart replaced the about-2011 numbers for the 17 crops it covers,
+and added six crops we didn't have (sugar cane, carrots, coffee, sunflowers,
+broccoli, corn). Its net profits all equal sale price minus seed minus the
+15-coin plow, which is a good sign it was copied carefully. The biggest
+changes: wheat went from 12 hours to 3 days, raspberries from level 8 to 2,
+pumpkins from level 5 to 1, and tomatoes and watermelon got much cheaper and
+earlier. Crops not on the chart keep their later values, so the market is a
+mix; if it ever feels uneven, those 18 are the first to revisit.
 

@@ -23,7 +23,7 @@ peanuts, eggplant), then everything else.
 | File | What |
 | --- | --- |
 | [animals.md](animals.md) | Five animal sprite sheets with walk cycles |
-| [crops.md](crops.md) | 29 crops, five growth stages each |
+| [crops.md](crops.md) | 35 crops, five growth stages each |
 | [trees.md](trees.md) | Six fruit trees, with and without fruit |
 | [buildings-and-decorations.md](buildings-and-decorations.md) | Farmhouse, shed, red barn, hay bale and the upright decorations |
 | [produce.md](produce.md) | Eleven basket icons |
