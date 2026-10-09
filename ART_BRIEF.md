@@ -132,20 +132,24 @@ Size: exactly **960 x 192**. Grid: **5 columns x 1 row**, each cell
 | broccoli | Broccoli | Blue-green leafy plants with dark green broccoli heads |
 | corn | Corn | Tall green stalks with yellow corn ears and tassels |
 
-## 3. Fruit trees: one strip each
+## 3. Fruit trees: one pair each
 
 Files: `tree-appleTree.png`, `tree-cherryTree.png`, `tree-lemonTree.png`,
 `tree-orangeTree.png`, `tree-peachTree.png`, `tree-plumTree.png`
 
-Size: exactly **256 x 128**. Grid: **2 columns**, each cell **128 x 128**.
+Size: exactly **512 x 256**. Grid: **2 columns**, each cell **256 x 256**.
 
     Column 0: leafy, no fruit (growing)
-    Column 1: the same tree with ripe fruit (ready to pick)
+    Column 1: the same tree loaded with ripe fruit (ready to pick)
 
-- **Trunk:** the base of the trunk is at **(64, 120)**. About 100 pixels
-  tall, round leafy canopy, fitting inside the cell.
-- Fruit colors: apples red, cherries dark red in pairs, lemons yellow,
-  oranges orange, peaches peach with a pink blush, plums deep purple.
+- **Big, like the crops:** about 220 pixels tall, with a round bushy canopy
+  up to about 210 pixels wide, so it spreads over the squares around it.
+  Twenty or more oversized fruit, each about 24 pixels across, brighter than
+  the leaves.
+- **Trunk:** the base of the trunk is at **(128, 240)**. The game finds the
+  drawing's bottom middle, so a few pixels off is fine.
+- The game draws trees at the same scale as crops (a tile is 128 pixels
+  wide in the art), whatever the cell size.
 
 ## 4. Buildings
 

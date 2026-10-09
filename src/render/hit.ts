@@ -17,6 +17,7 @@
 
 import { footprint, type FarmObject, type FarmState } from '../core/state';
 import { animalSlots } from './animalSlots';
+import { hasArt } from './art';
 import { footprintCorners, lift } from './draw/shapes';
 import type { WorldPoint } from './iso';
 
@@ -30,7 +31,8 @@ function height(obj: FarmObject): number {
     case 'building':
       return 80;
     case 'tree':
-      return 46;
+      // Real tree art is drawn up to 256 art pixels tall (ART_BRIEF.md).
+      return hasArt(`tree-${obj.typeId}`) ? 120 : 46;
     case 'animal':
       return 34;
     case 'decoration':
@@ -53,6 +55,15 @@ function height(obj: FarmObject): number {
       return _exhaustive;
     }
   }
+}
+
+// How far a thing's box is pulled in from its square's edges; negative
+// pushes it out. Crops spill past their plot's corners and a big tree's
+// canopy past its square; everything else stays inside.
+function inset(obj: FarmObject): number {
+  if (obj.kind === 'plot') return -0.25;
+  if (obj.kind === 'tree' && hasArt(`tree-${obj.typeId}`)) return -0.4;
+  return 0.1;
 }
 
 function inside(p: WorldPoint, polygon: readonly WorldPoint[]): boolean {
@@ -82,8 +93,7 @@ export function objectAtPoint(
       const shared = slot && (slot.u !== 0.5 || slot.v !== 0.5);
       const box = shared
         ? { x: o.x + slot.u - 0.25, y: o.y + slot.v - 0.25, width: 0.5, depth: 0.5, inset: 0 }
-        : // Crops spill past their plot's corners; everything else stays inside.
-          { x: o.x, y: o.y, ...footprint(o), inset: o.kind === 'plot' ? -0.25 : 0.1 };
+        : { x: o.x, y: o.y, ...footprint(o), inset: inset(o) };
       return { o, box };
     })
     // Nearest first, the reverse of drawing order.
