@@ -22,8 +22,9 @@ import { formatCoins, formatGrowTime } from './format';
 
 const SEED_KEY = 'back40-seed';
 
-// The Land tab sells farm expansions rather than things to put on the farm.
-type Tab = ProductKind | 'land';
+// The Land tab sells farm expansions rather than things to put on the farm,
+// and Gifts holds what neighbors have given you, free to place.
+type Tab = ProductKind | 'land' | 'gifts';
 
 const TABS: ReadonlyArray<{ readonly kind: Tab; readonly label: string }> = [
   { kind: 'crop', label: 'Seeds' },
@@ -31,6 +32,7 @@ const TABS: ReadonlyArray<{ readonly kind: Tab; readonly label: string }> = [
   { kind: 'animal', label: 'Animals' },
   { kind: 'decoration', label: 'Decorations' },
   { kind: 'land', label: 'Land' },
+  { kind: 'gifts', label: 'Gifts' },
 ];
 
 export type Market = {
@@ -42,6 +44,7 @@ export type MarketActions = {
   readonly onSeed: () => void;
   readonly onBuy: (item: Placeable) => void;
   readonly onExpand: () => void;
+  readonly onGift: (index: number) => void;
 };
 
 // The last seed chosen is a per-browser convenience, not part of the farm.
@@ -96,6 +99,7 @@ export function createMarket(dialog: HTMLDialogElement, button: HTMLButtonElemen
   let level = 1;
   let coins = 0;
   let expansion = 0;
+  let gifts: readonly Placeable[] = [];
   let tab: Tab = 'crop';
   let selected = rememberedSeed();
 
@@ -105,8 +109,18 @@ export function createMarket(dialog: HTMLDialogElement, button: HTMLButtonElemen
       <span class="button-text">
         <span class="button-label">Planting</span>
         <span class="button-value">${CROPS[selected].name}</span>
-      </span>`;
+      </span>
+      ${gifts.length > 0 ? `<span class="badge" title="Gifts waiting">${gifts.length}<span class="visually-hidden"> gifts waiting</span></span>` : ''}`;
   };
+
+  const giftCard = (g: Placeable, index: number): string => `
+    <li>
+      <button type="button" class="card" data-gift="${index}">
+        <img class="card-thumb" src="${productThumbnail(g)}" alt="" />
+        <span class="card-name">${productInfo(g).name}</span>
+        <span class="card-line">Free to place</span>
+      </button>
+    </li>`;
 
   const card = (p: Product): string => {
     const info = productInfo(p);
@@ -177,11 +191,17 @@ export function createMarket(dialog: HTMLDialogElement, button: HTMLButtonElemen
         ? 'Pick a crop to plant. You pay for seeds as you plant them.'
         : tab === 'land'
           ? `Your farm is ${size} × ${size}. New land is added along the far edges, so nothing moves.`
-          : 'Pick something, then click where it goes on your farm.';
+          : tab === 'gifts'
+            ? gifts.length > 0
+              ? 'Gifts from your neighbors. Pick one, then click where it goes.'
+              : 'No gifts right now. Your neighbors leave one most days once they move in.'
+            : 'Pick something, then click where it goes on your farm.';
     const body =
       tab === 'land'
         ? `<ul class="land-list">${EXPANSIONS.map((_, i) => i).slice(1).map(landCard).join('')}</ul>`
-        : `<ul class="cards">${productsOf(tab).map(card).join('')}</ul>`;
+        : tab === 'gifts'
+          ? `<ul class="cards">${gifts.map(giftCard).join('')}</ul>`
+          : `<ul class="cards">${productsOf(tab).map(card).join('')}</ul>`;
     dialog.innerHTML = `
       <div class="market">
         <header class="market-head">
@@ -191,7 +211,9 @@ export function createMarket(dialog: HTMLDialogElement, button: HTMLButtonElemen
         <div class="tabs" role="tablist">
           ${TABS.map(
             (t) =>
-              `<button type="button" role="tab" class="tab" data-tab="${t.kind}" aria-selected="${t.kind === tab}">${t.label}</button>`,
+              `<button type="button" role="tab" class="tab" data-tab="${t.kind}" aria-selected="${t.kind === tab}">${t.label}${
+                t.kind === 'gifts' && gifts.length > 0 ? ` (${gifts.length})` : ''
+              }</button>`,
           ).join('')}
         </div>
         <p class="market-hint">${hint}</p>
@@ -222,6 +244,13 @@ export function createMarket(dialog: HTMLDialogElement, button: HTMLButtonElemen
       tab = nextTab.kind;
       render();
       dialog.querySelector<HTMLElement>(`[data-tab="${tab}"]`)?.focus();
+      return;
+    }
+
+    const giftIndex = target.closest<HTMLElement>('[data-gift]')?.dataset['gift'];
+    if (giftIndex !== undefined) {
+      dialog.close();
+      actions.onGift(Number(giftIndex));
       return;
     }
 
@@ -260,6 +289,10 @@ export function createMarket(dialog: HTMLDialogElement, button: HTMLButtonElemen
       level = levelForXp(farm.xp);
       coins = farm.coins;
       expansion = farm.expansion;
+      if (farm.gifts !== gifts) {
+        gifts = farm.gifts;
+        renderButton();
+      }
       // A remembered seed from a farm with a higher level falls back to one
       // this farm can plant.
       if (!isUnlocked({ kind: 'crop', id: selected }, level)) {

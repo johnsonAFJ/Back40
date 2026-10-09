@@ -253,8 +253,12 @@ body {
 .mode-banner {
   position: fixed;
   top: calc(max(16px, env(safe-area-inset-top, 0px)) + 52px);
-  left: 50%;
-  transform: translateX(-50%);
+  /* Centered with auto margins rather than left: 50%, which would only
+     leave it half the screen's width to wrap into. */
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: fit-content;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -723,6 +727,210 @@ body {
   flex-wrap: wrap;
   padding: 14px 16px 16px;
   font-weight: 700;
+  color: var(--ink-soft);
+}
+
+/* Neighbors */
+
+.neighbors-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 48px;
+  color: var(--ink);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.neighbors-button svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* A dot when there's news you haven't seen. */
+.neighbors-button[data-news='true']::after,
+.badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #d8352a;
+  border: 2px solid var(--panel);
+}
+
+.neighbors-button[data-news='true']::after {
+  content: '';
+}
+
+.market-button {
+  position: relative;
+}
+
+.badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  box-sizing: border-box;
+}
+
+/* While visiting, your own tools are put away. */
+body[data-mode='visit'] .hud-bottom {
+  display: none;
+}
+
+.avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--face);
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  color: rgba(40, 25, 10, 0.75);
+  font-weight: 800;
+  font-size: 16px;
+}
+
+/* A cap of hair across the top of the portrait. */
+.avatar::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 62% 0;
+  background: var(--hair);
+}
+
+.avatar-large {
+  width: 56px;
+  height: 56px;
+  font-size: 24px;
+}
+
+.unlock-avatar {
+  display: grid;
+  place-items: center;
+}
+
+.neighbors {
+  width: min(460px, calc(100vw - 32px));
+  max-height: calc(100dvh - 36px);
+  overflow-y: auto;
+  padding-bottom: 16px;
+}
+
+.neighbor-list,
+.news-list,
+.away-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 16px;
+  display: grid;
+  gap: 6px;
+}
+
+.neighbor-list {
+  margin-top: 12px;
+}
+
+.neighbor-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border: 2px solid var(--panel-edge);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.neighbor-row[data-locked='true'] {
+  background: var(--panel-shade);
+  border-style: dashed;
+}
+
+.neighbor-row[data-locked='true'] .avatar {
+  filter: grayscale(1) opacity(0.5);
+}
+
+.neighbor-main {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.helps {
+  color: var(--level);
+  font-weight: 700;
+}
+
+.visit-button {
+  min-height: 38px;
+  padding: 0 16px;
+  font-size: 14px;
+}
+
+.news-head {
+  margin: 18px 20px 8px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.news-row,
+.away-list li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.news-row .avatar,
+.away-list .avatar {
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.news-when {
+  font-size: 12px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.away {
+  width: min(380px, calc(100vw - 32px));
+}
+
+.away-list {
+  width: 100%;
+  margin: 8px 0;
+  padding: 0;
+  text-align: left;
+}
+
+.away-list li {
+  grid-template-columns: auto 1fr;
+}
+
+.notice-detail {
+  font-size: 14px !important;
+  font-weight: 500 !important;
   color: var(--ink-soft);
 }
 

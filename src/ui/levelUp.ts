@@ -3,11 +3,20 @@
 
 import { productInfo } from '../core/catalog';
 import { nextUnlockLevel, type Unlock } from '../core/unlocks';
+import { NEIGHBORS } from '../core/data/neighbors';
 import { productThumbnail } from '../render/thumbnails';
+import { avatar } from './neighbors';
 
 export type LevelUp = { readonly show: (level: number, unlocked: readonly Unlock[]) => void };
 
 function unlockCard(u: Unlock): string {
+  if (u.kind === 'neighbor') {
+    return `
+      <li class="unlock">
+        <span class="unlock-thumb unlock-avatar">${avatar(u.id, 'large')}</span>
+        <span>${NEIGHBORS[u.id].name} moves in</span>
+      </li>`;
+  }
   if (u.kind === 'expansion') {
     return `
       <li class="unlock">

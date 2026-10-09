@@ -123,9 +123,12 @@ describe('selling', () => {
 
 describe('saves from milestone 2', () => {
   it('migrate step by step to the current version with nothing lost', () => {
-    const { timeOffset: _, basket: __, ...v1 } = { ...newFarm(START, 7), version: 1 };
+    const { timeOffset: _, basket: __, neighbors: _n, gifts: _g, feed: _f, neighborsCheckedAt: _c, ...v1 } = {
+      ...newFarm(START, 7),
+      version: 1,
+    };
     const loaded = parseSave(JSON.parse(JSON.stringify(v1)));
-    expect(loaded.version).toBe(4);
+    expect(loaded.version).toBe(5);
     expect(loaded.objects).toEqual(v1.objects);
     expect(loaded.timeOffset).toBe(0);
     expect(loaded.basket).toEqual({});

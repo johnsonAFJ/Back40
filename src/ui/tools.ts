@@ -5,6 +5,7 @@
 // whatever you were holding, and nothing is paid for until it's placed.
 
 import type { Placeable } from '../core/catalog';
+import type { NeighborId } from '../core/data/neighbors';
 import type { FarmObject } from '../core/state';
 
 export type Mode =
@@ -14,7 +15,11 @@ export type Mode =
   // tiles was clicked, so a big building stays under the cursor where it was
   // grabbed.
   | { readonly kind: 'move'; readonly held: FarmObject | null; readonly grab: { readonly dx: number; readonly dy: number } }
-  | { readonly kind: 'sell' };
+  | { readonly kind: 'sell' }
+  // Placing gift number `index` from the gift box, for free.
+  | { readonly kind: 'gift'; readonly index: number }
+  // On a neighbor's farm, where clicks help instead of farm.
+  | { readonly kind: 'visit'; readonly neighbor: NeighborId };
 
 const ICONS = {
   // A hoe.
@@ -57,12 +62,13 @@ export function createToolbar(
 
   return {
     show(mode, text) {
-      const active: ToolKind = mode.kind === 'place' ? 'farm' : mode.kind;
+      const active: ToolKind = mode.kind === 'move' || mode.kind === 'sell' ? mode.kind : 'farm';
       for (const el of bar.querySelectorAll<HTMLElement>('[data-tool]')) {
         el.setAttribute('aria-pressed', String(el.dataset['tool'] === active));
       }
       if (text) {
-        banner.innerHTML = `<span>${text}</span><button type="button" class="banner-cancel" data-cancel>Done</button>`;
+        const done = mode.kind === 'visit' ? 'Go home' : 'Done';
+        banner.innerHTML = `<span>${text}</span><button type="button" class="banner-cancel" data-cancel>${done}</button>`;
         banner.hidden = false;
       } else {
         banner.hidden = true;

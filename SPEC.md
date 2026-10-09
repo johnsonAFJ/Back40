@@ -283,32 +283,48 @@ level and stays.
 | Earl | level 15 | Corn and wheat as far as the eye can see |
 | Pearl | level 20 | A tidy hobby farm with every decoration she can find |
 
-They show in a **neighbor bar** along the bottom of the screen, like the
-original. Empty slots read "A neighbor moves in at level N".
+A **Neighbors** button in the bottom bar opens the Neighbors window: everyone
+who has moved in (with a **Visit** button and how many helps are left today),
+everyone still to come ("Moves in at level 10"), and the farm news. A red dot
+on the button means there's news you haven't seen. Each new neighbor also
+appears in the level-up banner.
 
 What neighbors do:
 
-1. **Their farms.** Each neighbor has a fixed, hand-built farm you can visit
-   from the neighbor bar. Their farms grow and change by the day, so a visit
-   looks a little different each time.
-2. **You help them.** On each visit you can take up to 5 helping actions per
-   neighbor per day: fertilize a crop, chase off crows, or feed an animal.
-   Each action pays 10 coins and 1 XP.
-3. **They help you.** Once a day, each neighbor stops by and fertilizes up to 6
-   of your growing crops. Fertilized plots show a sparkle and pay 1 extra XP at
-   harvest. Visits that happened while the game was closed are worked out when
-   it opens, and a "While you were away" card lists who helped.
-4. **Daily gift.** Once a day, one neighbor leaves a gift in your gift box: a
-   tree, an animal, a decoration or a stack of seeds, drawn from items unlocked
-   at your level. Gifts sit in the gift box until you place them.
-5. **News feed.** A quiet side panel shows what neighbors have been up to
-   ("June harvested 40 daffodils", "Gus's cow had a calf", "Martha fertilized
-   your soybeans"). It never pops up and never asks for anything. It keeps the
-   last 30 items.
+1. **Their farms.** Each neighbor has a hand-made 16 x 16 farm
+   (`src/core/neighborFarms.ts`). It's rebuilt from code on every visit and
+   never saved. Each crop holds a growth stage for the whole day, picked by
+   seeded randomness keyed by the day, so a visit looks a little different
+   each day and there's always something growing to help with. Their trees
+   always show fruit.
+2. **You help them.** Visiting puts your own toolbar away and shows a banner
+   with the helps left and a **Go home** button. You get 5 helping actions per
+   neighbor per day, each paying 10 coins and 1 XP:
+   - **Chase off crows:** three of their crops have crows each day.
+   - **Feed an animal:** two of their animals are hungry each day (a hay
+     bubble).
+   - **Fertilize a crop:** any other growing crop.
+3. **They help you.** Once a day, at their own time between 8am and 8pm, each
+   neighbor fertilizes up to 6 of your growing crops. Fertilized crops show a
+   sparkle and pay 1 extra XP at harvest.
+4. **Daily gift.** Once a day, one neighbor leaves a gift: a tree, an animal
+   or a decoration unlocked at your level and costing 1,000 coins or less.
+   Gifts wait in the market's **Gifts** tab (the market button shows a count)
+   and are placed for free. Seeds aren't given as gifts.
+5. **News.** Each neighbor's day has a bit of news ("June harvested 40
+   daffodils"), alongside their visits, gifts and arrivals. The Neighbors
+   window keeps the last 30 items. It never pops up during play.
 
-Neighbor activity is generated from a seeded random generator keyed by the
-save's seed, the neighbor and the day. The same day always produces the same
-events, so reloading cannot farm extra gifts.
+**While you were away.** On opening the game, a card lists what neighbors did
+since you last played (visits, gifts, arrivals). A farm left alone for a long
+time only catches up on the last 3 days.
+
+**How it stays fair.** Every visit, gift and bit of news happens at a time
+fixed by `random01(seed, neighbor, day)`. The farm remembers how far it has
+checked (`neighborsCheckedAt`), and `syncNeighbors` replays whatever happened
+between then and now. That works the same whether the game was open all day,
+closed overnight, or pushed ahead by test mode, and reloading can never
+produce an extra or different gift.
 
 **A "day"** runs from local midnight to local midnight on the player's device.
 
@@ -345,8 +361,8 @@ Camera:
 - **Drag versus click:** a press that moves more than 6 pixels is a pan and
   never triggers the tool.
 
-The HUD shows coins, level, an XP bar with "XP to next level", and the
-neighbor bar.
+The top bar shows coins, level with an XP bar, and the harvest basket. The
+bottom bar holds the market button, the tools and the Neighbors button.
 
 ## Test mode
 
@@ -371,6 +387,11 @@ real speed. The cheats are pure functions in `src/core/cheats.ts`.
 
 Without `?test` none of this appears, so friends playing normally never see it.
 
+My own testing runs on port 8442, from whatever branch I'm working on. Port
+8440 is kept for playing and always serves `main` from a separate copy in
+`.claude/worktrees/play`, so a test build can never upgrade (and then strand)
+the farm you play.
+
 ## Architecture
 
 Vite and TypeScript. No game framework and no UI framework.
@@ -384,14 +405,15 @@ Vite and TypeScript. No game framework and no UI framework.
         rng.ts       seeded random numbers
         state.ts     the save shape and a new-farm factory
         actions.ts   plow, plant, harvest, buy, place, move, sell, expand
-        neighbors.ts daily visits, gifts and feed events
+        neighbors.ts daily visits, gifts, news, and helping on their farms
+        neighborFarms.ts  the neighbors' hand-made farms
         save.ts      validate and migrate saves between versions
       render/        Canvas 2D drawing
         iso.ts       tile <-> screen math and diamond hit-testing
         camera.ts    pan and zoom
         draw/        procedural sprites: tiles, crops, trees, animals, decorations
         renderer.ts  depth-sorted drawing of the visible scene
-      ui/            HTML and CSS: HUD, toolbar, market, dialogs, neighbor bar, feed
+      ui/            HTML and CSS: HUD, toolbar, market, dialogs, neighbors, news
       platform/      localStorage save, backup export and import
       main.ts        wires the pieces together and runs the frame loop
     tests/           Vitest, against src/core with a fake clock
@@ -433,7 +455,7 @@ Stored in `localStorage` under the key `back40`. Every GitHub Pages project on
 
 ```json
 {
-  "version": 4,
+  "version": 5,
   "seed": 482913,
   "createdAt": 1791436800000,
   "lastSeenAt": 1791480000000,
@@ -450,16 +472,16 @@ Stored in `localStorage` under the key `back40`. Every GitHub Pages project on
       "lastHarvestAt": 1791436800000 },
     { "id": "d1", "kind": "decoration", "typeId": "hayBale", "x": 9, "y": 9 }
   ],
-  "giftBox": { "cherryTree": 1 },
-  "neighbors": {
-    "martha": { "lastVisitedDay": "2026-10-08", "helpsToday": 3 }
-  },
-  "lastNeighborDay": "2026-10-08",
   "timeOffset": 0,
   "basket": { "eggs": 4, "apples": 2 },
+  "neighbors": {
+    "martha": { "day": 20734, "helped": ["martha-47", "martha-59"] }
+  },
+  "gifts": [{ "kind": "decoration", "id": "hayBale" }],
   "feed": [
-    { "at": 1791476000000, "text": "Martha fertilized 6 of your crops" }
-  ]
+    { "kind": "fertilized", "at": 1791476000000, "neighbor": "martha", "count": 6 }
+  ],
+  "neighborsCheckedAt": 1791480000000
 }
 ```
 
@@ -468,6 +490,12 @@ Stored in `localStorage` under the key `back40`. Every GitHub Pages project on
   (`lastHarvestAt`), animals (`lastHarvestAt`) and decorations. Version 3
   added `timeOffset` for test mode, 0 for every older farm. Version 4 added
   `basket`, the harvest basket's contents by produce, empty for older farms.
+  Version 5 added `neighbors` (who has moved in and today's helps), `gifts`,
+  `feed` and `neighborsCheckedAt`. Older farms start from their last play
+  time, so they aren't flooded with visits that never happened.
+- A save from a **newer** version than the game knows (say, from a test build
+  of the next milestone) is never replaced. The game shows a message and
+  doesn't save at all until the right version is open.
 - Saving happens after every action. There is no save button.
 - If the stored save cannot be read, it is copied to `back40-unreadable-<time>`
   before a new farm starts, so a bad save never silently erases a farm.
@@ -522,8 +550,9 @@ needs them.
   actions queued up behind them. It adds a lot of charm, and a lot of work
   (pathfinding, an action queue, animation). Not planned for version 1; worth
   deciding before milestone 7.
-- **Neighbor gifts.** Should you be able to "send" a gift back to a neighbor,
-  for nothing more than a thank-you line in the feed? Decide in milestone 6.
+- **Neighbor requests.** Should neighbors ask for produce from your basket
+  ("Martha would love 3 eggs") in exchange for coins or XP? Raised after the
+  basket was built; left for after milestone 6.
 
 ## Sources
 
