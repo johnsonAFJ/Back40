@@ -13,6 +13,7 @@ import { ANIMALS, DECORATIONS, TREES } from '../core/data/items';
 import { EXPANSIONS } from '../core/data/expansions';
 import { NEIGHBORS } from '../core/data/neighbors';
 import { PRODUCE } from '../core/data/produce';
+import { CLIMBING_CROPS, SUPPORTS } from '../core/data/supports';
 import { neighborsAt } from '../core/land';
 import { levelForXp } from '../core/levels';
 import type { FarmState } from '../core/state';
@@ -73,7 +74,8 @@ function details(p: Product): string {
     case 'crop': {
       const c = CROPS[p.id];
       return `<span class="card-line">${formatGrowTime(c.hours)} · +${c.plantXp + PLOW_XP + HARVEST_XP} XP</span>
-        <span class="card-line card-money">${coinIcon}${formatCoins(c.seed)} → ${formatCoins(c.sells)}</span>`;
+        <span class="card-line card-money">${coinIcon}${formatCoins(c.seed)} → ${formatCoins(c.sells)}</span>
+        ${CLIMBING_CROPS.has(p.id) ? '<span class="card-line">Grows on a trellis</span>' : ''}`;
     }
     case 'tree':
     case 'animal': {
@@ -88,11 +90,26 @@ function details(p: Product): string {
       return `<span class="card-line">${size}+${d.buyXp} XP</span>
         <span class="card-line card-money">${coinIcon}${formatCoins(d.price)}</span>`;
     }
+    case 'support': {
+      const t = SUPPORTS[p.id];
+      const climbers = [...CLIMBING_CROPS].map((id) => CROPS[id].name).join(', ');
+      return `<span class="card-line">For ${climbers} · never needs plowing</span>
+        <span class="card-line card-money">${coinIcon}${formatCoins(t.price)} · +${t.buyXp} XP</span>`;
+    }
     default: {
       const _exhaustive: never = p;
       return _exhaustive;
     }
   }
+}
+
+// What a tab lists. Supports sit among the seeds, right after the last
+// climbing crop, so the trellis is next to grapes.
+function tabProducts(kind: ProductKind): Product[] {
+  if (kind !== 'crop') return productsOf(kind);
+  const crops = productsOf('crop');
+  const after = crops.reduce((last, p, i) => (p.kind === 'crop' && CLIMBING_CROPS.has(p.id) ? i + 1 : last), crops.length);
+  return [...crops.slice(0, after), ...productsOf('support'), ...crops.slice(after)];
 }
 
 export function createMarket(dialog: HTMLDialogElement, button: HTMLButtonElement, actions: MarketActions): Market {
@@ -201,7 +218,7 @@ export function createMarket(dialog: HTMLDialogElement, button: HTMLButtonElemen
         ? `<ul class="land-list">${EXPANSIONS.map((_, i) => i).slice(1).map(landCard).join('')}</ul>`
         : tab === 'gifts'
           ? `<ul class="cards">${gifts.map(giftCard).join('')}</ul>`
-          : `<ul class="cards">${productsOf(tab).map(card).join('')}</ul>`;
+          : `<ul class="cards">${tabProducts(tab).map(card).join('')}</ul>`;
     dialog.innerHTML = `
       <div class="market">
         <header class="market-head">

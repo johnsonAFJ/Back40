@@ -1,5 +1,5 @@
 // One way to talk about anything the market sells. A `Product` names a crop,
-// tree, animal or decoration; `productInfo` gives the facts every screen
+// tree, animal, decoration or support (a trellis); `productInfo` gives the facts every screen
 // needs about it, whatever kind it is.
 
 import { CROPS, CROP_IDS, type CropId } from './data/crops';
@@ -14,12 +14,14 @@ import {
   type DecorationId,
   type TreeId,
 } from './data/items';
+import { SUPPORTS, SUPPORT_IDS, type SupportId } from './data/supports';
 
 export type Product =
   | { readonly kind: 'crop'; readonly id: CropId }
   | { readonly kind: 'tree'; readonly id: TreeId }
   | { readonly kind: 'animal'; readonly id: AnimalId }
-  | { readonly kind: 'decoration'; readonly id: DecorationId };
+  | { readonly kind: 'decoration'; readonly id: DecorationId }
+  | { readonly kind: 'support'; readonly id: SupportId };
 
 export type ProductKind = Product['kind'];
 
@@ -51,6 +53,10 @@ export function productInfo(p: Product): ProductInfo {
       const d = DECORATIONS[p.id];
       return { name: d.name, level: d.level, price: d.price, buyXp: d.buyXp, width: d.width, depth: d.depth };
     }
+    case 'support': {
+      const t = SUPPORTS[p.id];
+      return { name: t.name, level: t.level, price: t.price, buyXp: t.buyXp, width: 1, depth: 1 };
+    }
     default: {
       const _exhaustive: never = p;
       return _exhaustive;
@@ -67,7 +73,9 @@ export function productsOf(kind: ProductKind): Product[] {
         ? TREE_IDS.map((id) => ({ kind, id }))
         : kind === 'animal'
           ? ANIMAL_IDS.map((id) => ({ kind, id }))
-          : DECORATION_IDS.map((id) => ({ kind, id }));
+          : kind === 'decoration'
+            ? DECORATION_IDS.map((id) => ({ kind, id }))
+            : SUPPORT_IDS.map((id) => ({ kind, id }));
   return all.sort((a, b) => {
     const ia = productInfo(a);
     const ib = productInfo(b);
@@ -75,7 +83,7 @@ export function productsOf(kind: ProductKind): Product[] {
   });
 }
 
-export const PRODUCT_KINDS: readonly ProductKind[] = ['crop', 'tree', 'animal', 'decoration'];
+export const PRODUCT_KINDS: readonly ProductKind[] = ['crop', 'tree', 'animal', 'decoration', 'support'];
 
 export function sameProduct(a: Product, b: Product): boolean {
   return a.kind === b.kind && a.id === b.id;

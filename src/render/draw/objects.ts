@@ -7,7 +7,8 @@ import { stage } from '../../core/growth';
 import { isProducerReady } from '../../core/producers';
 import { footprint, type FarmObject } from '../../core/state';
 import { drawBuilding } from './buildings';
-import { drawCrop } from './crops';
+import { drawCrop, drawSoil } from './crops';
+import { drawSupport } from './supports';
 import type { Slot } from '../animalSlots';
 import { STILL, type Pose } from '../animalMotion';
 import { drawAnimal, drawDecoration, drawFruitTree, NO_LINKS, type Links } from './items';
@@ -24,6 +25,7 @@ export function drawFarmObject(
 ): void {
   switch (obj.kind) {
     case 'plot':
+      if (obj.support !== null) drawSupport(ctx, obj.support, obj.x, obj.y);
       if (obj.state === 'planted') drawCrop(ctx, obj.x, obj.y, obj.cropId, stage(obj, now));
       return;
     case 'building':
@@ -66,6 +68,10 @@ export function drawProduct(ctx: CanvasRenderingContext2D, p: Placeable, x: numb
       return;
     case 'decoration':
       drawDecoration(ctx, p.id, { x, y, width, depth }, NO_LINKS);
+      return;
+    case 'support':
+      drawSoil(ctx, x, y, 'plowed');
+      drawSupport(ctx, p.id, x, y);
       return;
     default: {
       const _exhaustive: never = p;

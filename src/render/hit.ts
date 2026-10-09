@@ -26,7 +26,8 @@ function height(obj: FarmObject): number {
   switch (obj.kind) {
     case 'plot':
       // Crops are drawn oversized, up to the height of a 192-pixel art cell.
-      return obj.state === 'planted' ? 64 : 0;
+      // A trellis stands up off its plot even with nothing growing.
+      return obj.state === 'planted' ? 64 : obj.support !== null ? 36 : 0;
     case 'building':
       return 80;
     case 'tree':
