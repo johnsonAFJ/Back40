@@ -122,7 +122,23 @@ export function drawArt(
 ): boolean {
   const cell = sheets.get(name)?.[index];
   if (!cell) return false;
-  const scale = width / cell.image.width;
+  return drawArtScaled(ctx, name, index, x, y, width / cell.image.width, flip);
+}
+
+// The same, but at a fixed scale: world pixels per art pixel. For art whose
+// cells may come in more than one size but whose ground always does (crops:
+// the plot is 128 art pixels wide however tall or wide the plants are).
+export function drawArtScaled(
+  ctx: CanvasRenderingContext2D,
+  name: string,
+  index: number,
+  x: number,
+  y: number,
+  scale: number,
+  flip = false,
+): boolean {
+  const cell = sheets.get(name)?.[index];
+  if (!cell) return false;
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(flip ? -scale : scale, scale);

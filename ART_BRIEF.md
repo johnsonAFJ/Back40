@@ -68,20 +68,31 @@ The game mirrors the sheet for the right-facing directions, so draw left only.
 
 Files: `crop-<id>.png` for each crop below.
 
-Size: exactly **640 x 128**. Grid: **5 columns x 1 row**, each cell
-**128 x 128**.
+Size: exactly **960 x 192**. Grid: **5 columns x 1 row**, each cell
+**192 x 192**.
 
     Column 0: seeded      a few small dark mounds where seeds went in
-    Column 1: sprouting   tiny two-leaf sprouts
-    Column 2: growing     leafy plants at about two-thirds height, no crop showing
-    Column 3: ready       full plants with the crop clearly visible
-    Column 4: withered    brown, drooping, dead plants
+    Column 1: sprouting   chunky sprouts with two big leaves
+    Column 2: growing     big leafy plants at about two-thirds height, no crop showing
+    Column 3: ready       the crop itself, oversized and heaped up
+    Column 4: withered    the same plants brown, drooping and dead
 
-- **The plot** is the diamond in the bottom half of each cell: top corner
-  (64, 64), right (128, 96), bottom (64, 128), left (0, 96). The game draws
-  the soil there; draw **only the plants**, as a small cluster of four to six
-  spread over the diamond. Plants may rise above it, up to the top of the
-  cell.
+- **Oversized:** crops are drawn far bigger than life, toy-like: a ripe
+  plot is three or four huge watermelons, or a mound heaped with
+  strawberries the size of a fist. Plots side by side merge into one dense
+  field. It should look natural and a little wild: every piece at its own
+  angle and size, overlapping unevenly, never copies of one piece. The game
+  mirrors about half the plots so neighbors differ too. Each prompt in [prompts/crops.md](prompts/crops.md) gives rough
+  sizes for its crop.
+- **The plot** is a diamond at the bottom center of each cell: top corner
+  (96, 128), right (160, 160), bottom (96, 192), left (32, 160). The game
+  draws the soil there; draw **only the plants**, centered on it. They fill
+  it, may spill past its left and right corners by up to 32 pixels, and may
+  rise to the top of the cell.
+- The plot is always 128 pixels wide in the art, so the game draws crops at
+  a fixed scale whatever the cell size. The older 640 x 128 strips (128 x
+  128 cells, plot filling the cell's bottom half) still work, so crops can
+  be redrawn one at a time.
 
 | id | Crop | Ready looks like |
 | --- | --- | --- |
