@@ -18,7 +18,7 @@ Make a strip of five growth stages of one crop, Strawberries, for an isometric f
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -40,7 +40,7 @@ Make a strip of five growth stages of one crop, Wheat, for an isometric farming 
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -62,7 +62,7 @@ Make a strip of five growth stages of one crop, Soybeans, for an isometric farmi
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -84,7 +84,7 @@ Make a strip of five growth stages of one crop, Peanuts, for an isometric farmin
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -106,7 +106,7 @@ Make a strip of five growth stages of one crop, Eggplant, for an isometric farmi
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -128,7 +128,7 @@ Make a strip of five growth stages of one crop, Lilac, for an isometric farming 
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -150,7 +150,7 @@ Make a strip of five growth stages of one crop, Squash, for an isometric farming
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -172,7 +172,7 @@ Make a strip of five growth stages of one crop, Pumpkin, for an isometric farmin
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -194,7 +194,7 @@ Make a strip of five growth stages of one crop, Spinach, for an isometric farmin
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -216,7 +216,7 @@ Make a strip of five growth stages of one crop, Artichokes, for an isometric far
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -238,7 +238,7 @@ Make a strip of five growth stages of one crop, Rice, for an isometric farming g
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -260,7 +260,7 @@ Make a strip of five growth stages of one crop, Raspberries, for an isometric fa
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -282,7 +282,7 @@ Make a strip of five growth stages of one crop, Daffodils, for an isometric farm
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -304,7 +304,7 @@ Make a strip of five growth stages of one crop, Cotton, for an isometric farming
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -326,7 +326,7 @@ Make a strip of five growth stages of one crop, Cranberries, for an isometric fa
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -348,7 +348,7 @@ Make a strip of five growth stages of one crop, Chickpeas, for an isometric farm
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -370,7 +370,7 @@ Make a strip of five growth stages of one crop, Bell Peppers, for an isometric f
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -392,7 +392,7 @@ Make a strip of five growth stages of one crop, Rhubarb, for an isometric farmin
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -414,7 +414,7 @@ Make a strip of five growth stages of one crop, Peppers, for an isometric farmin
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -436,7 +436,7 @@ Make a strip of five growth stages of one crop, Morning Glory, for an isometric 
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -458,7 +458,7 @@ Make a strip of five growth stages of one crop, Aloe Vera, for an isometric farm
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -480,7 +480,7 @@ Make a strip of five growth stages of one crop, Pineapples, for an isometric far
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -502,7 +502,7 @@ Make a strip of five growth stages of one crop, Red Tulips, for an isometric far
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -524,7 +524,7 @@ Make a strip of five growth stages of one crop, Pattypan Squash, for an isometri
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -546,7 +546,7 @@ Make a strip of five growth stages of one crop, Blueberries, for an isometric fa
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -568,7 +568,7 @@ Make a strip of five growth stages of one crop, Watermelon, for an isometric far
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -590,7 +590,7 @@ Make a strip of five growth stages of one crop, Grapes, for an isometric farming
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -612,7 +612,7 @@ Make a strip of five growth stages of one crop, Tomatoes, for an isometric farmi
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -634,7 +634,7 @@ Make a strip of five growth stages of one crop, Pink Roses, for an isometric far
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -656,7 +656,7 @@ Make a strip of five growth stages of one crop, Sugar Cane, for an isometric far
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -678,7 +678,7 @@ Make a strip of five growth stages of one crop, Carrots, for an isometric farmin
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -700,7 +700,7 @@ Make a strip of five growth stages of one crop, Coffee, for an isometric farming
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -722,7 +722,7 @@ Make a strip of five growth stages of one crop, Sunflowers, for an isometric far
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -744,7 +744,7 @@ Make a strip of five growth stages of one crop, Broccoli, for an isometric farmi
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
@@ -766,7 +766,7 @@ Make a strip of five growth stages of one crop, Corn, for an isometric farming g
 
 Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
 
-The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field.
+The look: crops are oversized and exaggerated, toy-like, the way classic browser farm games drew them. A ripe plot is a lush heap where the crop itself is the star, drawn much bigger than life and piled up to fill the whole plot. Plots side by side should merge into one dense, bountiful field. Make it look natural and a little wild, never neat: every piece of the crop is its own, at its own angle and size, some tipped over, some half hidden under leaves, overlapping each other unevenly. No two pieces alike, no rows, no copies of the same piece.
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 

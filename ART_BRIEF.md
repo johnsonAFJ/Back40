@@ -80,7 +80,9 @@ Size: exactly **960 x 192**. Grid: **5 columns x 1 row**, each cell
 - **Oversized:** crops are drawn far bigger than life, toy-like: a ripe
   plot is three or four huge watermelons, or a mound heaped with
   strawberries the size of a fist. Plots side by side merge into one dense
-  field. Each prompt in [prompts/crops.md](prompts/crops.md) gives rough
+  field. It should look natural and a little wild: every piece at its own
+  angle and size, overlapping unevenly, never copies of one piece. The game
+  mirrors about half the plots so neighbors differ too. Each prompt in [prompts/crops.md](prompts/crops.md) gives rough
   sizes for its crop.
 - **The plot** is a diamond at the bottom center of each cell: top corner
   (96, 128), right (160, 160), bottom (96, 192), left (32, 160). The game
