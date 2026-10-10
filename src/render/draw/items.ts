@@ -3,7 +3,7 @@
 
 import type { AnimalId, DecorationId, TreeId } from '../../core/data/items';
 import { STILL, type Pose } from '../animalMotion';
-import { decorationHasArt, drawArt, GRIDS, UPRIGHT_DECORATIONS } from '../art';
+import { decorationHasArt, drawArt, drawArtScaled, GRIDS, GROUND_SCALE, hasArt, UPRIGHT_DECORATIONS } from '../art';
 import { tile, tileCenter, tileToWorld, type WorldPoint } from '../iso';
 import { drawBarnLike } from './buildings';
 import { drawBox, ellipse, footprintCorners, lift, line, mix, polygon, SHADOW, type Footprint } from './shapes';
@@ -22,9 +22,15 @@ const TREE_LOOKS: Record<TreeId, { readonly leaves: string; readonly light: stri
 export function drawFruitTree(ctx: CanvasRenderingContext2D, x: number, y: number, id: TreeId, ready: boolean): void {
   const c = tileCenter(tile(x, y));
   const look = TREE_LOOKS[id];
+  // Real art stands its trunk on the middle of the square, drawn to the
+  // ground's scale: big trees spread over the squares around them.
+  const art = `tree-${id}`;
+  if (hasArt(art)) {
+    ellipse(ctx, c.x + 6, c.y + 3, 32, 13, SHADOW);
+    drawArtScaled(ctx, art, ready ? 1 : 0, c.x, c.y, GROUND_SCALE);
+    return;
+  }
   ellipse(ctx, c.x + 4, c.y + 2, 18, 8, SHADOW);
-  // Real art stands its trunk on the middle of the square.
-  if (drawArt(ctx, `tree-${id}`, ready ? 1 : 0, c.x, c.y, 64)) return;
   ctx.fillStyle = '#7a5230';
   ctx.fillRect(c.x - 2.5, c.y - 16, 5, 16);
   const blobs: ReadonlyArray<readonly [number, number, number, string]> = [

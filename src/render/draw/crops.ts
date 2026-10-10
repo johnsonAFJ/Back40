@@ -4,9 +4,9 @@
 import type { CropId } from '../../core/data/crops';
 import type { Stage } from '../../core/growth';
 import { random01 } from '../../core/rng';
-import { TILE_WIDTH, tile, tileToWorld, type WorldPoint } from '../iso';
+import { tile, tileToWorld, type WorldPoint } from '../iso';
 import { tileNoise } from './ground';
-import { drawArtScaled } from '../art';
+import { drawArtScaled, GROUND_SCALE } from '../art';
 import { footprintCorners, polygon } from './shapes';
 
 type Style = 'berry' | 'grain' | 'leafy' | 'vine' | 'flower' | 'stalk';
@@ -102,8 +102,6 @@ export function drawSoil(ctx: CanvasRenderingContext2D, x: number, y: number, ki
   }
 }
 
-// How wide the plot is in a crop strip's art, in art pixels.
-const CROP_PLOT_WIDTH = 128;
 // Seeds the choice of which plots show their crop art mirrored.
 const MIRROR_SEED = 7;
 
@@ -117,7 +115,7 @@ export function drawCrop(ctx: CanvasRenderingContext2D, x: number, y: number, cr
   // changes, so a field of one crop doesn't look stamped out.
   const front = tileToWorld(tile(x + 1, y + 1));
   const flip = random01(x, y, MIRROR_SEED) < 0.5;
-  if (drawArtScaled(ctx, `crop-${cropId}`, STAGE_INDEX[stage], front.x, front.y, TILE_WIDTH / CROP_PLOT_WIDTH, flip)) return;
+  if (drawArtScaled(ctx, `crop-${cropId}`, STAGE_INDEX[stage], front.x, front.y, GROUND_SCALE, flip)) return;
   const art = ART[cropId];
   for (const [u, v] of SPOTS) {
     const base = tileToWorld(tile(x + u, y + v));

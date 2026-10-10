@@ -16,10 +16,16 @@
 import { CROP_IDS } from '../core/data/crops';
 import { ANIMAL_IDS, DECORATION_IDS, DECORATIONS, TREE_IDS, type DecorationId } from '../core/data/items';
 import { PRODUCE_IDS } from '../core/data/produce';
+import { TILE_WIDTH } from './iso';
 
 // Vite lists the PNGs that exist when the game is built. Missing ones simply
 // aren't in the list, which is how the code-drawn fallback works.
 const FILES = import.meta.glob('../art/*.png', { eager: true, query: '?url', import: 'default' });
+
+// A floor tile is 128 pixels wide in the art (ART_BRIEF.md), so art drawn
+// to the ground's scale (crops, trees) is drawn at this many world pixels
+// per art pixel, whatever the size of its cells.
+export const GROUND_SCALE = TILE_WIDTH / 128;
 
 // The grid each kind of file is laid out in. See ART_BRIEF.md.
 export const GRIDS = {
