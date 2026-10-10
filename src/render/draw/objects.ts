@@ -8,7 +8,7 @@ import { isProducerReady } from '../../core/producers';
 import { footprint, type FarmObject } from '../../core/state';
 import { drawBuilding } from './buildings';
 import { drawCrop, drawSoil } from './crops';
-import { drawSupport } from './supports';
+import { drawSupport, trellisRun } from './supports';
 import type { Slot } from '../animalSlots';
 import { STILL, type Pose } from '../animalMotion';
 import { drawAnimal, drawDecoration, drawFruitTree, NO_LINKS, type Links } from './items';
@@ -25,8 +25,12 @@ export function drawFarmObject(
 ): void {
   switch (obj.kind) {
     case 'plot':
-      if (obj.support !== null) drawSupport(ctx, obj.support, obj.x, obj.y);
-      if (obj.state === 'planted') drawCrop(ctx, obj.x, obj.y, obj.cropId, stage(obj, now));
+      if (obj.support !== null) drawSupport(ctx, obj.support, obj.x, obj.y, links);
+      // Crop art on a trellis is drawn along x, and mirrored to run along y.
+      if (obj.state === 'planted') {
+        const mirror = obj.support === null ? undefined : trellisRun(links) === 'y';
+        drawCrop(ctx, obj.x, obj.y, obj.cropId, stage(obj, now), mirror);
+      }
       return;
     case 'building':
       drawBuilding(ctx, obj.typeId, { x: obj.x, y: obj.y, ...footprint(obj) });
@@ -71,7 +75,7 @@ export function drawProduct(ctx: CanvasRenderingContext2D, p: Placeable, x: numb
       return;
     case 'support':
       drawSoil(ctx, x, y, 'plowed');
-      drawSupport(ctx, p.id, x, y);
+      drawSupport(ctx, p.id, x, y, NO_LINKS);
       return;
     default: {
       const _exhaustive: never = p;
