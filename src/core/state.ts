@@ -10,9 +10,10 @@ import type { Placeable } from './catalog';
 import { CROPS, type CropId } from './data/crops';
 import { STARTER_CROP_MINUTES_LEFT, STARTING_COINS, WITHER_GROW_TIMES } from './data/economy';
 import { EXPANSIONS } from './data/expansions';
+import type { SupportId } from './data/supports';
 import { HOUR, MINUTE } from './clock';
 
-export const SAVE_VERSION = 6;
+export const SAVE_VERSION = 7;
 
 // A plot is always in exactly one of these states. Fields that only make
 // sense for a growing crop only exist on the 'planted' variant, so a plowed
@@ -30,7 +31,9 @@ export type PlotState =
 
 type Placed = { readonly id: string; readonly x: number; readonly y: number };
 
-export type Plot = Placed & { readonly kind: 'plot' } & PlotState;
+// `support` is what the plot is: plain soil (null), or a support such as a
+// trellis that climbing crops grow on (see data/supports.ts).
+export type Plot = Placed & { readonly kind: 'plot'; readonly support: SupportId | null } & PlotState;
 export type PlantedPlot = Extract<Plot, { state: 'planted' }>;
 export type BuildingObject = Placed & { readonly kind: 'building'; readonly typeId: BuildingId };
 // Trees and animals produce again a set time after their last harvest. A new
@@ -188,6 +191,7 @@ export function newFarm(now: number, seed: number): FarmState {
       objects.push({
         id: `o${nextId++}`,
         kind: 'plot',
+        support: null,
         x,
         y,
         state: 'planted',

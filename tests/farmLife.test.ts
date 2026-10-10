@@ -128,7 +128,7 @@ describe('saves from milestone 2', () => {
       version: 1,
     };
     const loaded = parseSave(JSON.parse(JSON.stringify(v1)));
-    expect(loaded.version).toBe(6);
+    expect(loaded.version).toBe(7);
     expect(loaded.objects).toEqual(v1.objects);
     expect(loaded.timeOffset).toBe(0);
     expect(loaded.basket).toEqual({});

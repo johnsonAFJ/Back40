@@ -12,6 +12,7 @@ import { isProduceId } from './data/produce';
 import { NEIGHBORS, type NeighborId } from './data/neighbors';
 import type { Placeable } from './catalog';
 import { EXPANSIONS } from './data/expansions';
+import { isSupportId } from './data/supports';
 import { FEED_LENGTH, SAVE_VERSION, footprint, spaceUsed, type Basket, type FarmObject, type FarmState, type FeedEvent, type NeighborRecord } from './state';
 
 // `newer` means the save came from a later version of the game than this
@@ -87,8 +88,10 @@ function parseObject(raw: unknown, index: number): FarmObject {
   }
 
   if (kind === 'plot') {
+    const support = raw['support'];
+    if (support !== null && !isSupportId(support)) throw new SaveError(`${where}.support is not a known support`);
     const state = raw['state'];
-    if (state === 'plowed' || state === 'harvested') return { ...base, kind, state };
+    if (state === 'plowed' || state === 'harvested') return { ...base, kind, support, state };
     if (state === 'planted') {
       const cropId = raw['cropId'];
       if (!isCropId(cropId)) throw new SaveError(`${where}.cropId is not a known crop`);
@@ -97,6 +100,7 @@ function parseObject(raw: unknown, index: number): FarmObject {
       return {
         ...base,
         kind,
+        support,
         state,
         cropId,
         plantedAt: num(raw, 'plantedAt', where),
@@ -131,6 +135,15 @@ const MIGRATIONS: Readonly<Record<number, (raw: Json) => Json>> = {
   // changes; the new number just stops older versions of the game from
   // reading a shared square as two objects overlapping by mistake.
   5: (raw) => ({ ...raw, version: 6 }),
+  // Version 7 added trellises. Every plot in an older farm is plain soil;
+  // grapes already growing on one finish as they are.
+  6: (raw) => ({
+    ...raw,
+    version: 7,
+    objects: Array.isArray(raw['objects'])
+      ? raw['objects'].map((o: unknown) => (isRecord(o) && o['kind'] === 'plot' ? { ...o, support: null } : o))
+      : raw['objects'],
+  }),
 };
 
 const isNeighborId = (v: unknown): v is NeighborId => typeof v === 'string' && Object.hasOwn(NEIGHBORS, v);
@@ -141,6 +154,7 @@ function parsePlaceable(raw: unknown, where: string): Placeable {
   if (kind === 'tree' && isTreeId(id)) return { kind, id };
   if (kind === 'animal' && isAnimalId(id)) return { kind, id };
   if (kind === 'decoration' && isDecorationId(id)) return { kind, id };
+  if (kind === 'support' && isSupportId(id)) return { kind, id };
   throw new SaveError(`${where} is not something that can be placed`);
 }
 

@@ -5,6 +5,7 @@
 // ripen while you watch, so there's always something growing to help with.
 
 import { CROPS, type CropId } from './data/crops';
+import { CLIMBING_CROPS } from './data/supports';
 import { HOUR } from './clock';
 import type { AnimalId, DecorationId, TreeId } from './data/items';
 import type { NeighborId } from './data/neighbors';
@@ -54,7 +55,9 @@ class Builder {
     const plantedAt = this.plantedAt(x, y, cropId);
     // Neighbors' crops never wither while you're looking at them.
     const witherAt = plantedAt + 1000 * HOUR;
-    this.add({ id: this.id(), kind: 'plot', x, y, state: 'planted', cropId, plantedAt, witherAt, fertilized: false });
+    // Climbing crops stand on a trellis, as they would on your farm.
+    const support = CLIMBING_CROPS.has(cropId) ? 'trellis' : null;
+    this.add({ id: this.id(), kind: 'plot', support, x, y, state: 'planted', cropId, plantedAt, witherAt, fertilized: false });
   }
 
   // Neighbors' trees always show fruit, which is the point of an orchard.

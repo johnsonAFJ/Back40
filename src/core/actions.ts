@@ -7,6 +7,7 @@ import { productInfo, type Placeable } from './catalog';
 import { CROPS, type CropId } from './data/crops';
 import { FERTILIZED_BONUS_XP, HARVEST_XP, PLOW_COST, PLOW_XP } from './data/economy';
 import { SELL_BACK } from './data/items';
+import { CLIMBING_CROPS, type SupportId } from './data/supports';
 import type { ProduceId } from './data/produce';
 import { stage } from './growth';
 import { levelForXp } from './levels';
@@ -37,6 +38,9 @@ export type Failure =
   | { readonly code: 'squareFull' }
   | { readonly code: 'alreadyPlowed' }
   | { readonly code: 'notPlowed' }
+  // A climbing crop (grapes) on plain soil, or any other crop on a trellis.
+  | { readonly code: 'needsSupport'; readonly cropId: CropId }
+  | { readonly code: 'climbersOnly'; readonly support: SupportId }
   | { readonly code: 'growing'; readonly plot: PlantedPlot }
   | { readonly code: 'producing'; readonly producer: Producer }
   | { readonly code: 'notEnoughCoins'; readonly needed: number }
@@ -109,16 +113,26 @@ export function plow(state: FarmState, x: number, y: number, now: number): Outco
     if (existing.state === 'planted' && stage(existing, now) !== 'withered') {
       return fail({ code: 'growing', plot: existing });
     }
+    // A trellis never needs plowing: clearing dead vines off it is free.
+    if (existing.support !== null) {
+      const cleared: Plot = { id: existing.id, kind: 'plot', support: existing.support, x, y, state: 'plowed' };
+      return succeed('plow', put(state, cleared), NO_REWARD, cleared, now);
+    }
   }
   if (state.coins < PLOW_COST) return fail({ code: 'notEnoughCoins', needed: PLOW_COST });
 
-  const plot: Plot = { id: existing?.id ?? `o${state.nextId}`, kind: 'plot', x, y, state: 'plowed' };
+  const plot: Plot = { id: existing?.id ?? `o${state.nextId}`, kind: 'plot', support: null, x, y, state: 'plowed' };
   return succeed('plow', put(state, plot), { coins: -PLOW_COST, xp: PLOW_XP, produce: [] }, plot, now);
 }
 
 export function plant(state: FarmState, x: number, y: number, cropId: CropId, now: number): Outcome {
   const existing = objectAt(state, x, y);
   if (!existing || existing.kind !== 'plot' || existing.state !== 'plowed') return fail({ code: 'notPlowed' });
+  // Climbing crops grow on a support and nowhere else, and nothing else
+  // grows on one.
+  const climbs = CLIMBING_CROPS.has(cropId);
+  if (climbs && existing.support === null) return fail({ code: 'needsSupport', cropId });
+  if (!climbs && existing.support !== null) return fail({ code: 'climbersOnly', support: existing.support });
   const crop = CROPS[cropId];
   if (levelForXp(state.xp) < crop.level) return fail({ code: 'levelTooLow', level: crop.level });
   if (state.coins < crop.seed) return fail({ code: 'notEnoughCoins', needed: crop.seed });
@@ -126,6 +140,7 @@ export function plant(state: FarmState, x: number, y: number, cropId: CropId, no
   const plot: Plot = {
     id: existing.id,
     kind: 'plot',
+    support: existing.support,
     x,
     y,
     state: 'planted',
@@ -168,7 +183,11 @@ export function harvest(state: FarmState, x: number, y: number, now: number): Ou
   if (existing.kind !== 'plot' || existing.state !== 'planted') return fail({ code: 'notPlowed' });
   if (stage(existing, now) !== 'ready') return fail({ code: 'growing', plot: existing });
 
-  const plot: Plot = { id: existing.id, kind: 'plot', x, y, state: 'harvested' };
+  // Soil needs plowing again after a harvest; a trellis is ready to replant.
+  const plot: Plot =
+    existing.support === null
+      ? { id: existing.id, kind: 'plot', support: null, x, y, state: 'harvested' }
+      : { id: existing.id, kind: 'plot', support: existing.support, x, y, state: 'plowed' };
   const reward = {
     coins: CROPS[existing.cropId].sells,
     xp: HARVEST_XP + (existing.fertilized ? FERTILIZED_BONUS_XP : 0),
@@ -177,7 +196,26 @@ export function harvest(state: FarmState, x: number, y: number, now: number): Ou
   return succeed('harvest', put(state, plot), reward, plot, now);
 }
 
-// ---- Trees, animals and decorations ----
+// ---- Trees, animals, decorations and supports ----
+
+// What a bought or gifted item becomes on the farm. A support goes down as a
+// plot, ready to plant.
+function newObject(item: Placeable, id: string, x: number, y: number, now: number): FarmObject {
+  switch (item.kind) {
+    case 'decoration':
+      return { id, kind: 'decoration', typeId: item.id, x, y };
+    case 'tree':
+      return { id, kind: 'tree', typeId: item.id, x, y, lastHarvestAt: now };
+    case 'animal':
+      return { id, kind: 'animal', typeId: item.id, x, y, lastHarvestAt: now };
+    case 'support':
+      return { id, kind: 'plot', support: item.id, x, y, state: 'plowed' };
+    default: {
+      const _exhaustive: never = item;
+      return _exhaustive;
+    }
+  }
+}
 
 // Buy something from the market and place it with its top corner at (x, y).
 export function place(state: FarmState, item: Placeable, x: number, y: number, now: number): Outcome {
@@ -188,13 +226,7 @@ export function place(state: FarmState, item: Placeable, x: number, y: number, n
   if (blocker) return fail(blockedBy(blocker));
   if (state.coins < info.price) return fail({ code: 'notEnoughCoins', needed: info.price });
 
-  const id = `o${state.nextId}`;
-  const obj: FarmObject =
-    item.kind === 'decoration'
-      ? { id, kind: 'decoration', typeId: item.id, x, y }
-      : item.kind === 'tree'
-        ? { id, kind: 'tree', typeId: item.id, x, y, lastHarvestAt: now }
-        : { id, kind: 'animal', typeId: item.id, x, y, lastHarvestAt: now };
+  const obj = newObject(item, `o${state.nextId}`, x, y, now);
   return succeed('place', put(state, obj), { coins: -info.price, xp: info.buyXp, produce: [] }, obj, now);
 }
 
@@ -208,13 +240,7 @@ export function placeGift(state: FarmState, index: number, x: number, y: number,
   const blocker = areaBlocker(state, { x, y, width, depth }, animal);
   if (blocker) return fail(blockedBy(blocker));
 
-  const id = `o${state.nextId}`;
-  const obj: FarmObject =
-    gift.kind === 'decoration'
-      ? { id, kind: 'decoration', typeId: gift.id, x, y }
-      : gift.kind === 'tree'
-        ? { id, kind: 'tree', typeId: gift.id, x, y, lastHarvestAt: now }
-        : { id, kind: 'animal', typeId: gift.id, x, y, lastHarvestAt: now };
+  const obj = newObject(gift, `o${state.nextId}`, x, y, now);
   const gifts = state.gifts.filter((_, i) => i !== index);
   return succeed('place', { ...put(state, obj), gifts }, NO_REWARD, obj, now);
 }
@@ -235,8 +261,9 @@ export function sellValue(obj: FarmObject): number | null {
     case 'building':
       return null;
     case 'plot':
-      // Removing a plot pays nothing, and loses whatever was growing.
-      return 0;
+      // Removing a plot loses whatever was growing. Plain soil pays nothing;
+      // a trellis pays back like a decoration.
+      return obj.support === null ? 0 : Math.floor(productInfo({ kind: 'support', id: obj.support }).price * SELL_BACK);
     case 'tree':
       return Math.floor(productInfo({ kind: 'tree', id: obj.typeId }).price * SELL_BACK);
     case 'animal':

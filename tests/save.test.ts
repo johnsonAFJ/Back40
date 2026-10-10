@@ -33,9 +33,10 @@ describe('parseSave', () => {
     const farm = newFarm(START, 1);
     const withObject = (obj: object): unknown => ({ ...farm, objects: [...farm.objects, obj] });
     expect(() =>
-      parseSave(withObject({ id: 'x', kind: 'plot', x: 9, y: 9, state: 'planted', cropId: 'mandrake', plantedAt: 0, witherAt: 1, fertilized: false })),
+      parseSave(withObject({ id: 'x', kind: 'plot', support: null, x: 9, y: 9, state: 'planted', cropId: 'mandrake', plantedAt: 0, witherAt: 1, fertilized: false })),
     ).toThrow(/not a known crop/);
-    expect(() => parseSave(withObject({ id: 'x', kind: 'plot', x: 1, y: 1, state: 'plowed' }))).toThrow(/overlap/);
-    expect(() => parseSave(withObject({ id: 'x', kind: 'plot', x: 12, y: 0, state: 'plowed' }))).toThrow(/off the farm/);
+    expect(() => parseSave(withObject({ id: 'x', kind: 'plot', support: null, x: 1, y: 1, state: 'plowed' }))).toThrow(/overlap/);
+    expect(() => parseSave(withObject({ id: 'x', kind: 'plot', support: null, x: 12, y: 0, state: 'plowed' }))).toThrow(/off the farm/);
+    expect(() => parseSave(withObject({ id: 'x', kind: 'plot', support: 'beanpole', x: 9, y: 9, state: 'plowed' }))).toThrow(/not a known support/);
   });
 });

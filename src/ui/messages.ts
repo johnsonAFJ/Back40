@@ -8,6 +8,7 @@ import { CROPS, type CropId } from '../core/data/crops';
 import { PLOW_COST } from '../core/data/economy';
 import { ANIMALS, DECORATIONS, TREES } from '../core/data/items';
 import { PRODUCE } from '../core/data/produce';
+import { CLIMBING_CROPS, SUPPORTS } from '../core/data/supports';
 import { stage, timeUntilReady } from '../core/growth';
 import { isProducerReady, producerData, timeUntilProduce } from '../core/producers';
 import { isOnFarm, objectAt, objectsAt, type FarmObject, type FarmState, type Producer } from '../core/state';
@@ -16,7 +17,8 @@ import { formatCoins, formatDuration } from './format';
 export function objectName(obj: FarmObject): string {
   switch (obj.kind) {
     case 'plot':
-      return obj.state === 'planted' ? CROPS[obj.cropId].name : 'Plot';
+      if (obj.state === 'planted') return CROPS[obj.cropId].name;
+      return obj.support === null ? 'Plot' : SUPPORTS[obj.support].name;
     case 'building':
       return BUILDINGS[obj.typeId].name;
     case 'tree':
@@ -30,6 +32,11 @@ export function objectName(obj: FarmObject): string {
       return _exhaustive;
     }
   }
+}
+
+// The crops that grow on a trellis, as a phrase: "grapes".
+function climberNames(): string {
+  return [...CLIMBING_CROPS].map((id) => CROPS[id].name.toLowerCase()).join(' and ');
 }
 
 // What clicking this tile with the multi-tool would do, or what's on it.
@@ -61,6 +68,8 @@ export function describeTile(farm: FarmState, x: number, y: number, seed: CropId
     case 'plot':
       switch (obj.state) {
         case 'plowed':
+          if (obj.support !== null && !CLIMBING_CROPS.has(seed)) return `${SUPPORTS[obj.support].name}: plant ${climberNames()} here`;
+          if (obj.support === null && CLIMBING_CROPS.has(seed)) return `${CROPS[seed].name} grow on a trellis`;
           return `Plant ${CROPS[seed].name} for ${formatCoins(CROPS[seed].seed)} coins`;
         case 'harvested':
           return `Harvested. Plow again for ${PLOW_COST} coins`;
@@ -70,7 +79,7 @@ export function describeTile(farm: FarmState, x: number, y: number, seed: CropId
             case 'ready':
               return `${name}: ready to harvest`;
             case 'withered':
-              return `${name}: withered. Plow to clear for ${PLOW_COST} coins`;
+              return obj.support === null ? `${name}: withered. Plow to clear for ${PLOW_COST} coins` : `${name}: withered. Click to clear`;
             default:
               return `${name}: ready in ${formatDuration(timeUntilReady(obj, now))}`;
           }
@@ -92,6 +101,11 @@ export function describeSell(obj: FarmObject | null): string | null {
   if (!obj) return null;
   const value = sellValue(obj);
   if (value === null) return `The ${objectName(obj).toLowerCase()} can't be sold`;
+  if (obj.kind === 'plot' && obj.support !== null) {
+    const what = SUPPORTS[obj.support].name.toLowerCase();
+    const and = obj.state === 'planted' ? ` and ${CROPS[obj.cropId].name.toLowerCase()}` : '';
+    return `Sell ${what}${and} for ${formatCoins(value)} coins`;
+  }
   if (obj.kind === 'plot') return obj.state === 'planted' ? `Remove plot and ${objectName(obj).toLowerCase()}` : 'Remove plot';
   return `Sell ${objectName(obj).toLowerCase()} for ${formatCoins(value)} coins`;
 }
@@ -110,6 +124,10 @@ export function failureMessage(failure: Failure, now: number): string {
       return 'Already plowed';
     case 'notPlowed':
       return 'Plow it first';
+    case 'needsSupport':
+      return `${CROPS[failure.cropId].name} grow on a trellis. Buy one in the market`;
+    case 'climbersOnly':
+      return `Only ${climberNames()} grow on a ${SUPPORTS[failure.support].name.toLowerCase()}`;
     case 'growing':
       return `${CROPS[failure.plot.cropId].name}: ready in ${formatDuration(timeUntilReady(failure.plot, now))}`;
     case 'producing': {

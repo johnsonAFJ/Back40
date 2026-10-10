@@ -41,6 +41,7 @@ Departures happen for a few reasons, and each entry below names which:
 | Sound | Music and effects | None | Scope |
 | Animals per square | A finer grid, so many small animals fit in a pen | Squares hold 4 spaces: 4 chickens, 2 sheep or pigs, or 1 cow or horse | Our own choice (see below) |
 | Tree and animal produce | Sold the moment it was collected | Goes into a harvest basket, sold when you choose | Our own choice (see below) |
+| Grapes | Planted on any plot | Grow only on a trellis, bought once and never plowed | Our own choice (see below) |
 | Saves | Zynga's servers | The browser, with backup export and import | Scope |
 
 ### Neighbors arrive by level
@@ -179,3 +180,16 @@ pumpkins from level 5 to 1, and tomatoes and watermelon got much cheaper and
 earlier. Crops not on the chart keep their later values, so the market is a
 mix; if it ever feels uneven, those 18 are the first to revisit.
 
+### Grapes grow on a trellis
+
+Grapes need a trellis: 100 coins, unlocked with grapes at level 15. A trellis
+is a plot that never needs plowing. After a harvest it's ready to plant again,
+and clearing withered vines off it is free. That saves 15 coins a cycle but
+loses the 1 XP plowing gives, so it pays for itself after about seven
+harvests. Only climbing crops grow on one, so it isn't simply a better plot
+for everything. Grapes are the only climber for now. The rule lives in
+`core/data/supports.ts`, so adding more climbers (cucumbers, say) or another
+support (a garden arch) is a data change.
+
+Grapes already growing on plain soil in an older save finish as they are; they
+just can't be replanted there.
