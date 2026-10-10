@@ -193,3 +193,8 @@ support (a garden arch) is a data change.
 
 Grapes already growing on plain soil in an older save finish as they are; they
 just can't be replanted there.
+
+Trellises join up with their neighbors like fences do, but in rows: a block of
+them becomes parallel rows along one axis, like a vineyard, instead of a
+lattice. Grape art is drawn along a trellis and mirrored to follow a row that
+runs the other way.
