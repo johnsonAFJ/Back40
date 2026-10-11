@@ -10,7 +10,6 @@
 import { animalPose, STILL } from './animalMotion';
 import { animalSlots } from './animalSlots';
 import { drawFarmObject } from './draw/objects';
-import { NO_LINKS } from './draw/items';
 import type { WorldPoint } from './iso';
 import { linker } from './renderer';
 import type { FarmObject, FarmState } from '../core/state';
@@ -36,7 +35,7 @@ export function pixelTest(farm: FarmState, p: WorldPoint, now: number, motion: n
     ctx.setTransform(1, 0, 0, 1, 0.5 - p.x, 0.5 - p.y);
     const slot = slots.get(obj.id);
     const pose = slot && motion !== null ? animalPose(obj.id, slot, motion) : STILL;
-    const links = obj.kind === 'decoration' ? linksAt(obj.x, obj.y, obj.typeId) : NO_LINKS;
+    const links = linksAt(obj);
     drawFarmObject(ctx, obj, now, links, slot, pose);
     return (ctx.getImageData(0, 0, 1, 1).data[3] ?? 0) >= SOLID;
   };

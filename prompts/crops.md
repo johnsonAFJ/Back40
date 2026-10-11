@@ -585,6 +585,9 @@ In each cell, the farm plot is a diamond at the bottom center of the cell: top c
 
 File: `crop-grapes.png`
 
+Grapes grow on a trellis the game draws, so this strip draws only the vine,
+lined up with where the trellis stands.
+
 ```
 Make a strip of five growth stages of one crop, Grapes, for an isometric farming game.
 
@@ -594,13 +597,13 @@ The look: crops are oversized and exaggerated, toy-like, the way classic browser
 
 Canvas: exactly 960 x 192 pixels, transparent: 5 cells of 192 x 192 side by side, with no lines between them.
 
-In each cell, the farm plot is a diamond at the bottom center of the cell: top corner at (96, 128), right corner at (160, 160), bottom corner at (96, 192), left corner at (32, 160). The game draws the soil there, so draw only the plants, centered on the plot. They should fill it, and may spill past its left and right corners by up to 32 px and rise as high as the top of the cell, but nothing may go outside the cell.
+In each cell, the farm plot is a diamond at the bottom center of the cell: top corner at (96, 128), right corner at (160, 160), bottom corner at (96, 192), left corner at (32, 160). The game draws the soil there, and also a simple wooden trellis standing on the plot: two posts, one at (64, 144) and one at (128, 176), each 68 px tall, joined by two rails 30 px and 58 px above the ground. The trellis runs diagonally down to the right, and in a row of plots it carries on into the next plot at each end. Do NOT draw the trellis or the soil; draw only the grapevine growing on that trellis, so it lines up when the game draws it underneath. The vine may spill a little past the posts along the line of the trellis, but nothing may go outside the cell.
 
-- Cell 1 (x 0 to 191): seeded. Four or five small dark mounds of earth spread over the plot.
-- Cell 2 (x 192 to 383): sprouting. Three or four chunky sprouts, each with two big round leaves.
-- Cell 3 (x 384 to 575): growing. Big, full leafy plants covering the plot, about two-thirds of full height, no crop showing yet, in plainer, darker greens than the ripe stage so a player can always tell growing from ready at a glance.
-- Cell 4 (x 576 to 767): ready. Ripe and oversized: short vines on wooden stakes hung with big purple grape bunches, each bunch about 44 px tall.
-- Cell 5 (x 768 to 959): withered. The same big plants brown, drooping and dead, the crop shriveled.
+- Cell 1 (x 0 to 191): seeded. Two small dark mounds of earth, one at the foot of each post.
+- Cell 2 (x 192 to 383): sprouting. A chunky sprout with two big round leaves at the foot of each post.
+- Cell 3 (x 384 to 575): growing. Young twisting brown vines climbing both posts and reaching partway along the rails, with plain dark green grape leaves, no grapes yet.
+- Cell 4 (x 576 to 767): ready. Ripe and oversized: a full grapevine trained along the rails from post to post, covered in broad lobed grape leaves, with big purple grape bunches hanging below the rails, each bunch about 44 px tall, five or six showing. Let bits of the rails and the tops of the posts show between the leaves.
+- Cell 5 (x 768 to 959): withered. The same vine brown, drooping and dead along the rails, the grapes shriveled.
 ```
 
 ## Tomatoes

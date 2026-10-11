@@ -107,14 +107,16 @@ const MIRROR_SEED = 7;
 
 const STAGE_INDEX: Record<Stage, number> = { seeded: 0, sprouting: 1, growing: 2, ready: 3, withered: 4 };
 
-export function drawCrop(ctx: CanvasRenderingContext2D, x: number, y: number, cropId: CropId, stage: Stage): void {
+// `mirror` overrides the usual mirroring of crop art, for a crop that has to
+// line up with the trellis under it.
+export function drawCrop(ctx: CanvasRenderingContext2D, x: number, y: number, cropId: CropId, stage: Stage, mirror?: boolean): void {
   // Real art stands on the plot's front corner. The plot is always 128 art
   // pixels wide, so the art is drawn at a fixed scale; a bigger cell just
   // means bigger plants, spilling over the plot's edges (see ART_BRIEF.md).
   // About half the plots show it mirrored, picked by position so it never
   // changes, so a field of one crop doesn't look stamped out.
   const front = tileToWorld(tile(x + 1, y + 1));
-  const flip = random01(x, y, MIRROR_SEED) < 0.5;
+  const flip = mirror ?? random01(x, y, MIRROR_SEED) < 0.5;
   if (drawArtScaled(ctx, `crop-${cropId}`, STAGE_INDEX[stage], front.x, front.y, GROUND_SCALE, flip)) return;
   const art = ART[cropId];
   for (const [u, v] of SPOTS) {

@@ -6,7 +6,7 @@
 // density, live entirely in that one setTransform call.
 
 import { productInfo, type Placeable } from '../core/catalog';
-import { DECORATIONS, type DecorationId } from '../core/data/items';
+import { DECORATIONS } from '../core/data/items';
 import { farmSize, footprint, type FarmObject, type FarmState } from '../core/state';
 import { screenToWorld, type Camera, type Viewport } from './camera';
 import { screen, tile, worldToTile, type TilePoint } from './iso';
@@ -84,19 +84,37 @@ function visibleTiles(camera: Camera, view: Viewport): TileRange {
   };
 }
 
-// Fences and paths join up with the same decoration on neighboring tiles.
-export function linker(objects: readonly FarmObject[]): (x: number, y: number, id: DecorationId) => Links {
-  const at = new Map<string, DecorationId>();
-  for (const o of objects) if (o.kind === 'decoration' && DECORATIONS[o.typeId].connects) at.set(`${o.x},${o.y}`, o.typeId);
-  return (x, y, id) =>
-    DECORATIONS[id].connects
-      ? {
-          east: at.get(`${x + 1},${y}`) === id,
-          west: at.get(`${x - 1},${y}`) === id,
-          south: at.get(`${x},${y + 1}`) === id,
-          north: at.get(`${x},${y - 1}`) === id,
-        }
-      : NO_LINKS;
+// What an object joins up with on neighboring tiles: fences and paths with
+// the same decoration, trellises with other trellises. Null for things that
+// stand alone.
+function joinKey(o: FarmObject): string | null {
+  if (o.kind === 'decoration') return DECORATIONS[o.typeId].connects ? `decoration:${o.typeId}` : null;
+  if (o.kind === 'plot') return o.support === null ? null : `support:${o.support}`;
+  return null;
+}
+
+// Which sides of each object join up with a neighbor.
+export function linker(objects: readonly FarmObject[]): (obj: FarmObject) => Links {
+  const at = new Map<string, string>();
+  for (const o of objects) {
+    const key = joinKey(o);
+    if (key) at.set(`${o.x},${o.y}`, key);
+  }
+  return (obj) => {
+    const key = joinKey(obj);
+    if (!key) return NO_LINKS;
+    const has = (x: number, y: number): boolean => at.get(`${x},${y}`) === key;
+    const { x, y } = obj;
+    const east = has(x + 1, y);
+    const west = has(x - 1, y);
+    if (obj.kind !== 'plot') return { east, west, south: has(x, y + 1), north: has(x, y - 1) };
+    // Trellises run in rows along x. Two join along y only if one of them
+    // isn't in a row, so a block of trellises becomes parallel rows rather
+    // than a lattice, while an L still turns its corner.
+    const inRow = (ny: number): boolean => has(x + 1, ny) || has(x - 1, ny);
+    const joinsY = (ny: number): boolean => has(x, ny) && !((east || west) && inRow(ny));
+    return { east, west, south: joinsY(y + 1), north: joinsY(y - 1) };
+  };
 }
 
 // Depth is the sum of an object's center coordinates: a larger x + y is
@@ -161,7 +179,7 @@ export function render(ctx: CanvasRenderingContext2D, scene: Scene): void {
       depth: slot ? obj.x + slot.u + pose.du + obj.y + slot.v + pose.dv : depthOf(obj.x, obj.y, width, depth),
       x: obj.x,
       draw: () => {
-        drawFarmObject(ctx, obj, now, obj.kind === 'decoration' ? linksAt(obj.x, obj.y, obj.typeId) : NO_LINKS, slot, pose);
+        drawFarmObject(ctx, obj, now, linksAt(obj), slot, pose);
         if (obj.kind === 'plot' && obj.state === 'planted' && obj.fertilized) drawSparkle(ctx, obj.x, obj.y);
         if (scene.marks.crows.has(obj.id)) drawCrows(ctx, obj.x, obj.y);
         // The hungry bubble follows its animal around.
@@ -219,6 +237,11 @@ function drawGhost(ctx: CanvasRenderingContext2D, ghost: Ghost, now: number, obj
     } else if (ghost.product.kind === 'animal') {
       const preview: FarmObject = { id: '~preview', kind: 'animal', typeId: ghost.product.id, x: ghost.x, y: ghost.y, lastHarvestAt: 0 };
       drawFarmObject(ctx, preview, now, NO_LINKS, joiningSlot(objects, preview));
+    } else if (ghost.product.kind === 'support') {
+      // Show the trellis already joined to the ones it will touch.
+      const preview: FarmObject = { id: '~preview', kind: 'plot', support: ghost.product.id, x: ghost.x, y: ghost.y, state: 'plowed' };
+      drawSoil(ctx, ghost.x, ghost.y, 'plowed');
+      drawFarmObject(ctx, preview, now, linker([...objects, preview])(preview));
     } else {
       drawProduct(ctx, ghost.product, ghost.x, ghost.y, width, depth);
     }
@@ -226,7 +249,8 @@ function drawGhost(ctx: CanvasRenderingContext2D, ghost: Ghost, now: number, obj
     const moved = { ...ghost.obj, x: ghost.x, y: ghost.y };
     if (moved.kind === 'plot') drawSoil(ctx, moved.x, moved.y, moved.state === 'harvested' ? 'harvested' : 'plowed');
     if (moved.kind === 'decoration' && isFlat(moved.typeId)) drawFlatDecoration(ctx, moved.typeId, moved.x, moved.y);
-    drawFarmObject(ctx, moved, now, NO_LINKS, moved.kind === 'animal' ? joiningSlot(objects, moved) : undefined);
+    const links = linker([...objects.filter((o) => o.id !== moved.id), moved])(moved);
+    drawFarmObject(ctx, moved, now, links, moved.kind === 'animal' ? joiningSlot(objects, moved) : undefined);
   }
   ctx.globalAlpha = 1;
 }
