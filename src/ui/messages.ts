@@ -79,7 +79,7 @@ export function describeTile(farm: FarmState, x: number, y: number, seed: CropId
             case 'ready':
               return `${name}: ready to harvest`;
             case 'withered':
-              return obj.support === null ? `${name}: withered. Plow to clear for ${PLOW_COST} coins` : `${name}: withered. Click to clear`;
+              return `${name}: withered. Click to clear for free`;
             default:
               return `${name}: ready in ${formatDuration(timeUntilReady(obj, now))}`;
           }

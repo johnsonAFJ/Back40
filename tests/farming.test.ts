@@ -108,7 +108,7 @@ describe('withering', () => {
     expect(witherTime('wheat', START)).toBe(START + 180 * HOUR);
   });
 
-  it('turns a ripe crop into a withered one that can only be plowed', () => {
+  it('turns a ripe crop into a withered one that can only be cleared, for free', () => {
     let farm = ok(plow(newFarm(START, SEED), 9, 9, START));
     farm = ok(plant(farm, 9, 9, 'strawberries', START));
     const plot = plotAt(farm, 9, 9);
@@ -116,9 +116,18 @@ describe('withering', () => {
     expect(stage(plot, plot.witherAt)).toBe('withered');
 
     expect(harvest(farm, 9, 9, plot.witherAt).ok).toBe(false);
-    const replowed = ok(plow(farm, 9, 9, plot.witherAt));
-    expect(replowed.coins).toBe(farm.coins - 15);
-    expect(objectAt(replowed, 9, 9)).toMatchObject({ state: 'plowed' });
+    const cleared = ok(plow(farm, 9, 9, plot.witherAt));
+    expect(cleared.coins).toBe(farm.coins);
+    expect(objectAt(cleared, 9, 9)).toMatchObject({ state: 'plowed' });
+  });
+
+  it("can be cleared even by a farm that can't afford to plow", () => {
+    let farm = ok(plow(newFarm(START, SEED), 9, 9, START));
+    farm = ok(plant(farm, 9, 9, 'strawberries', START));
+    const broke = { ...farm, coins: 3 };
+    const cleared = ok(plow(broke, 9, 9, plotAt(farm, 9, 9).witherAt));
+    expect(cleared.coins).toBe(3);
+    expect(objectAt(cleared, 9, 9)).toMatchObject({ state: 'plowed' });
   });
 });
 
