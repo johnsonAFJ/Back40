@@ -42,6 +42,7 @@ Departures happen for a few reasons, and each entry below names which:
 | Animals per square | A finer grid, so many small animals fit in a pen | Squares hold 4 spaces: 4 chickens, 2 sheep or pigs, or 1 cow or horse | Our own choice (see below) |
 | Tree and animal produce | Sold the moment it was collected | Goes into a harvest basket, sold when you choose | Our own choice (see below) |
 | Withered crops | Plowing them under cost 15 coins | Clearing them is free | Our own choice (see below) |
+| Running out of coins | Stuck until a friend helped or you bought Farm Cash | Under 20 coins, a button gives 100, once every 3 days | Our own choice (see below) |
 | Grapes | Planted on any plot | Grow only on a trellis, bought once and never plowed | Our own choice (see below) |
 | Saves | Zynga's servers | The browser, with backup export and import | Scope |
 
@@ -206,3 +207,18 @@ Trellises join up with their neighbors like fences do, but in rows: a block of
 them becomes parallel rows along one axis, like a vineyard, instead of a
 lattice. Grape art is drawn along a trellis and mirrored to follow a row that
 runs the other way.
+
+### A bailout for a broke farm
+
+A farm under 20 coins with nothing growing can't afford a plow and seeds, and
+has no way to earn its way back. In 2009, friends or Farm Cash got you out;
+Back40 has neither yet. So under 20 coins a button appears by the coins: "Get
+100 coins", which pays out once every 3 days of farm time and otherwise shows
+how long until the next one. It's a gift, not a loan, to keep it simple for
+young players. It can't be farmed: it only appears when you're nearly out,
+and 100 coins is a few strawberry plots. Numbers are in
+`src/core/data/economy.ts`.
+
+On a phone, the home-screen app keeps its own save, separate from the
+browser's, and has no address bar for `?test`. That's part of why the bailout
+lives in the game rather than in test mode.

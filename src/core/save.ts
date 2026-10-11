@@ -144,6 +144,8 @@ const MIGRATIONS: Readonly<Record<number, (raw: Json) => Json>> = {
       ? raw['objects'].map((o: unknown) => (isRecord(o) && o['kind'] === 'plot' ? { ...o, support: null } : o))
       : raw['objects'],
   }),
+  // Version 8 added the bailout. No older farm has claimed one.
+  7: (raw) => ({ ...raw, version: 8, lastBailoutAt: null }),
 };
 
 const isNeighborId = (v: unknown): v is NeighborId => typeof v === 'string' && Object.hasOwn(NEIGHBORS, v);
@@ -278,5 +280,6 @@ export function parseSave(input: unknown): FarmState {
     gifts: list(raw, 'gifts', 'save').map((g, i) => parsePlaceable(g, `save.gifts[${i}]`)),
     feed: list(raw, 'feed', 'save').map(parseFeedEvent).slice(-FEED_LENGTH),
     neighborsCheckedAt: num(raw, 'neighborsCheckedAt', 'save'),
+    lastBailoutAt: raw['lastBailoutAt'] === null ? null : num(raw, 'lastBailoutAt', 'save'),
   };
 }

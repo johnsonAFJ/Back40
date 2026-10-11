@@ -628,6 +628,25 @@ body {
 
 /* Basket */
 
+.bailout {
+  border-color: #2c6a28;
+  background: var(--level);
+  color: #fff;
+  box-shadow: 0 2px 0 #2c6a28;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.bailout:disabled {
+  border-color: var(--panel-edge);
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: 0 2px 0 var(--panel-edge);
+  font-weight: 600;
+  opacity: 0.85;
+  cursor: default;
+}
+
 .basket-button {
   color: var(--ink);
   font-family: inherit;

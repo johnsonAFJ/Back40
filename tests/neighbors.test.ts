@@ -15,7 +15,7 @@ import {
   visit,
 } from '../src/core/neighbors';
 import { parseSave } from '../src/core/save';
-import { newFarm, objectAt, type FarmState } from '../src/core/state';
+import { SAVE_VERSION, newFarm, objectAt, type FarmState } from '../src/core/state';
 import { unlocksAt } from '../src/core/unlocks';
 
 // UTC, so days start at midnight UTC in these tests.
@@ -171,6 +171,6 @@ describe('saves from milestone 5.5', () => {
   it('start with no neighbors, gifts or news, and no backlog', () => {
     const { neighbors: _a, gifts: _b, feed: _c, neighborsCheckedAt: _d, ...v4 } = { ...newFarm(MIDNIGHT, 11), version: 4 };
     const loaded = parseSave(JSON.parse(JSON.stringify(v4)));
-    expect(loaded).toMatchObject({ version: 7, neighbors: {}, gifts: [], feed: [], neighborsCheckedAt: v4.lastSeenAt });
+    expect(loaded).toMatchObject({ version: SAVE_VERSION, neighbors: {}, gifts: [], feed: [], neighborsCheckedAt: v4.lastSeenAt });
   });
 });
