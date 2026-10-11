@@ -10,6 +10,7 @@ import { addCoins, farmNow, levelUp as cheatLevelUp, readyEverything, skipAhead 
 import { systemClock } from './core/clock';
 import { NEIGHBORS, type NeighborId } from './core/data/neighbors';
 import { PRODUCE, type ProduceId } from './core/data/produce';
+import { bailout } from './core/bailout';
 import { expand, nextExpansion } from './core/land';
 import { levelForXp } from './core/levels';
 import { HELP_COINS, HELP_XP, help, helpsLeft, syncNeighbors, visit, type Visit } from './core/neighbors';
@@ -85,7 +86,10 @@ const basket = createBasket(required('#basket', HTMLDialogElement), {
   sellOne: (id) => sold(sellProduce(farm, id)),
   sellAll: () => sold(sellBasket(farm)),
 });
-const hud = createHud(required('#hud', HTMLElement), () => basket.open(farm));
+const hud = createHud(required('#hud', HTMLElement), {
+  openBasket: () => basket.open(farm),
+  bailout: () => claimBailout(),
+});
 const tooltip = createTooltip(required('#tooltip', HTMLElement));
 const toast = createToast(required('#toast', HTMLElement));
 const levelUp = createLevelUp(required('#levelup', HTMLDialogElement));
@@ -336,7 +340,7 @@ function apply(outcome: Outcome): boolean {
 function setFarm(next: FarmState): void {
   farm = next;
   if (!persist()) toast.show("Couldn't save. This browser is blocking storage");
-  hud.update(farm);
+  hud.update(farm, now());
   market.setFarm(farm);
   basket.refresh(farm);
   neighborsWindow.refresh(farm, now(), tz());
@@ -504,6 +508,15 @@ async function restore(file: File): Promise<void> {
   toast.show('Backup loaded');
 }
 
+// ---- Bailout ----
+
+function claimBailout(): void {
+  const outcome = bailout(farm, now());
+  if (!outcome.ok) return;
+  setFarm(outcome.state);
+  toast.show(`Your neighbors chipped in ${formatCoins(outcome.coins)} coins. Happy farming!`);
+}
+
 // ---- Land ----
 
 async function expandFarm(): Promise<void> {
@@ -664,6 +677,8 @@ window.setInterval(() => {
   }
   lastTick = real;
   checkNeighbors();
+  // Keeps the bailout's countdown current.
+  hud.update(farm, now());
   if (mode.kind === 'visit') toolbar.show(mode, bannerText());
   refreshTooltip();
   requestDraw();
@@ -717,7 +732,7 @@ window.addEventListener('keydown', (e) => {
   e.preventDefault();
 });
 
-hud.update(farm);
+hud.update(farm, now());
 market.setFarm(farm);
 setMode({ kind: 'farm' });
 testPanel?.update(farm.timeOffset, speed);

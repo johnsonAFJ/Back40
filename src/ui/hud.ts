@@ -1,13 +1,19 @@
-// The coins, level, XP and basket display at the top of the screen.
+// The coins, level, XP and basket display at the top of the screen, and the
+// bailout button when a farm is nearly out of coins.
 
+import { bailoutStatus } from '../core/bailout';
 import { basketTotal } from '../core/basket';
+import { BAILOUT_COINS } from '../core/data/economy';
 import { levelProgress } from '../core/levels';
 import type { FarmState } from '../core/state';
-import { formatCoins } from './format';
+import { formatCoins, formatDuration } from './format';
 
-export type Hud = { readonly update: (farm: FarmState) => void };
+// `now` is farm time, for the bailout's countdown.
+export type Hud = { readonly update: (farm: FarmState, now: number) => void };
 
-export function createHud(root: HTMLElement, openBasket: () => void): Hud {
+export type HudActions = { readonly openBasket: () => void; readonly bailout: () => void };
+
+export function createHud(root: HTMLElement, actions: HudActions): Hud {
   root.innerHTML = `
     <div class="pill stat" title="Coins">
       <span class="coin" aria-hidden="true"></span>
@@ -27,7 +33,8 @@ export function createHud(root: HTMLElement, openBasket: () => void): Hud {
       </svg>
       <span class="stat-value" data-basket-count></span>
       <span class="visually-hidden">items in your basket</span>
-    </button>`;
+    </button>
+    <button type="button" class="pill stat bailout" data-bailout hidden></button>`;
 
   const find = (attr: string): HTMLElement => {
     const el = root.querySelector(`[${attr}]`);
@@ -40,11 +47,14 @@ export function createHud(root: HTMLElement, openBasket: () => void): Hud {
   const label = find('data-xp-label');
   const basketCount = find('data-basket-count');
   const basketButton = find('data-basket');
-  basketButton.addEventListener('click', openBasket);
+  basketButton.addEventListener('click', actions.openBasket);
+  const bailoutButton = find('data-bailout');
+  if (!(bailoutButton instanceof HTMLButtonElement)) throw new Error('HUD bailout should be a button');
+  bailoutButton.addEventListener('click', actions.bailout);
   let lastCount = -1;
 
   return {
-    update(farm) {
+    update(farm, now) {
       const progress = levelProgress(farm.xp);
       coins.textContent = formatCoins(farm.coins);
       level.textContent = String(progress.level);
@@ -59,6 +69,16 @@ export function createHud(root: HTMLElement, openBasket: () => void): Hud {
         basketButton.classList.add('hop');
       }
       lastCount = count;
+
+      const status = bailoutStatus(farm, now);
+      bailoutButton.hidden = status.kind === 'notNeeded';
+      bailoutButton.disabled = status.kind === 'waiting';
+      bailoutButton.textContent =
+        status.kind === 'waiting' ? `More coins in ${formatDuration(status.readyAt - now)}` : `Get ${formatCoins(BAILOUT_COINS)} coins`;
+      bailoutButton.title =
+        status.kind === 'waiting'
+          ? 'Running low? You can get more coins once every 3 days'
+          : `Running low? Get ${formatCoins(BAILOUT_COINS)} coins to keep farming. Once every 3 days`;
     },
   };
 }

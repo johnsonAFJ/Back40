@@ -13,3 +13,9 @@ export const WITHER_GROW_TIMES = 2.5;
 // New farms start with strawberries this close to ready. See DESIGN.md
 // "Starting crops".
 export const STARTER_CROP_MINUTES_LEFT = 5;
+
+// The bailout (core/bailout.ts): a farm under BAILOUT_UNDER coins can claim
+// BAILOUT_COINS, once every BAILOUT_EVERY_DAYS days.
+export const BAILOUT_COINS = 100;
+export const BAILOUT_UNDER = 20;
+export const BAILOUT_EVERY_DAYS = 3;

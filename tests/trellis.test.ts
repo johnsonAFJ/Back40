@@ -5,7 +5,7 @@ import { CROPS } from '../src/core/data/crops';
 import { SUPPORTS } from '../src/core/data/supports';
 import { totalXpForLevel } from '../src/core/levels';
 import { parseSave } from '../src/core/save';
-import { newFarm, objectAt, type FarmState } from '../src/core/state';
+import { SAVE_VERSION, newFarm, objectAt, type FarmState } from '../src/core/state';
 
 const START = Date.UTC(2026, 9, 8, 9, 0);
 const GRAPES = CROPS.grapes;
@@ -85,7 +85,7 @@ describe('saves from before trellises', () => {
     );
     const v6 = { ...farm, version: 6, objects };
     const loaded = parseSave(JSON.parse(JSON.stringify(v6)));
-    expect(loaded.version).toBe(7);
+    expect(loaded.version).toBe(SAVE_VERSION);
     expect(loaded.objects.filter((o) => o.kind === 'plot').every((o) => o.kind === 'plot' && o.support === null)).toBe(true);
     const picked = ok(harvest(loaded, 9, 10, START + GRAPES.hours * HOUR));
     expect(objectAt(picked, 9, 10)).toMatchObject({ state: 'harvested', support: null });

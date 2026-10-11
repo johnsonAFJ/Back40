@@ -13,7 +13,7 @@ import { EXPANSIONS } from './data/expansions';
 import type { SupportId } from './data/supports';
 import { HOUR, MINUTE } from './clock';
 
-export const SAVE_VERSION = 7;
+export const SAVE_VERSION = 8;
 
 // A plot is always in exactly one of these states. Fields that only make
 // sense for a growing crop only exist on the 'planted' variant, so a plowed
@@ -70,6 +70,8 @@ export type FarmState = {
   // The farm time up to which neighbor visits, gifts and news have been
   // worked out. See core/neighbors.ts.
   readonly neighborsCheckedAt: number;
+  // When the farm last claimed a bailout (core/bailout.ts), or null if never.
+  readonly lastBailoutAt: number | null;
 };
 
 // `day` is the day number (core/neighbors.ts dayIndex) that `helped` belongs
@@ -218,5 +220,6 @@ export function newFarm(now: number, seed: number): FarmState {
     gifts: [],
     feed: [],
     neighborsCheckedAt: now,
+    lastBailoutAt: null,
   };
 }

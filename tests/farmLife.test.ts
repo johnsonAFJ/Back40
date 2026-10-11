@@ -3,7 +3,7 @@ import { harvest, move, place, plant, plow, sell, sellValue, useMultiTool, type 
 import { HOUR } from '../src/core/clock';
 import { isProducerReady } from '../src/core/producers';
 import { parseSave } from '../src/core/save';
-import { newFarm, objectAt, type FarmState } from '../src/core/state';
+import { SAVE_VERSION, newFarm, objectAt, type FarmState } from '../src/core/state';
 
 const START = Date.UTC(2026, 9, 8, 9, 0);
 
@@ -128,7 +128,7 @@ describe('saves from milestone 2', () => {
       version: 1,
     };
     const loaded = parseSave(JSON.parse(JSON.stringify(v1)));
-    expect(loaded.version).toBe(7);
+    expect(loaded.version).toBe(SAVE_VERSION);
     expect(loaded.objects).toEqual(v1.objects);
     expect(loaded.timeOffset).toBe(0);
     expect(loaded.basket).toEqual({});

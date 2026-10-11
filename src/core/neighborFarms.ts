@@ -178,6 +178,7 @@ export function neighborFarm(seed: number, id: NeighborId, day: number, now: num
     gifts: [],
     feed: [],
     neighborsCheckedAt: now,
+    lastBailoutAt: null,
   };
 }
 
