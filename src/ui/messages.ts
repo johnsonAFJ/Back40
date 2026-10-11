@@ -10,6 +10,7 @@ import { ANIMALS, DECORATIONS, TREES } from '../core/data/items';
 import { PRODUCE } from '../core/data/produce';
 import { CLIMBING_CROPS, SUPPORTS } from '../core/data/supports';
 import { stage, timeUntilReady } from '../core/growth';
+import { levelForXp } from '../core/levels';
 import { isProducerReady, producerData, timeUntilProduce } from '../core/producers';
 import { isOnFarm, objectAt, objectsAt, type FarmObject, type FarmState, type Producer } from '../core/state';
 import { formatCoins, formatDuration } from './format';
@@ -72,7 +73,9 @@ export function describeTile(farm: FarmState, x: number, y: number, seed: CropId
           if (obj.support === null && CLIMBING_CROPS.has(seed)) return `${CROPS[seed].name} grow on a trellis`;
           return `Plant ${CROPS[seed].name} for ${formatCoins(CROPS[seed].seed)} coins`;
         case 'harvested':
-          return `Harvested. Plow again for ${PLOW_COST} coins`;
+          // A reminder for new farmers. By level 3 it's second nature, and
+          // the tooltip would only cover the coins and XP floating up.
+          return levelForXp(farm.xp) < 3 ? `Harvested. Plow again for ${PLOW_COST} coins` : null;
         case 'planted': {
           const name = CROPS[obj.cropId].name;
           switch (stage(obj, now)) {

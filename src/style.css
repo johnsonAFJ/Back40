@@ -2,6 +2,11 @@
    with wooden edges, like signs around a farm. */
 
 :root {
+  /* The screen height clear of the notch, status bar and home indicator. */
+  --safe-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  /* How far above the bottom edge floating controls sit: clear of the
+     bottom bar, which wraps onto two rows on a phone (see the end). */
+  --above-bar: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 64px);
   --wild-grass: #5f9a3a;
   --panel: #fffaf0;
   --panel-edge: #c9a46a;
@@ -289,7 +294,7 @@ body {
 /* The test button sits on the right edge above the zoom buttons, where it
    can't collide with the coins and level at the top on a phone. */
 .test-toggle {
-  --test-bottom: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 64px + 4 * 52px);
+  --test-bottom: calc(var(--above-bar) + 4 * 52px);
   position: fixed;
   bottom: var(--test-bottom);
   right: max(16px, env(safe-area-inset-right, 0px));
@@ -308,10 +313,11 @@ body {
 
 .test-panel {
   position: fixed;
-  bottom: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 64px + 4 * 52px + 50px);
+  bottom: calc(var(--above-bar) + 4 * 52px + 50px);
   right: max(16px, env(safe-area-inset-right, 0px));
   width: min(320px, calc(100vw - 32px));
-  max-height: calc(100dvh - 430px);
+  /* Room above it: everything below it, plus the coins and level at the top. */
+  max-height: calc(100dvh - var(--above-bar) - 4 * 52px - 50px - 92px);
   min-height: 0;
   overflow-y: auto;
   padding: 14px 16px 16px;
@@ -398,11 +404,24 @@ body {
   padding: 0;
   color: var(--ink);
   max-width: calc(100vw - 32px);
-  max-height: calc(100dvh - 32px);
+  max-height: calc(var(--safe-height) - 32px);
+  /* Centered in the part of the screen clear of the notch and home bar. */
+  inset-block: env(safe-area-inset-top, 0px) env(safe-area-inset-bottom, 0px);
 }
 
 .dialog::backdrop {
   background: rgba(30, 40, 15, 0.45);
+}
+
+/* An iPhone home-screen app with a see-through status bar lays the page out
+   one status bar short, leaving a bare strip along the bottom. There, the
+   large viewport height is the whole screen. (In a browser tab it would
+   reach behind the toolbars, so this is for the installed app only.) */
+@media (display-mode: standalone) {
+  #farm,
+  .dialog::backdrop {
+    height: 100lvh;
+  }
 }
 
 .close {
@@ -477,8 +496,15 @@ body {
 .market {
   width: min(680px, calc(100vw - 32px));
   display: grid;
-  grid-template-rows: auto auto 1fr;
-  max-height: calc(100dvh - 36px);
+  grid-template-rows: auto auto auto 1fr;
+  /* The same size on every tab: three rows of cards on a phone, with the
+     rest scrolling, rather than growing and shrinking with each list. */
+  height: min(700px, calc(var(--safe-height) - 36px));
+}
+
+.market > :last-child {
+  min-height: 0;
+  align-content: start;
 }
 
 .market-head {
@@ -496,9 +522,9 @@ body {
 
 .tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
   margin: 10px 16px 0;
-  overflow-x: auto;
 }
 
 .tab {
@@ -534,6 +560,8 @@ body {
   overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  /* Every card the same height, on every tab. */
+  grid-auto-rows: minmax(160px, auto);
   gap: 10px;
 }
 
@@ -689,7 +717,7 @@ body {
   width: min(440px, calc(100vw - 32px));
   display: grid;
   grid-template-rows: auto 1fr auto;
-  max-height: calc(100dvh - 36px);
+  max-height: calc(var(--safe-height) - 36px);
 }
 
 .basket-empty {
@@ -846,7 +874,7 @@ body[data-mode='visit'] .hud-bottom {
 
 .neighbors {
   width: min(460px, calc(100vw - 32px));
-  max-height: calc(100dvh - 36px);
+  max-height: calc(var(--safe-height) - 36px);
   overflow-y: auto;
   padding-bottom: 16px;
 }
@@ -1186,7 +1214,7 @@ body[data-mode='visit'] .hud-bottom {
 .zoom-controls {
   position: fixed;
   right: max(16px, env(safe-area-inset-right, 0px));
-  bottom: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 64px);
+  bottom: var(--above-bar);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1239,7 +1267,7 @@ button:focus-visible {
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 64px);
+  bottom: var(--above-bar);
   transform: translateX(-50%);
   max-width: calc(100vw - 32px);
   padding: 8px 16px;
@@ -1258,6 +1286,14 @@ button:focus-visible {
 @media (max-width: 420px) {
   .xp-bar {
     width: 72px;
+  }
+}
+
+/* Narrower than this, the bottom bar wraps onto a second row, so the zoom
+   buttons, test button and messages move up a row to stay clear of it. */
+@media (max-width: 560px) {
+  :root {
+    --above-bar: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 128px);
   }
 }
 
