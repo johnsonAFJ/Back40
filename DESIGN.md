@@ -41,6 +41,7 @@ Departures happen for a few reasons, and each entry below names which:
 | Sound | Music and effects | None | Scope |
 | Animals per square | A finer grid, so many small animals fit in a pen | Squares hold 4 spaces: 4 chickens, 2 sheep or pigs, or 1 cow or horse | Our own choice (see below) |
 | Tree and animal produce | Sold the moment it was collected | Goes into a harvest basket, sold when you choose | Our own choice (see below) |
+| Withered crops | Plowing them under cost 15 coins | Clearing them is free | Our own choice (see below) |
 | Grapes | Planted on any plot | Grow only on a trellis, bought once and never plowed | Our own choice (see below) |
 | Saves | Zynga's servers | The browser, with backup export and import | Scope |
 
@@ -81,6 +82,13 @@ planting is a small bet on when you'll be back. Back40 keeps the 2009 rule:
 a crop withers 2.5 grow times after planting. It first used a random moment
 between 2 and 2.5 grow times, from a later fan guide; the 2009 chart's fixed
 2.5 is both more faithful and easier to plan around.
+
+Clearing a withered crop is free, and leaves the plot plowed and ready to
+plant. In 2009 it cost a plow (15 coins), which could strand a player: with
+fewer than 25 coins, nothing growing and nothing to sell, there was no way to
+afford both the cleanup and new seeds. That happened to a young player who
+forgot a field of raspberries, so the rule changed. Losing the crop is the
+penalty.
 
 If friends find it too harsh, adjust in this order:
 

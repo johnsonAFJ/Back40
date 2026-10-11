@@ -103,7 +103,7 @@ function remove(state: FarmState, id: string): FarmState {
 
 // ---- Crops ----
 
-// Plow empty land, a harvested plot, or a withered crop.
+// Plow empty land or a harvested plot, or clear a withered crop.
 export function plow(state: FarmState, x: number, y: number, now: number): Outcome {
   if (!isOnFarm(state, x, y)) return fail({ code: 'offFarm' });
   const existing = objectAt(state, x, y);
@@ -113,8 +113,10 @@ export function plow(state: FarmState, x: number, y: number, now: number): Outco
     if (existing.state === 'planted' && stage(existing, now) !== 'withered') {
       return fail({ code: 'growing', plot: existing });
     }
-    // A trellis never needs plowing: clearing dead vines off it is free.
-    if (existing.support !== null) {
+    // Clearing a withered crop is free and leaves the plot ready to plant:
+    // losing the crop is penalty enough, and charging for the cleanup could
+    // leave a broke farm with no way back. A trellis never needs plowing.
+    if (existing.state === 'planted' || existing.support !== null) {
       const cleared: Plot = { id: existing.id, kind: 'plot', support: existing.support, x, y, state: 'plowed' };
       return succeed('plow', put(state, cleared), NO_REWARD, cleared, now);
     }
