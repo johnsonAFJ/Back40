@@ -226,7 +226,7 @@ lives in the game rather than in test mode.
 
 ### The tractor
 
-A tractor costs 7,500 coins at level 10 and plows a 2 x 2 block per click.
+A tractor costs 5,000 coins at level 10 and plows a 2 x 2 block per click.
 Each square still costs a normal plow (15 coins) and gives its 1 XP, so the
 tractor saves clicks, not money. The 2009 tractor also needed fuel, which in
 practice was a way to sell Farm Cash, so Back40 leaves it out.

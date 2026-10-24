@@ -2,7 +2,7 @@
 // (`vehicle-<id>.png`, see ART_BRIEF.md) replaces the drawing when it exists.
 
 import { VEHICLES, type VehicleId } from '../../core/data/vehicles';
-import { drawArtScaled, GROUND_SCALE } from '../art';
+import { drawArtScaled, GROUND_SCALE, hasArt } from '../art';
 import { tile, tileCenter, tileToWorld, type WorldPoint } from '../iso';
 import { drawBox, ellipse, line, lift, SHADOW } from './shapes';
 
@@ -36,8 +36,15 @@ function drawTractor(ctx: CanvasRenderingContext2D, x: number, y: number): void 
 
 export function drawVehicle(ctx: CanvasRenderingContext2D, id: VehicleId, x: number, y: number): void {
   const c = tileCenter(tile(x, y));
+  const art = `vehicle-${id}`;
+  if (hasArt(art)) {
+    // The art stands on its lowest point, the front wheel; the shadow goes
+    // under the middle of the whole tractor, a little further back.
+    ellipse(ctx, c.x - 2, c.y - 7, 36, 14, SHADOW);
+    drawArtScaled(ctx, art, 0, c.x, c.y, GROUND_SCALE);
+    return;
+  }
   ellipse(ctx, c.x + 3, c.y + 2, 24, 10, SHADOW);
-  if (drawArtScaled(ctx, `vehicle-${id}`, 0, c.x, c.y, GROUND_SCALE)) return;
   switch (id) {
     case 'tractor':
       drawTractor(ctx, x, y);
@@ -57,8 +64,9 @@ export function vehicleAt(ids: readonly VehicleId[], p: WorldPoint, zoom: number
   for (const id of ids) {
     const { x, y } = VEHICLES[id].parking;
     const c = tileCenter(tile(x, y));
-    const middle = c.y - 13;
-    if (Math.abs(p.x - c.x) <= Math.max(34, finger) && Math.abs(p.y - middle) <= Math.max(31, finger)) return id;
+    // From the wheels up to the top of the art, about 64 world pixels.
+    const middle = c.y - 28;
+    if (Math.abs(p.x - c.x) <= Math.max(40, finger) && Math.abs(p.y - middle) <= Math.max(36, finger)) return id;
   }
   return null;
 }

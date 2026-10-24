@@ -15,7 +15,7 @@ export type Vehicle = {
 };
 
 export const VEHICLES = {
-  tractor: { name: 'Tractor', level: 10, price: 7_500, buyXp: 75, plows: 2, parking: { x: -2, y: 3 } },
+  tractor: { name: 'Tractor', level: 10, price: 5_000, buyXp: 50, plows: 2, parking: { x: -2, y: 3 } },
 } as const satisfies Record<string, Vehicle>;
 
 export type VehicleId = keyof typeof VEHICLES;

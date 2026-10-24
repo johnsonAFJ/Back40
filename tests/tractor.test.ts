@@ -21,18 +21,18 @@ function readyToBuy(): FarmState {
 }
 
 describe('buying the tractor', () => {
-  it('costs 7,500 coins at level 10 and parks off the farm', () => {
+  it('costs 5,000 coins at level 10 and parks off the farm', () => {
     const before = readyToBuy();
     const after = ok(buyVehicle(before, 'tractor', START));
     expect(ownsVehicle(after, 'tractor')).toBe(true);
-    expect(after.coins).toBe(before.coins - 7_500);
+    expect(after.coins).toBe(before.coins - 5_000);
     expect(after.xp).toBe(before.xp + TRACTOR.buyXp);
     expect(isOnFarm(after, TRACTOR.parking.x, TRACTOR.parking.y)).toBe(false);
   });
 
   it('needs the level and the coins, and is only bought once', () => {
     expect(buyVehicle({ ...readyToBuy(), xp: 0 }, 'tractor', START)).toMatchObject({ failure: { code: 'levelTooLow', level: 10 } });
-    expect(buyVehicle({ ...readyToBuy(), coins: 7_499 }, 'tractor', START)).toMatchObject({ failure: { code: 'notEnoughCoins' } });
+    expect(buyVehicle({ ...readyToBuy(), coins: 4_999 }, 'tractor', START)).toMatchObject({ failure: { code: 'notEnoughCoins' } });
     const owned = ok(buyVehicle(readyToBuy(), 'tractor', START));
     expect(buyVehicle(owned, 'tractor', START)).toMatchObject({ failure: { code: 'alreadyOwned' } });
   });
