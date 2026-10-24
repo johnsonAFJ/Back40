@@ -43,6 +43,7 @@ Departures happen for a few reasons, and each entry below names which:
 | Tree and animal produce | Sold the moment it was collected | Goes into a harvest basket, sold when you choose | Our own choice (see below) |
 | Withered crops | Plowing them under cost 15 coins | Clearing them is free | Our own choice (see below) |
 | Running out of coins | Stuck until a friend helped or you bought Farm Cash | Under 20 coins, a button gives 100, once every 3 days | Our own choice (see below) |
+| Tractor | Plowed 2 x 2 squares at a time, but ran on fuel bought with Farm Cash | Plows 2 x 2, no fuel; each square still costs a normal plow | Our own choice (see below) |
 | Grapes | Planted on any plot | Grow only on a trellis, bought once and never plowed | Our own choice (see below) |
 | Saves | Zynga's servers | The browser, with backup export and import | Scope |
 
@@ -222,3 +223,17 @@ and 100 coins is a few strawberry plots. Numbers are in
 On a phone, the home-screen app keeps its own save, separate from the
 browser's, and has no address bar for `?test`. That's part of why the bailout
 lives in the game rather than in test mode.
+
+### The tractor
+
+A tractor costs 7,500 coins at level 10 and plows a 2 x 2 block per click.
+Each square still costs a normal plow (15 coins) and gives its 1 XP, so the
+tractor saves clicks, not money. The 2009 tractor also needed fuel, which in
+practice was a way to sell Farm Cash, so Back40 leaves it out.
+
+It parks on the grass just off the farm by the farmhouse corner, rather than
+taking a square: the farm only grows away from that corner, so the spot never
+becomes farmland. Tapping it switches the tractor on; tapping it again, or
+Done, switches it off. It isn't on the toolbar because a fourth tool would
+push the phone's bottom bar onto a third row. A seeder and harvester, like the
+original's, would park beside it.

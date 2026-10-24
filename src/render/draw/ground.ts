@@ -2,7 +2,7 @@
 // trees. All drawing happens in world coordinates; the renderer has already
 // set the canvas transform for the camera.
 
-import { TILE_HEIGHT, TILE_WIDTH, tile, tileCenter, tileCorners, type TilePoint } from '../iso';
+import { TILE_HEIGHT, TILE_WIDTH, tile, tileCenter, tileCorners, tileToWorld, type TilePoint } from '../iso';
 import { PALETTE } from './palette';
 
 // A stable pseudo-random number in [0, 1) for a tile. The same tile always
@@ -111,8 +111,20 @@ export function drawSceneryTree(ctx: CanvasRenderingContext2D, x: number, y: num
   }
 }
 
-export function drawHighlight(ctx: CanvasRenderingContext2D, t: TilePoint, zoom: number): void {
-  diamondPath(ctx, t);
+// Outlines the tile `t`, or the `size` x `size` block with `t` at its back
+// corner (the tractor's reach).
+export function drawHighlight(ctx: CanvasRenderingContext2D, t: TilePoint, zoom: number, size = 1): void {
+  if (size === 1) {
+    diamondPath(ctx, t);
+  } else {
+    const corners = [tile(t.x, t.y), tile(t.x + size, t.y), tile(t.x + size, t.y + size), tile(t.x, t.y + size)].map(tileToWorld);
+    ctx.beginPath();
+    for (const [i, p] of corners.entries()) {
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+  }
   ctx.fillStyle = PALETTE.highlightFill;
   ctx.fill();
   ctx.strokeStyle = PALETTE.highlightStroke;

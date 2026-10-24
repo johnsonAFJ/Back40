@@ -7,6 +7,8 @@
 
 import { productInfo, type Placeable } from '../core/catalog';
 import { DECORATIONS } from '../core/data/items';
+import { VEHICLES } from '../core/data/vehicles';
+import { drawVehicle } from './draw/vehicles';
 import { farmSize, footprint, type FarmObject, type FarmState } from '../core/state';
 import { screenToWorld, type Camera, type Viewport } from './camera';
 import { screen, tile, worldToTile, type TilePoint } from './iso';
@@ -44,6 +46,8 @@ export type Scene = {
   readonly farm: FarmState;
   readonly now: number;
   readonly highlight: TilePoint | null;
+  // How many tiles on a side the highlight covers: 1, or the tractor's reach.
+  readonly highlightSize: number;
   readonly ghost: Ghost | null;
   // An object being moved is drawn as the ghost, not in its old spot.
   readonly hiddenId: string | null;
@@ -164,7 +168,7 @@ export function render(ctx: CanvasRenderingContext2D, scene: Scene): void {
   }
 
   drawFarmEdge(ctx, size, camera.zoom);
-  if (highlight && !ghost) drawHighlight(ctx, highlight, camera.zoom);
+  if (highlight && !ghost) drawHighlight(ctx, highlight, camera.zoom, scene.highlightSize);
   if (ghost) drawGhostFootprint(ctx, ghost, farm);
 
   // Object pass, back to front. Animals sharing a square each stand in
@@ -192,6 +196,11 @@ export function render(ctx: CanvasRenderingContext2D, scene: Scene): void {
   if (ghost) {
     const { width, depth } = ghostSize(ghost);
     drawables.push({ depth: depthOf(ghost.x, ghost.y, width, depth), x: ghost.x, draw: () => drawGhost(ctx, ghost, now, objects) });
+  }
+  // Vehicles, parked off the farm.
+  for (const id of farm.vehicles) {
+    const { x, y } = VEHICLES[id].parking;
+    drawables.push({ depth: x + y + 1, x, draw: () => drawVehicle(ctx, id, x, y) });
   }
   for (let y = range.minY; y <= range.maxY; y++) {
     for (let x = range.minX; x <= range.maxX; x++) {

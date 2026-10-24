@@ -3,7 +3,10 @@
 // src/core.
 
 import './style.css';
-import { move, place, placeGift, sell, sellValue, useMultiTool, type Outcome } from './core/actions';
+import { buyVehicle, move, place, placeGift, plowBlock, sell, sellValue, useMultiTool, type Outcome } from './core/actions';
+import { PLOW_COST } from './core/data/economy';
+import { VEHICLES, type VehicleId } from './core/data/vehicles';
+import { vehicleAt } from './render/draw/vehicles';
 import { productInfo, type Placeable } from './core/catalog';
 import { sellBasket, sellProduce, type Sale } from './core/basket';
 import { addCoins, farmNow, levelUp as cheatLevelUp, readyEverything, skipAhead } from './core/cheats';
@@ -97,6 +100,7 @@ const askConfirm = createConfirm(required('#confirm', HTMLDialogElement));
 const market = createMarket(required('#market', HTMLDialogElement), required('#market-button', HTMLButtonElement), {
   onSeed: () => setMode({ kind: 'farm' }),
   onBuy: (item) => setMode({ kind: 'place', item }),
+  onVehicle: (id) => void buyNewVehicle(id),
   onExpand: () => void expandFarm(),
   onGift: (index) => setMode({ kind: 'gift', index }),
 });
@@ -203,6 +207,7 @@ function requestDraw(): void {
       farm: v?.farm ?? farm,
       now: now(),
       highlight,
+      highlightSize: mode.kind === 'tractor' ? VEHICLES.tractor.plows : 1,
       ghost: ghostAt(highlight),
       hiddenId,
       effects,
@@ -231,6 +236,13 @@ function tooltipText(t: TilePoint): string | null {
     case 'place':
     case 'gift':
       return null;
+    case 'tractor': {
+      // What this click would do, worked out by trying it.
+      const outcome = plowBlock(farm, t.x, t.y, VEHICLES.tractor.plows, now());
+      if (!outcome.ok) return failureMessage(outcome.failure, now());
+      const cost = -outcome.reward.coins;
+      return cost > 0 ? `Plow here for ${formatCoins(cost)} coins` : 'Clear here for free';
+    }
     case 'visit': {
       const v = currentVisit();
       return v ? describeChore(v, t.x, t.y, now()) : null;
@@ -268,6 +280,10 @@ function bannerText(): string | null {
     case 'gift': {
       const gift = farm.gifts[mode.index];
       return gift ? `Placing your gift: ${productInfo(gift).name.toLowerCase()}. Click where it goes` : null;
+    }
+    case 'tractor': {
+      const side = VEHICLES.tractor.plows;
+      return `Tractor: click to plow ${side * side} squares at a time, ${formatCoins(PLOW_COST)} coins each`;
     }
     case 'visit': {
       const name = NEIGHBORS[mode.neighbor].name;
@@ -414,6 +430,9 @@ async function tapTile(t: TilePoint): Promise<void> {
       if (g && apply(placeGift(farm, mode.index, g.x, g.y, now()))) setMode({ kind: 'farm' });
       return;
     }
+    case 'tractor':
+      apply(plowBlock(farm, t.x, t.y, VEHICLES.tractor.plows, now()));
+      return;
     case 'visit': {
       const v = currentVisit();
       const obj = v ? objectAt(v.farm, t.x, t.y) : null;
@@ -506,6 +525,28 @@ async function restore(file: File): Promise<void> {
   setCamera(fittedCamera());
   checkNeighbors();
   toast.show('Backup loaded');
+}
+
+// ---- Vehicles ----
+
+async function buyNewVehicle(id: VehicleId): Promise<void> {
+  const v = VEHICLES[id];
+  if (!(await askConfirm(`Buy a ${v.name.toLowerCase()} for ${formatCoins(v.price)} coins?`, 'Buy'))) return;
+  if (!apply(buyVehicle(farm, id, now()))) return;
+  toast.show(`Your ${v.name.toLowerCase()} is parked by the farmhouse. Tap it to plow ${v.plows * v.plows} squares at a time`);
+}
+
+// Tapping a parked vehicle starts driving it; tapping it again stops.
+function tapVehicle(id: VehicleId): void {
+  switch (id) {
+    case 'tractor':
+      setMode(mode.kind === 'tractor' ? { kind: 'farm' } : { kind: 'tractor' });
+      return;
+    default: {
+      const _exhaustive: never = id;
+      return _exhaustive;
+    }
+  }
 }
 
 // ---- Bailout ----
@@ -606,6 +647,12 @@ attachInput(canvas, {
     setHighlight(at ? farmTileAt(at) : null);
   },
   tap: (at) => {
+    // A parked vehicle sits off the farm, so it's checked before tiles.
+    const vehicle = mode.kind === 'visit' ? null : vehicleAt(farm.vehicles, screenToWorld(camera, view, at), camera.zoom);
+    if (vehicle) {
+      tapVehicle(vehicle);
+      return;
+    }
     highlightObj = thingAt(shownFarm(), screenToWorld(camera, view, at));
     const t = farmTileAt(at);
     // On a phone there's no hover, so the tapped tile is the highlight.

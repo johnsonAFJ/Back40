@@ -11,9 +11,10 @@ import { CROPS, type CropId } from './data/crops';
 import { STARTER_CROP_MINUTES_LEFT, STARTING_COINS, WITHER_GROW_TIMES } from './data/economy';
 import { EXPANSIONS } from './data/expansions';
 import type { SupportId } from './data/supports';
+import type { VehicleId } from './data/vehicles';
 import { HOUR, MINUTE } from './clock';
 
-export const SAVE_VERSION = 8;
+export const SAVE_VERSION = 9;
 
 // A plot is always in exactly one of these states. Fields that only make
 // sense for a growing crop only exist on the 'planted' variant, so a plowed
@@ -72,6 +73,8 @@ export type FarmState = {
   readonly neighborsCheckedAt: number;
   // When the farm last claimed a bailout (core/bailout.ts), or null if never.
   readonly lastBailoutAt: number | null;
+  // Vehicles bought, parked off the farm (data/vehicles.ts).
+  readonly vehicles: readonly VehicleId[];
 };
 
 // `day` is the day number (core/neighbors.ts dayIndex) that `helped` belongs
@@ -221,5 +224,6 @@ export function newFarm(now: number, seed: number): FarmState {
     feed: [],
     neighborsCheckedAt: now,
     lastBailoutAt: null,
+    vehicles: [],
   };
 }

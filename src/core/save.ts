@@ -13,6 +13,7 @@ import { NEIGHBORS, type NeighborId } from './data/neighbors';
 import type { Placeable } from './catalog';
 import { EXPANSIONS } from './data/expansions';
 import { isSupportId } from './data/supports';
+import { isVehicleId } from './data/vehicles';
 import { FEED_LENGTH, SAVE_VERSION, footprint, spaceUsed, type Basket, type FarmObject, type FarmState, type FeedEvent, type NeighborRecord } from './state';
 
 // `newer` means the save came from a later version of the game than this
@@ -146,6 +147,8 @@ const MIGRATIONS: Readonly<Record<number, (raw: Json) => Json>> = {
   }),
   // Version 8 added the bailout. No older farm has claimed one.
   7: (raw) => ({ ...raw, version: 8, lastBailoutAt: null }),
+  // Version 9 added vehicles. No older farm owns one.
+  8: (raw) => ({ ...raw, version: 9, vehicles: [] }),
 };
 
 const isNeighborId = (v: unknown): v is NeighborId => typeof v === 'string' && Object.hasOwn(NEIGHBORS, v);
@@ -281,5 +284,9 @@ export function parseSave(input: unknown): FarmState {
     feed: list(raw, 'feed', 'save').map(parseFeedEvent).slice(-FEED_LENGTH),
     neighborsCheckedAt: num(raw, 'neighborsCheckedAt', 'save'),
     lastBailoutAt: raw['lastBailoutAt'] === null ? null : num(raw, 'lastBailoutAt', 'save'),
+    vehicles: [...new Set(list(raw, 'vehicles', 'save').map((v, i) => {
+      if (!isVehicleId(v)) throw new SaveError(`save.vehicles[${i}] is not a known vehicle`);
+      return v;
+    }))],
   };
 }

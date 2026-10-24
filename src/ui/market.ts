@@ -14,6 +14,7 @@ import { EXPANSIONS } from '../core/data/expansions';
 import { NEIGHBORS } from '../core/data/neighbors';
 import { PRODUCE } from '../core/data/produce';
 import { CLIMBING_CROPS, SUPPORTS } from '../core/data/supports';
+import { VEHICLES, type VehicleId } from '../core/data/vehicles';
 import { neighborsAt } from '../core/land';
 import { levelForXp } from '../core/levels';
 import type { FarmState } from '../core/state';
@@ -32,6 +33,7 @@ const TABS: ReadonlyArray<{ readonly kind: Tab; readonly label: string }> = [
   { kind: 'tree', label: 'Trees' },
   { kind: 'animal', label: 'Animals' },
   { kind: 'decoration', label: 'Decorations' },
+  { kind: 'vehicle', label: 'Vehicles' },
   { kind: 'land', label: 'Land' },
   { kind: 'gifts', label: 'Gifts' },
 ];
@@ -44,6 +46,7 @@ export type Market = {
 export type MarketActions = {
   readonly onSeed: () => void;
   readonly onBuy: (item: Placeable) => void;
+  readonly onVehicle: (id: VehicleId) => void;
   readonly onExpand: () => void;
   readonly onGift: (index: number) => void;
 };
@@ -96,6 +99,11 @@ function details(p: Product): string {
       return `<span class="card-line">For ${climbers} · never needs plowing</span>
         <span class="card-line card-money">${coinIcon}${formatCoins(t.price)} · +${t.buyXp} XP</span>`;
     }
+    case 'vehicle': {
+      const v = VEHICLES[p.id];
+      return `<span class="card-line">Plows ${v.plows * v.plows} squares at a time</span>
+        <span class="card-line card-money">${coinIcon}${formatCoins(v.price)} · +${v.buyXp} XP</span>`;
+    }
     default: {
       const _exhaustive: never = p;
       return _exhaustive;
@@ -117,6 +125,7 @@ export function createMarket(dialog: HTMLDialogElement, button: HTMLButtonElemen
   let coins = 0;
   let expansion = 0;
   let gifts: readonly Placeable[] = [];
+  let vehicles: readonly VehicleId[] = [];
   let tab: Tab = 'crop';
   let selected = rememberedSeed();
 
@@ -144,15 +153,21 @@ export function createMarket(dialog: HTMLDialogElement, button: HTMLButtonElemen
     const open = isUnlocked(p, level);
     const affordable = p.kind === 'crop' || coins >= info.price;
     const current = p.kind === 'crop' && p.id === selected;
-    const note = !open ? `<span class="card-lock">Level ${info.level}</span>` : details(p);
+    const owned = p.kind === 'vehicle' && vehicles.includes(p.id);
+    const note = !open
+      ? `<span class="card-lock">Level ${info.level}</span>`
+      : owned
+        ? '<span class="card-line">Parked by your farmhouse. Tap it to drive</span>'
+        : details(p);
     return `
       <li>
         <button type="button" class="card" data-kind="${p.kind}" data-id="${p.id}"
-          ${open ? '' : 'disabled'} ${open && !affordable ? 'data-short="true"' : ''} aria-pressed="${current}">
+          ${open && !owned ? '' : 'disabled'} ${open && !affordable && !owned ? 'data-short="true"' : ''} aria-pressed="${current}">
           <img class="card-thumb" src="${productThumbnail(p)}" alt="" />
           <span class="card-name">${info.name}</span>
           ${note}
           ${current ? '<span class="card-tag">Planting</span>' : ''}
+          ${owned ? '<span class="card-tag">Owned</span>' : ''}
         </button>
       </li>`;
   };
@@ -212,7 +227,9 @@ export function createMarket(dialog: HTMLDialogElement, button: HTMLButtonElemen
             ? gifts.length > 0
               ? 'Gifts from your neighbors. Pick one, then click where it goes.'
               : 'No gifts right now. Your neighbors leave one most days once they move in.'
-            : 'Pick something, then click where it goes on your farm.';
+            : tab === 'vehicle'
+              ? 'Vehicles park by your farmhouse. Tap one on the farm to use it.'
+              : 'Pick something, then click where it goes on your farm.';
     const body =
       tab === 'land'
         ? `<ul class="land-list">${EXPANSIONS.map((_, i) => i).slice(1).map(landCard).join('')}</ul>`
@@ -286,6 +303,8 @@ export function createMarket(dialog: HTMLDialogElement, button: HTMLButtonElemen
       rememberSeed(p.id);
       renderButton();
       actions.onSeed();
+    } else if (p.kind === 'vehicle') {
+      actions.onVehicle(p.id);
     } else {
       actions.onBuy(p);
     }
@@ -306,6 +325,7 @@ export function createMarket(dialog: HTMLDialogElement, button: HTMLButtonElemen
       level = levelForXp(farm.xp);
       coins = farm.coins;
       expansion = farm.expansion;
+      vehicles = farm.vehicles;
       if (farm.gifts !== gifts) {
         gifts = farm.gifts;
         renderButton();
