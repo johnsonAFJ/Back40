@@ -16,6 +16,8 @@ export type Mode =
   // grabbed.
   | { readonly kind: 'move'; readonly held: FarmObject | null; readonly grab: { readonly dx: number; readonly dy: number } }
   | { readonly kind: 'sell' }
+  // Driving the tractor: each click plows a block of squares.
+  | { readonly kind: 'tractor' }
   // Placing gift number `index` from the gift box, for free.
   | { readonly kind: 'gift'; readonly index: number }
   // On a neighbor's farm, where clicks help instead of farm.

@@ -8,6 +8,7 @@ import { CROPS, type CropId } from './data/crops';
 import { FERTILIZED_BONUS_XP, HARVEST_XP, PLOW_COST, PLOW_XP } from './data/economy';
 import { SELL_BACK } from './data/items';
 import { CLIMBING_CROPS, type SupportId } from './data/supports';
+import { VEHICLES, type VehicleId } from './data/vehicles';
 import type { ProduceId } from './data/produce';
 import { stage } from './growth';
 import { levelForXp } from './levels';
@@ -46,9 +47,10 @@ export type Failure =
   | { readonly code: 'notEnoughCoins'; readonly needed: number }
   | { readonly code: 'levelTooLow'; readonly level: number }
   | { readonly code: 'nothingThere' }
-  | { readonly code: 'cantSell'; readonly obj: FarmObject };
+  | { readonly code: 'cantSell'; readonly obj: FarmObject }
+  | { readonly code: 'alreadyOwned' };
 
-export type ActionKind = 'plow' | 'plant' | 'harvest' | 'place' | 'move' | 'sell';
+export type ActionKind = 'plow' | 'plant' | 'harvest' | 'place' | 'move' | 'sell' | 'buy';
 
 export type Outcome =
   | {
@@ -125,6 +127,38 @@ export function plow(state: FarmState, x: number, y: number, now: number): Outco
 
   const plot: Plot = { id: existing?.id ?? `o${state.nextId}`, kind: 'plot', support: null, x, y, state: 'plowed' };
   return succeed('plow', put(state, plot), { coins: -PLOW_COST, xp: PLOW_XP, produce: [] }, plot, now);
+}
+
+// The tractor: plow a block of squares in one go, (x, y) being its back
+// corner. Each square is plowed, or cleared, exactly as `plow` would, and
+// paid for one at a time. Squares that can't be plowed (built on, growing,
+// already plowed, off the farm) are skipped, and it stops paying once the
+// coins run out. It fails only when no square could be plowed, with the
+// reason the first square gave.
+export function plowBlock(state: FarmState, x: number, y: number, size: number, now: number): Outcome {
+  let next = state;
+  let coins = 0;
+  let xp = 0;
+  let plowed = 0;
+  let firstFailure: Failure | null = null;
+  for (let dy = 0; dy < size; dy++) {
+    for (let dx = 0; dx < size; dx++) {
+      const outcome = plow(next, x + dx, y + dy, now);
+      if (!outcome.ok) {
+        firstFailure ??= outcome.failure;
+        continue;
+      }
+      next = outcome.state;
+      coins += outcome.reward.coins;
+      xp += outcome.reward.xp;
+      plowed++;
+    }
+  }
+  if (plowed === 0) return fail(firstFailure ?? { code: 'nothingThere' });
+  // Each plow already paid and earned; the reward is only the total to show,
+  // over the middle of the block.
+  const middle = (size - 1) / 2;
+  return { ok: true, kind: 'plow', state: next, reward: { coins, xp, produce: [] }, at: { x: x + middle, y: y + middle } };
 }
 
 export function plant(state: FarmState, x: number, y: number, cropId: CropId, now: number): Outcome {
@@ -285,6 +319,22 @@ export function sell(state: FarmState, id: string, now: number): Outcome {
   const value = sellValue(obj);
   if (value === null) return fail({ code: 'cantSell', obj });
   return succeed('sell', remove(state, id), { coins: value, xp: 0, produce: [] }, obj, now);
+}
+
+// ---- Vehicles ----
+
+export function ownsVehicle(state: FarmState, id: VehicleId): boolean {
+  return state.vehicles.includes(id);
+}
+
+// Buy a vehicle. It parks itself off the farm, so it never needs a spot.
+export function buyVehicle(state: FarmState, id: VehicleId, now: number): Outcome {
+  const v = VEHICLES[id];
+  if (ownsVehicle(state, id)) return fail({ code: 'alreadyOwned' });
+  if (levelForXp(state.xp) < v.level) return fail({ code: 'levelTooLow', level: v.level });
+  if (state.coins < v.price) return fail({ code: 'notEnoughCoins', needed: v.price });
+  const bought = { ...state, vehicles: [...state.vehicles, id] };
+  return succeed('buy', bought, { coins: -v.price, xp: v.buyXp, produce: [] }, v.parking, now);
 }
 
 // ---- The multi-tool ----

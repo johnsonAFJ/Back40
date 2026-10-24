@@ -53,7 +53,7 @@ export function dayStart(day: number, tz: number): number {
 export function giftChoices(level: number): Placeable[] {
   return (['tree', 'animal', 'decoration'] as const)
     .flatMap((kind) => productsOf(kind))
-    .flatMap((p) => (p.kind !== 'crop' && productInfo(p).level <= level && productInfo(p).price <= GIFT_PRICE_LIMIT ? [p] : []));
+    .flatMap((p) => (p.kind !== 'crop' && p.kind !== 'vehicle' && productInfo(p).level <= level && productInfo(p).price <= GIFT_PRICE_LIMIT ? [p] : []));
 }
 
 function isGrowingAt(o: FarmObject, t: number): o is PlantedPlot {

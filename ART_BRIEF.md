@@ -186,6 +186,16 @@ All **128 x 128**.
 Fences and paths stay drawn in code, since they join up with their
 neighbors in many combinations.
 
+## 5b. Vehicles
+
+| File | Size | What it is |
+| --- | --- | --- |
+| `vehicle-tractor.png` | 256 x 256 | A red tractor facing down and to the right, wheels resting at about y 230, about 150 px long |
+
+Vehicles park on the grass off the farm and are drawn at the same scale as
+crops and trees. The game stands the drawing's bottom middle on its tile, so a
+few pixels off is fine.
+
 ## 6. Basket produce icons
 
 Files: `produce-<id>.png` for apples, cherries, lemons, oranges, peaches,

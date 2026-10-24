@@ -143,6 +143,8 @@ export function failureMessage(failure: Failure, now: number): string {
       return `Unlocks at level ${failure.level}`;
     case 'nothingThere':
       return 'Nothing there';
+    case 'alreadyOwned':
+      return 'You already have one';
     case 'cantSell':
       return `The ${objectName(failure.obj).toLowerCase()} can't be sold`;
     default: {

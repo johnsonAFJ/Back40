@@ -16,6 +16,7 @@
 import { CROP_IDS } from '../core/data/crops';
 import { ANIMAL_IDS, DECORATION_IDS, DECORATIONS, TREE_IDS, type DecorationId } from '../core/data/items';
 import { PRODUCE_IDS } from '../core/data/produce';
+import { VEHICLE_IDS } from '../core/data/vehicles';
 import { TILE_WIDTH } from './iso';
 
 // Vite lists the PNGs that exist when the game is built. Missing ones simply
@@ -173,5 +174,6 @@ export const ART_FILES: ReadonlyArray<readonly [string, GridKind, Anchor]> = [
     (id) => [`deco-${id}`, 'single', UPRIGHT_DECORATIONS.has(id) ? 'feet' : 'cell'] as const,
   ),
   ['building-farmhouse', 'single', 'cell'] as const,
+  ...VEHICLE_IDS.map((id) => [`vehicle-${id}`, 'single', 'feet'] as const),
   ...PRODUCE_IDS.map((id) => [`produce-${id}`, 'single', 'feet'] as const),
 ];

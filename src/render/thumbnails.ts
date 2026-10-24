@@ -8,6 +8,7 @@ import { TILE_HEIGHT, TILE_WIDTH } from './iso';
 import { drawCrop, drawSoil } from './draw/crops';
 import { drawFlatDecoration, isFlat } from './draw/items';
 import { drawProduct } from './draw/objects';
+import { drawVehicle } from './draw/vehicles';
 import { drawProduceIcon } from './draw/produce';
 import { drawArt } from './art';
 
@@ -50,6 +51,8 @@ export function productThumbnail(p: Product): string {
     drawCrop(ctx, 0, 0, p.id, 'ready');
   } else if (p.kind === 'decoration' && isFlat(p.id)) {
     drawFlatDecoration(ctx, p.id, 0, 0);
+  } else if (p.kind === 'vehicle') {
+    drawVehicle(ctx, p.id, 0, 0);
   } else {
     drawProduct(ctx, p, 0, 0, width, depth);
   }
