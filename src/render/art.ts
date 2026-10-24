@@ -44,6 +44,8 @@ type Cell = {
   // Where the drawing touches the ground, in the cell's own pixels.
   readonly anchorX: number;
   readonly anchorY: number;
+  // The top of the drawing, in the cell's own pixels.
+  readonly top: number;
 };
 
 const sheets = new Map<string, Cell[]>();
@@ -67,29 +69,28 @@ function slice(img: HTMLImageElement, kind: GridKind, anchor: Anchor): Cell[] {
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
       if (!ctx) continue;
       ctx.drawImage(img, col * cw, row * ch, cw, ch, 0, 0, cw, ch);
-      if (anchor === 'cell') {
-        cells.push({ image: canvas, anchorX: cw / 2, anchorY: ch });
-        continue;
-      }
       // Find the drawing's bounds from its non-transparent pixels.
       const { data } = ctx.getImageData(0, 0, cw, ch);
       let minX = cw;
       let maxX = -1;
+      let minY = ch;
       let maxY = -1;
       for (let y = 0; y < ch; y++) {
         for (let x = 0; x < cw; x++) {
           if ((data[(y * cw + x) * 4 + 3] ?? 0) > 24) {
             if (x < minX) minX = x;
             if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
             if (y > maxY) maxY = y;
           }
         }
       }
-      cells.push(
-        maxX < 0
-          ? { image: canvas, anchorX: cw / 2, anchorY: ch }
-          : { image: canvas, anchorX: (minX + maxX + 1) / 2, anchorY: maxY + 1 },
-      );
+      const top = maxX < 0 ? ch : minY;
+      if (anchor === 'cell' || maxX < 0) {
+        cells.push({ image: canvas, anchorX: cw / 2, anchorY: ch, top });
+        continue;
+      }
+      cells.push({ image: canvas, anchorX: (minX + maxX + 1) / 2, anchorY: maxY + 1, top });
     }
   }
   return cells;
@@ -152,6 +153,16 @@ export function drawArtScaled(
   ctx.drawImage(cell.image, -cell.anchorX, -cell.anchorY);
   ctx.restore();
   return true;
+}
+
+// How far real art reaches above its ground point, in world pixels, when
+// drawn the way drawArt (at `width`) or drawArtScaled (at `scale`) draws it.
+// Null when the art isn't there. Click boxes are sized from it (hit.ts).
+export function artRise(name: string, index: number, size: { readonly width: number } | { readonly scale: number }): number | null {
+  const cell = sheets.get(name)?.[index];
+  if (!cell) return null;
+  const scale = 'scale' in size ? size.scale : size.width / cell.image.width;
+  return (cell.anchorY - cell.top) * scale;
 }
 
 // ---- What can have art ----

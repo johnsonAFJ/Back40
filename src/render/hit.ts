@@ -17,13 +17,29 @@
 
 import { footprint, type FarmObject, type FarmState } from '../core/state';
 import { animalSlots } from './animalSlots';
-import { hasArt } from './art';
+import { artRise, GROUND_SCALE, hasArt } from './art';
 import { footprintCorners, lift } from './draw/shapes';
 import type { WorldPoint } from './iso';
 
-// Roughly how tall each thing is drawn, in world pixels. This belongs with
-// the art: when real images arrive, it comes from the image sizes instead.
+// Roughly how tall each thing is drawn, in world pixels: the code drawing's
+// height, or how far real art reaches up when it's loaded (measured from the
+// art's ground point, which never undershoots the box). The pixel test
+// trims whatever the box over-covers.
 function height(obj: FarmObject): number {
+  const drawn = codeHeight(obj);
+  const { width, depth } = footprint(obj);
+  const art =
+    obj.kind === 'building'
+      ? artRise(`building-${obj.typeId}`, 0, { width: (width + depth) * 32 })
+      : obj.kind === 'decoration'
+        ? artRise(`deco-${obj.typeId}`, 0, { width: (width + depth) * 32 })
+        : obj.kind === 'tree'
+          ? artRise(`tree-${obj.typeId}`, 1, { scale: GROUND_SCALE })
+          : null;
+  return art === null ? drawn : Math.max(drawn, art);
+}
+
+function codeHeight(obj: FarmObject): number {
   switch (obj.kind) {
     case 'plot':
       // Crops are drawn oversized, up to the height of a 192-pixel art cell.
@@ -32,8 +48,7 @@ function height(obj: FarmObject): number {
     case 'building':
       return 80;
     case 'tree':
-      // Real tree art is drawn up to 256 art pixels tall (ART_BRIEF.md).
-      return hasArt(`tree-${obj.typeId}`) ? 120 : 46;
+      return 46;
     case 'animal':
       return 34;
     case 'decoration':
