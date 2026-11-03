@@ -20,6 +20,7 @@ import {
   objectAt,
   objectsAt,
   witherTime,
+  type Area,
   type FarmObject,
   type FarmState,
   type PlantedPlot,
@@ -129,21 +130,24 @@ export function plow(state: FarmState, x: number, y: number, now: number): Outco
   return succeed('plow', put(state, plot), { coins: -PLOW_COST, xp: PLOW_XP, produce: [] }, plot, now);
 }
 
-// The tractor: plow a block of squares in one go, (x, y) being its back
-// corner. Each square is plowed, or cleared, exactly as `plow` would, and
-// paid for one at a time. Squares that can't be plowed (built on, growing,
-// already plowed, off the farm) are skipped, and it stops paying once the
-// coins run out. It fails only when no square could be plowed, with the
-// reason the first square gave.
-export function plowBlock(state: FarmState, x: number, y: number, size: number, now: number): Outcome {
+// Vehicles work a whole area at once: a 2 x 2 block for a tap, or a field
+// dragged out. `squares` is how many squares it changed, for the tooltip.
+export type AreaOutcome = { readonly outcome: Outcome; readonly squares: number };
+
+// Runs `each` on every square of `area`, back to front, as if clicked one at
+// a time: each square pays and earns as it goes. Squares where it fails
+// (built on, growing, already done, off the farm) are skipped, and once the
+// coins run out the rest fail too. It fails only when no square worked, with
+// the reason the first square gave.
+function workArea(state: FarmState, area: Area, each: (s: FarmState, x: number, y: number) => Outcome, now: number): AreaOutcome {
   let next = state;
   let coins = 0;
   let xp = 0;
-  let plowed = 0;
+  let squares = 0;
   let firstFailure: Failure | null = null;
-  for (let dy = 0; dy < size; dy++) {
-    for (let dx = 0; dx < size; dx++) {
-      const outcome = plow(next, x + dx, y + dy, now);
+  for (let dy = 0; dy < area.depth; dy++) {
+    for (let dx = 0; dx < area.width; dx++) {
+      const outcome = each(next, area.x + dx, area.y + dy);
       if (!outcome.ok) {
         firstFailure ??= outcome.failure;
         continue;
@@ -151,14 +155,25 @@ export function plowBlock(state: FarmState, x: number, y: number, size: number, 
       next = outcome.state;
       coins += outcome.reward.coins;
       xp += outcome.reward.xp;
-      plowed++;
+      squares++;
     }
   }
-  if (plowed === 0) return fail(firstFailure ?? { code: 'nothingThere' });
-  // Each plow already paid and earned; the reward is only the total to show,
-  // over the middle of the block.
-  const middle = (size - 1) / 2;
-  return { ok: true, kind: 'plow', state: next, reward: { coins, xp, produce: [] }, at: { x: x + middle, y: y + middle } };
+  if (squares === 0) return { outcome: fail(firstFailure ?? { code: 'nothingThere' }), squares };
+  // Each square already paid and earned; the reward is only the total to
+  // show, over the middle of the area.
+  const at = { x: area.x + (area.width - 1) / 2, y: area.y + (area.depth - 1) / 2 };
+  return { outcome: { ok: true, kind: 'plow', state: { ...next, lastSeenAt: now }, reward: { coins, xp, produce: [] }, at }, squares };
+}
+
+// The tractor: plow (or clear) every square in `area`.
+export function plowArea(state: FarmState, area: Area, now: number): AreaOutcome {
+  return workArea(state, area, (s, x, y) => plow(s, x, y, now), now);
+}
+
+// The seeder: plant `cropId` on every plowed square in `area`.
+export function plantArea(state: FarmState, area: Area, cropId: CropId, now: number): AreaOutcome {
+  const worked = workArea(state, area, (s, x, y) => plant(s, x, y, cropId, now), now);
+  return worked.outcome.ok ? { ...worked, outcome: { ...worked.outcome, kind: 'plant' } } : worked;
 }
 
 export function plant(state: FarmState, x: number, y: number, cropId: CropId, now: number): Outcome {

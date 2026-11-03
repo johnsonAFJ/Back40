@@ -111,13 +111,13 @@ export function drawSceneryTree(ctx: CanvasRenderingContext2D, x: number, y: num
   }
 }
 
-// Outlines the tile `t`, or the `size` x `size` block with `t` at its back
-// corner (the tractor's reach).
-export function drawHighlight(ctx: CanvasRenderingContext2D, t: TilePoint, zoom: number, size = 1): void {
-  if (size === 1) {
+// Outlines the tile `t`, or the `width` x `depth` area with `t` at its back
+// corner (what a vehicle covers).
+export function drawHighlight(ctx: CanvasRenderingContext2D, t: TilePoint, zoom: number, width = 1, depth = width): void {
+  if (width === 1 && depth === 1) {
     diamondPath(ctx, t);
   } else {
-    const corners = [tile(t.x, t.y), tile(t.x + size, t.y), tile(t.x + size, t.y + size), tile(t.x, t.y + size)].map(tileToWorld);
+    const corners = [tile(t.x, t.y), tile(t.x + width, t.y), tile(t.x + width, t.y + depth), tile(t.x, t.y + depth)].map(tileToWorld);
     ctx.beginPath();
     for (const [i, p] of corners.entries()) {
       if (i === 0) ctx.moveTo(p.x, p.y);

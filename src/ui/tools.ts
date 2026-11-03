@@ -6,6 +6,7 @@
 
 import type { Placeable } from '../core/catalog';
 import type { NeighborId } from '../core/data/neighbors';
+import type { VehicleId } from '../core/data/vehicles';
 import type { FarmObject } from '../core/state';
 
 export type Mode =
@@ -16,8 +17,8 @@ export type Mode =
   // grabbed.
   | { readonly kind: 'move'; readonly held: FarmObject | null; readonly grab: { readonly dx: number; readonly dy: number } }
   | { readonly kind: 'sell' }
-  // Driving the tractor: each click plows a block of squares.
-  | { readonly kind: 'tractor' }
+  // Driving a vehicle: each tap works a block of squares, and a drag a field.
+  | { readonly kind: 'drive'; readonly vehicle: VehicleId }
   // Placing gift number `index` from the gift box, for free.
   | { readonly kind: 'gift'; readonly index: number }
   // On a neighbor's farm, where clicks help instead of farm.

@@ -101,7 +101,7 @@ function details(p: Product): string {
     }
     case 'vehicle': {
       const v = VEHICLES[p.id];
-      return `<span class="card-line">Plows ${v.plows * v.plows} squares at a time</span>
+      return `<span class="card-line">${v.job === 'plow' ? 'Plows' : 'Plants'} ${v.reach * v.reach} squares a tap, or drag a field</span>
         <span class="card-line card-money">${coinIcon}${formatCoins(v.price)} · +${v.buyXp} XP</span>`;
     }
     default: {

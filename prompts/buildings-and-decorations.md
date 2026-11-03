@@ -137,3 +137,20 @@ Canvas: exactly 256 x 256 pixels, transparent. The tractor stands on the ground 
 Look: a cheerful little farm tractor in bright red with a cream-yellow grille and wheel hubs, big chunky rear wheels with deep treads and small front wheels, a single seat with a steering wheel, and a short black exhaust pipe on the hood. It faces down and to the right, toward the viewer, three-quarter view, parked with nobody in it. Toy-like and a little oversized, to match the game's big crops and trees.
 ```
 
+## a seeder
+
+File: `vehicle-seeder.png`
+
+Parked beside the tractor, at the same scale. Attach the tractor art as the
+style example so the two look like a matched pair.
+
+```
+Make one farm implement, a seed planter, for an isometric farming game.
+
+Style: bright, friendly, cartoony farm art in the spirit of 2009 browser farm games, but entirely original (nothing may resemble another game's characters or artwork). Rounded, chunky shapes that read clearly when small. Flat color with one soft highlight and one soft shade per surface. Soft outlines about 2 px wide in a darker shade of the fill, never pure black. Light comes from the upper left. Isometric 2:1 view: a floor tile is a diamond 128 px wide and 64 px tall at this size. Fully transparent background: no ground, no grass, no shadows under things, no text, no grid lines, no border. Crisp edges. Export as PNG with transparency at exactly the size given.
+
+Canvas: exactly 256 x 256 pixels, transparent. It stands on the ground with the bottom of its wheels at about y 230, centered at x 128, about 130 pixels long and 90 pixels tall, and fits inside the canvas.
+
+Look: a cheerful little seed planter meant to be towed behind a farm tractor: a bright green seed hopper box with its lid open and full of seeds, sitting on two chunky wheels with cream-yellow hubs, a row of small planting discs underneath, and a drawbar sticking out the front for hitching. It faces down and to the right, toward the viewer, three-quarter view. Toy-like and a little oversized, to match the red tractor it goes with.
+```
+
