@@ -618,6 +618,28 @@ Fences, paths and ground stay code-drawn even when the rest has real art.
   clicks queued behind them. Charming, but it's pathfinding, an action queue
   and a lot of animation: a milestone of its own, after the ones above.
   Actions stay instant until then.
+- **Vehicles drive across the field.** When the tractor or seeder works a
+  field, it visibly rolls out from its parking spot, along the rows and back,
+  each square changing as it passes: about a fifth of a second per square,
+  never more than about 3 seconds in all. Purely for show; the work itself
+  still happens at once, so nothing is ever left half done.
+
+### Ideas being talked about
+
+Not decided yet; each needs a few answers before it's built.
+
+- **Animals in the barn.** Put animals inside the red barn (and maybe a few
+  small ones in the shed) to save space and collect from all of them at once.
+  Open: do they keep producing, how many fit, can kinds mix?
+- **Crop mastery and varieties.** Stars for harvesting a crop enough times,
+  with rewards, and a new variety of the crop at three stars. Open: are
+  varieties better or just different, are there mastery signs, plan in depth
+  first?
+- **A garden arch** that climbing crops (cucumbers and the like) can grow on,
+  using the trellis's support system.
+- **Art redraws:** spinach, rice, peppers, bell peppers, eggplant and grapes
+  (grapes along the trellis), the seeder, and possibly bigger decorations to
+  match the oversized crops.
 
 ## Sources
 
