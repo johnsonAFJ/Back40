@@ -3,7 +3,8 @@
 // src/core.
 
 import './style.css';
-import { buyVehicle, move, place, placeGift, plowBlock, sell, sellValue, useMultiTool, type Outcome } from './core/actions';
+import { buyVehicle, move, place, placeGift, plantArea, plowArea, sell, sellValue, useMultiTool, type AreaOutcome, type Outcome } from './core/actions';
+import { CROPS } from './core/data/crops';
 import { PLOW_COST } from './core/data/economy';
 import { VEHICLES, type VehicleId } from './core/data/vehicles';
 import { vehicleAt } from './render/draw/vehicles';
@@ -18,7 +19,7 @@ import { expand, nextExpansion } from './core/land';
 import { levelForXp } from './core/levels';
 import { HELP_COINS, HELP_XP, help, helpsLeft, syncNeighbors, visit, type Visit } from './core/neighbors';
 import { newSeed } from './core/rng';
-import { farmSize, footprint, isAreaFree, isOnFarm, newFarm, objectAt, objectsAt, type FarmObject, type FarmState, type FeedEvent } from './core/state';
+import { farmSize, footprint, isAreaFree, isOnFarm, newFarm, objectAt, objectsAt, type Area, type FarmObject, type FarmState, type FeedEvent } from './core/state';
 import { unlocksBetween } from './core/unlocks';
 import { MIN_ZOOM, clampToBounds, pan, screenToWorld, worldToScreen, zoomAt, type Bounds, type Camera, type Viewport } from './render/camera';
 import { liveEffects, type FloatingText } from './render/effects';
@@ -79,6 +80,8 @@ let view: Viewport = { width: 1, height: 1 };
 let pixelRatio = 1;
 let camera: Camera = fittedCamera();
 let highlight: TilePoint | null = null;
+// The field being dragged out while driving a vehicle, if any.
+let zone: Area | null = null;
 // The particular thing under the pointer, when there is one. On a square
 // several animals share, this says which one Move or Sell would pick.
 let highlightObj: FarmObject | null = null;
@@ -98,7 +101,8 @@ const toast = createToast(required('#toast', HTMLElement));
 const levelUp = createLevelUp(required('#levelup', HTMLDialogElement));
 const askConfirm = createConfirm(required('#confirm', HTMLDialogElement));
 const market = createMarket(required('#market', HTMLDialogElement), required('#market-button', HTMLButtonElement), {
-  onSeed: () => setMode({ kind: 'farm' }),
+  // Choosing a seed keeps the seeder going, with the new seed.
+  onSeed: () => setMode(mode.kind === 'drive' && VEHICLES[mode.vehicle].job === 'plant' ? mode : { kind: 'farm' }),
   onBuy: (item) => setMode({ kind: 'place', item }),
   onVehicle: (id) => void buyNewVehicle(id),
   onExpand: () => void expandFarm(),
@@ -207,7 +211,7 @@ function requestDraw(): void {
       farm: v?.farm ?? farm,
       now: now(),
       highlight,
-      highlightSize: mode.kind === 'tractor' ? VEHICLES.tractor.plows : 1,
+      highlightSize: mode.kind === 'drive' ? (zone ?? reachAt(mode.vehicle, tile(0, 0))) : { width: 1, depth: 1 },
       ghost: ghostAt(highlight),
       hiddenId,
       effects,
@@ -236,13 +240,8 @@ function tooltipText(t: TilePoint): string | null {
     case 'place':
     case 'gift':
       return null;
-    case 'tractor': {
-      // What this click would do, worked out by trying it.
-      const outcome = plowBlock(farm, t.x, t.y, VEHICLES.tractor.plows, now());
-      if (!outcome.ok) return failureMessage(outcome.failure, now());
-      const cost = -outcome.reward.coins;
-      return cost > 0 ? `Plow here for ${formatCoins(cost)} coins` : 'Clear here for free';
-    }
+    case 'drive':
+      return describeDrive(mode.vehicle, zone ?? reachAt(mode.vehicle, t));
     case 'visit': {
       const v = currentVisit();
       return v ? describeChore(v, t.x, t.y, now()) : null;
@@ -281,9 +280,24 @@ function bannerText(): string | null {
       const gift = farm.gifts[mode.index];
       return gift ? `Placing your gift: ${productInfo(gift).name.toLowerCase()}. Click where it goes` : null;
     }
-    case 'tractor': {
-      const side = VEHICLES.tractor.plows;
-      return `Tractor: click to plow ${side * side} squares at a time, ${formatCoins(PLOW_COST)} coins each`;
+    case 'drive': {
+      const v = VEHICLES[mode.vehicle];
+      const squares = v.reach * v.reach;
+      // On a phone, one finger now marks out fields, so say how to move.
+      const move = pointerKind === 'touch' ? '. Two fingers move the map' : '';
+      const job = v.job;
+      switch (job) {
+        case 'plow':
+          return `Tractor: tap to plow ${squares} squares, or drag across a field. ${formatCoins(PLOW_COST)} coins a square${move}`;
+        case 'plant': {
+          const crop = CROPS[market.selected()];
+          return `Seeder: tap to plant ${squares} squares of ${crop.name.toLowerCase()}, or drag across a field. ${formatCoins(crop.seed)} coins a square${move}`;
+        }
+        default: {
+          const _exhaustive: never = job;
+          return _exhaustive;
+        }
+      }
     }
     case 'visit': {
       const name = NEIGHBORS[mode.neighbor].name;
@@ -430,8 +444,8 @@ async function tapTile(t: TilePoint): Promise<void> {
       if (g && apply(placeGift(farm, mode.index, g.x, g.y, now()))) setMode({ kind: 'farm' });
       return;
     }
-    case 'tractor':
-      apply(plowBlock(farm, t.x, t.y, VEHICLES.tractor.plows, now()));
+    case 'drive':
+      apply(drive(mode.vehicle, reachAt(mode.vehicle, t)).outcome);
       return;
     case 'visit': {
       const v = currentVisit();
@@ -533,20 +547,66 @@ async function buyNewVehicle(id: VehicleId): Promise<void> {
   const v = VEHICLES[id];
   if (!(await askConfirm(`Buy a ${v.name.toLowerCase()} for ${formatCoins(v.price)} coins?`, 'Buy'))) return;
   if (!apply(buyVehicle(farm, id, now()))) return;
-  toast.show(`Your ${v.name.toLowerCase()} is parked by the farmhouse. Tap it to plow ${v.plows * v.plows} squares at a time`);
+  const verb = v.job === 'plow' ? 'plow' : 'plant';
+  toast.show(`Your ${v.name.toLowerCase()} is parked by the farmhouse. Tap it, then tap or drag across a field to ${verb} it`);
 }
 
 // Tapping a parked vehicle starts driving it; tapping it again stops.
 function tapVehicle(id: VehicleId): void {
-  switch (id) {
-    case 'tractor':
-      setMode(mode.kind === 'tractor' ? { kind: 'farm' } : { kind: 'tractor' });
-      return;
+  setMode(mode.kind === 'drive' && mode.vehicle === id ? { kind: 'farm' } : { kind: 'drive', vehicle: id });
+}
+
+// The block a tap covers, with tile `t` at its back corner.
+function reachAt(id: VehicleId, t: TilePoint): Area {
+  const { reach } = VEHICLES[id];
+  return { x: t.x, y: t.y, width: reach, depth: reach };
+}
+
+// What driving vehicle `id` over `area` does: plow it, or plant the chosen
+// seed on it.
+function drive(id: VehicleId, area: Area): AreaOutcome {
+  const job = VEHICLES[id].job;
+  switch (job) {
+    case 'plow':
+      return plowArea(farm, area, now());
+    case 'plant':
+      return plantArea(farm, area, market.selected(), now());
     default: {
-      const _exhaustive: never = id;
+      const _exhaustive: never = job;
       return _exhaustive;
     }
   }
+}
+
+// The tooltip while driving: what the tap or drag would do, worked out by
+// trying it.
+function describeDrive(id: VehicleId, area: Area): string {
+  const { outcome, squares } = drive(id, area);
+  if (!outcome.ok) return failureMessage(outcome.failure, now());
+  const what = `${squares} ${squares === 1 ? 'square' : 'squares'}`;
+  const cost = -outcome.reward.coins;
+  const job = VEHICLES[id].job;
+  switch (job) {
+    case 'plow':
+      return cost > 0 ? `Plow ${what} for ${formatCoins(cost)} coins` : `Clear ${what} for free`;
+    case 'plant':
+      return `Plant ${what} of ${CROPS[market.selected()].name.toLowerCase()} for ${formatCoins(cost)} coins`;
+    default: {
+      const _exhaustive: never = job;
+      return _exhaustive;
+    }
+  }
+}
+
+// The field from one tapped tile to another, both kept on the farm.
+function fieldBetween(from: ScreenPoint, to: ScreenPoint): Area {
+  const size = farmSize(farm);
+  const clamp = (n: number): number => Math.min(size - 1, Math.max(0, n));
+  const a = pickTile(screenToWorld(camera, view, from));
+  const b = pickTile(screenToWorld(camera, view, to));
+  const [x0, x1] = [clamp(Math.min(a.x, b.x)), clamp(Math.max(a.x, b.x))];
+  const [y0, y1] = [clamp(Math.min(a.y, b.y)), clamp(Math.max(a.y, b.y))];
+  return { x: x0, y: y0, width: x1 - x0 + 1, depth: y1 - y0 + 1 };
 }
 
 // ---- Bailout ----
@@ -643,8 +703,34 @@ attachInput(canvas, {
   pan: (dx, dy) => setCamera(pan(camera, dx, dy)),
   zoom: (anchor, factor) => setCamera(zoomAt(camera, view, anchor, factor)),
   hover: (at) => {
+    // While a field is being dragged out, the highlight shows the field.
+    if (zone) return;
     highlightObj = at ? thingAt(shownFarm(), screenToWorld(camera, view, at)) : null;
     setHighlight(at ? farmTileAt(at) : null);
+  },
+  // While driving, a drag that starts on the farm marks out a field.
+  startsZone: (at) => {
+    if (mode.kind !== 'drive') return false;
+    const t = pickTile(screenToWorld(camera, view, at));
+    return isOnFarm(farm, t.x, t.y);
+  },
+  zone: (from, to, done) => {
+    if (mode.kind !== 'drive') return;
+    const field = fieldBetween(from, to);
+    if (done) {
+      zone = null;
+      apply(drive(mode.vehicle, field).outcome);
+      setHighlight(null);
+      return;
+    }
+    zone = field;
+    // Force a redraw even when the corner stays put and only the size grows.
+    highlight = null;
+    setHighlight(tile(field.x, field.y));
+  },
+  zoneCancel: () => {
+    zone = null;
+    setHighlight(null);
   },
   tap: (at) => {
     // A parked vehicle sits off the farm, so it's checked before tiles.

@@ -191,6 +191,7 @@ neighbors in many combinations.
 | File | Size | What it is |
 | --- | --- | --- |
 | `vehicle-tractor.png` | 256 x 256 | A red tractor facing down and to the right, wheels resting at about y 230, about 150 px long |
+| `vehicle-seeder.png` | 256 x 256 | A green seed planter on two wheels, same view and scale as the tractor, about 130 px long |
 
 Vehicles park on the grass off the farm and are drawn at the same scale as
 crops and trees. The game stands the drawing's bottom middle on its tile, so a

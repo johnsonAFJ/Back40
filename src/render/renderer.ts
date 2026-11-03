@@ -46,8 +46,9 @@ export type Scene = {
   readonly farm: FarmState;
   readonly now: number;
   readonly highlight: TilePoint | null;
-  // How many tiles on a side the highlight covers: 1, or the tractor's reach.
-  readonly highlightSize: number;
+  // How many tiles the highlight covers, from `highlight` as its back corner:
+  // one, or what a vehicle covers.
+  readonly highlightSize: { readonly width: number; readonly depth: number };
   readonly ghost: Ghost | null;
   // An object being moved is drawn as the ghost, not in its old spot.
   readonly hiddenId: string | null;
@@ -168,7 +169,7 @@ export function render(ctx: CanvasRenderingContext2D, scene: Scene): void {
   }
 
   drawFarmEdge(ctx, size, camera.zoom);
-  if (highlight && !ghost) drawHighlight(ctx, highlight, camera.zoom, scene.highlightSize);
+  if (highlight && !ghost) drawHighlight(ctx, highlight, camera.zoom, scene.highlightSize.width, scene.highlightSize.depth);
   if (ghost) drawGhostFootprint(ctx, ghost, farm);
 
   // Object pass, back to front. Animals sharing a square each stand in

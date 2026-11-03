@@ -3,7 +3,9 @@
 // handles them.
 //
 // The rule that keeps tools from misfiring: a press only counts as a tap if
-// the pointer moved less than DRAG_THRESHOLD pixels. Anything more is a pan.
+// the pointer moved less than DRAG_THRESHOLD pixels. Anything more is a drag:
+// a pan, or, while driving a vehicle, marking out a zone. Two fingers always
+// pan and zoom.
 
 import { screen, type ScreenPoint } from '../render/iso';
 
@@ -14,9 +16,16 @@ export type Gestures = {
   readonly zoom: (anchor: ScreenPoint, factor: number) => void;
   readonly hover: (at: ScreenPoint | null) => void;
   readonly tap: (at: ScreenPoint) => void;
+  // Whether a drag starting at `at` marks out a zone instead of panning.
+  readonly startsZone: (at: ScreenPoint) => boolean;
+  // A zone being marked out, from where the drag started to where it is
+  // now; `done` once it's let go.
+  readonly zone: (from: ScreenPoint, to: ScreenPoint, done: boolean) => void;
+  // A zone abandoned, when a second finger turns it into a pinch.
+  readonly zoneCancel: () => void;
 };
 
-type Press = { readonly start: ScreenPoint; last: ScreenPoint; dragging: boolean };
+type Press = { readonly start: ScreenPoint; last: ScreenPoint; dragging: 'no' | 'pan' | 'zone' };
 
 export function attachInput(canvas: HTMLCanvasElement, gestures: Gestures): () => void {
   const pointers = new Map<number, ScreenPoint>();
@@ -42,9 +51,10 @@ export function attachInput(canvas: HTMLCanvasElement, gestures: Gestures): () =
     const at = local(e);
     pointers.set(e.pointerId, at);
     if (pointers.size === 1) {
-      press = { start: at, last: at, dragging: false };
+      press = { start: at, last: at, dragging: 'no' };
     } else {
       // A second finger turns the gesture into a pinch, never a tap.
+      if (press?.dragging === 'zone') gestures.zoneCancel();
       press = null;
       pinchDistance = pinchInfo()?.distance ?? 0;
     }
@@ -69,22 +79,25 @@ export function attachInput(canvas: HTMLCanvasElement, gestures: Gestures): () =
     }
 
     if (!press) return;
-    if (!press.dragging && Math.hypot(at.x - press.start.x, at.y - press.start.y) > DRAG_THRESHOLD) {
-      press.dragging = true;
+    if (press.dragging === 'no' && Math.hypot(at.x - press.start.x, at.y - press.start.y) > DRAG_THRESHOLD) {
+      press.dragging = gestures.startsZone(press.start) ? 'zone' : 'pan';
     }
-    if (press.dragging) gestures.pan(at.x - press.last.x, at.y - press.last.y);
+    if (press.dragging === 'pan') gestures.pan(at.x - press.last.x, at.y - press.last.y);
+    if (press.dragging === 'zone') gestures.zone(press.start, at, false);
     press.last = at;
     if (e.pointerType === 'mouse') gestures.hover(at);
   };
 
   const onUp = (e: PointerEvent): void => {
     if (!pointers.delete(e.pointerId)) return;
-    if (press && !press.dragging && pointers.size === 0) gestures.tap(local(e));
+    if (press?.dragging === 'no' && pointers.size === 0) gestures.tap(local(e));
+    if (press?.dragging === 'zone' && pointers.size === 0) gestures.zone(press.start, local(e), true);
     if (pointers.size === 0) press = null;
   };
 
   const onCancel = (e: PointerEvent): void => {
     pointers.delete(e.pointerId);
+    if (press?.dragging === 'zone') gestures.zoneCancel();
     if (pointers.size === 0) press = null;
   };
 

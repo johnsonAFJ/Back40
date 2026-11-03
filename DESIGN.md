@@ -43,7 +43,7 @@ Departures happen for a few reasons, and each entry below names which:
 | Tree and animal produce | Sold the moment it was collected | Goes into a harvest basket, sold when you choose | Our own choice (see below) |
 | Withered crops | Plowing them under cost 15 coins | Clearing them is free | Our own choice (see below) |
 | Running out of coins | Stuck until a friend helped or you bought Farm Cash | Under 20 coins, a button gives 100, once every 3 days | Our own choice (see below) |
-| Tractor | Plowed 2 x 2 squares at a time, but ran on fuel bought with Farm Cash | Plows 2 x 2, no fuel; each square still costs a normal plow | Our own choice (see below) |
+| Tractor and seeder | Worked 2 x 2 squares at a time, and ran on fuel bought with Farm Cash | Work 2 x 2 a tap, or a whole field dragged out; no fuel; each square costs what it would by hand | Our own choice (see below) |
 | Grapes | Planted on any plot | Grow only on a trellis, bought once and never plowed | Our own choice (see below) |
 | Saves | Zynga's servers | The browser, with backup export and import | Scope |
 
@@ -224,16 +224,24 @@ On a phone, the home-screen app keeps its own save, separate from the
 browser's, and has no address bar for `?test`. That's part of why the bailout
 lives in the game rather than in test mode.
 
-### The tractor
+### The tractor and seeder
 
-A tractor costs 5,000 coins at level 10 and plows a 2 x 2 block per click.
-Each square still costs a normal plow (15 coins) and gives its 1 XP, so the
-tractor saves clicks, not money. The 2009 tractor also needed fuel, which in
+A tractor costs 5,000 coins at level 10 and plows a 2 x 2 block per tap; a
+seeder costs 10,000 at level 15 and plants the chosen seed the same way.
+Dragging across the farm while driving either one marks out a whole field
+and works it all when you let go. Each square still costs what it would by
+hand (a 15 coin plow and its 1 XP, or the seed and its planting XP), so
+vehicles save clicks, not money. The 2009 versions also needed fuel, which in
 practice was a way to sell Farm Cash, so Back40 leaves it out.
 
-It parks on the grass just off the farm by the farmhouse corner, rather than
-taking a square: the farm only grows away from that corner, so the spot never
-becomes farmland. Tapping it switches the tractor on; tapping it again, or
-Done, switches it off. It isn't on the toolbar because a fourth tool would
-push the phone's bottom bar onto a third row. A seeder and harvester, like the
-original's, would park beside it.
+Vehicles park on the grass just off the farm by the farmhouse corner, rather
+than taking a square: the farm only grows away from that corner, so the spot
+never becomes farmland. Tapping one starts driving it; tapping it again, or
+Done, stops. It isn't on the toolbar because a fourth tool would
+push the phone's bottom bar onto a third row. The seeder parks beside it, and a
+harvester could join them.
+
+Dragging out a field makes vehicles worth buying, but on a phone one finger
+normally pans the map. So while driving, a drag that starts on the farm marks
+out a field, one that starts off the farm pans, and two fingers always pan and
+zoom; the banner says so on a phone. A field can be any size.

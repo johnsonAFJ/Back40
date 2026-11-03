@@ -7,6 +7,7 @@ import { tile, tileCenter, tileToWorld, type WorldPoint } from '../iso';
 import { drawBox, ellipse, line, lift, SHADOW } from './shapes';
 
 const RED = { top: '#e0483a', left: '#b8342a', right: '#9a2a22' };
+const GREEN = { top: '#5fb043', left: '#46902f', right: '#3a7a27' };
 const TYRE = '#2e2a26';
 const HUB = '#f2c230';
 
@@ -34,12 +35,25 @@ function drawTractor(ctx: CanvasRenderingContext2D, x: number, y: number): void 
   wheel(ctx, at(0.82, 0.75), 6);
 }
 
+// The seeder: a green seed hopper on two wheels, with a drawbar to hitch it
+// to the tractor, facing the same way.
+function drawSeeder(ctx: CanvasRenderingContext2D, x: number, y: number): void {
+  const at = (u: number, v: number): WorldPoint => tileToWorld(tile(x + u, y + v));
+  wheel(ctx, at(0.45, 0.15), 9);
+  line(ctx, lift(at(0.72, 0.5), 6), lift(at(0.98, 0.5), 4), '#5a5550', 2.5);
+  drawBox(ctx, { x: x + 0.2, y: y + 0.22, width: 0.5, depth: 0.56 }, 0, 20, GREEN);
+  // The hopper's open top, full of seed.
+  const top = lift(at(0.45, 0.5), 20);
+  ellipse(ctx, top.x, top.y, 11, 5, '#c9a46a');
+  wheel(ctx, at(0.45, 0.85), 9);
+}
+
 export function drawVehicle(ctx: CanvasRenderingContext2D, id: VehicleId, x: number, y: number): void {
   const c = tileCenter(tile(x, y));
   const art = `vehicle-${id}`;
   if (hasArt(art)) {
-    // The art stands on its lowest point, the front wheel; the shadow goes
-    // under the middle of the whole tractor, a little further back.
+    // The art stands on its lowest point, a front wheel; the shadow goes
+    // under the middle of the whole vehicle, a little further back.
     ellipse(ctx, c.x - 2, c.y - 7, 36, 14, SHADOW);
     drawArtScaled(ctx, art, 0, c.x, c.y, GROUND_SCALE);
     return;
@@ -48,6 +62,9 @@ export function drawVehicle(ctx: CanvasRenderingContext2D, id: VehicleId, x: num
   switch (id) {
     case 'tractor':
       drawTractor(ctx, x, y);
+      return;
+    case 'seeder':
+      drawSeeder(ctx, x, y);
       return;
     default: {
       const _exhaustive: never = id;

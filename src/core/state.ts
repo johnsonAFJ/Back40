@@ -146,7 +146,7 @@ export function spaceUsed(objects: readonly FarmObject[]): number | null {
   return used;
 }
 
-type Area = { readonly x: number; readonly y: number; readonly width: number; readonly depth: number };
+export type Area = { readonly x: number; readonly y: number; readonly width: number; readonly depth: number };
 
 // What's going into an area: an animal can share a square with other
 // animals if there's space; anything else needs the area empty. `ignoreId` is
